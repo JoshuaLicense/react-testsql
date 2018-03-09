@@ -2,20 +2,37 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import SQL from 'sql.js';
+
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            database: null,
+            results: null,
+            alert: null,
+            history: [],
+        };
+    }
+    render() {
+        if (this.state.database) {
+            return (
+                <div className="d-flex flex-row">
+                    <main className="d-flex flex-column p-4 pr-5" style={{flexGrow: 1, overflow: "hidden"}}>
+                        <section className="mb-3">
+                        </section>
+                        <section className="mb-3">
+                        </section>
+                    </main>
+                </div>
+            );
+        }
+
+        return null;
+    }
 }
 
 export default App;
