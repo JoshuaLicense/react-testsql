@@ -20,6 +20,23 @@ class App extends Component {
             history: [],
         };
     }
+
+    componentDidMount() {
+        this.getDatabase();
+    }
+
+    getDatabase() {
+            fetch('default.sqlite')
+                .then(response => response.arrayBuffer())
+                .then(fileBuffer => {
+                    const typedArray = new Uint8Array(fileBuffer);
+                    const database = new SQL.Database(typedArray);
+
+                    this.setState({ database, });
+                })
+                .catch(e => console.log(e));
+    }
+
     render() {
         if (this.state.database) {
             return (
