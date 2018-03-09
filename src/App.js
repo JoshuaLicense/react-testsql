@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import Nav from './components/Nav';
 import SQL from 'sql.js';
 
 class App extends Component {
@@ -21,6 +21,7 @@ class App extends Component {
         if (this.state.database) {
             return (
                 <div className="d-flex flex-row">
+                    <Nav />
                     <main className="d-flex flex-column p-4 pr-5" style={{flexGrow: 1, overflow: "hidden"}}>
                         <section className="mb-3">
                         </section>
