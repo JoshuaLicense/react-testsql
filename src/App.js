@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Nav from './components/Nav';
 
+import { DatabaseInput, DatabaseOutput, } from './components/Database';
+
 import Alert from './components/Alert';
 
 import SQL from 'sql.js';
@@ -35,6 +37,35 @@ class App extends Component {
                     this.setState({ database, });
                 })
                 .catch(e => console.log(e));
+
+    runStatement = (statement) => {
+        // Run the current statement that is saved in the state
+        this.runQuery(statement);
+    }
+
+    runQuery = (sql) => {
+        try {
+            const results = this.state.database.exec(sql);
+
+            this.setState(
+                { 
+                    results, 
+                    history: [...this.state.history, sql],
+                }
+            );
+
+            // Remove the alert(s) if any
+            this.setState({ alert: null, })
+        } catch(error) {
+            this.setState({
+                alert: {
+                    type: `danger`,
+                    message: error.message,
+                },
+            });
+        }
+    }
+
     }
 
     render() {
@@ -45,8 +76,12 @@ class App extends Component {
                     <main className="d-flex flex-column p-4 pr-5" style={{flexGrow: 1, overflow: "hidden"}}>
                         <Alert data={this.state.alert} />
                         <section className="mb-3">
+                            <h5>SQL Statement</h5>
+                            <DatabaseInput submitHandler={this.runStatement} />
                         </section>
                         <section className="mb-3">
+                            <h5>Result</h5>
+                            <DatabaseOutput data={this.state.results} />
                         </section>
                     </main>
                 </div>
