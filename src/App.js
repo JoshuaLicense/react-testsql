@@ -90,7 +90,7 @@ class App extends Component {
             return (
                 <div className="d-flex flex-row">
                     <Nav />
-                    <main className="d-flex flex-column p-4 pr-5" style={{flexGrow: 1, overflow: "hidden"}}>
+                    <main className="d-flex flex-column p-4 pr-5" style={{flexGrow: 1}}>
                         <Alert data={this.state.alert} />
                         <section className="mb-3">
                             <h5>SQL Statement</h5>

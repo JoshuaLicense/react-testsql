@@ -15,7 +15,6 @@ class Schema extends React.Component {
 
         this.state = { 
             x: props.x,
-            y: props.y,
             data: props.data,
             isVerticalHeader: props.isVerticalHeader, 
         };
@@ -29,7 +28,7 @@ class Schema extends React.Component {
     }
 
     onStop(e, ui) {
-        let { x, y, node } = ui;
+        let { x, node } = ui;
 
         // Get the width of the slider
         const sliderWidth = node.firstElementChild.offsetWidth;
@@ -48,12 +47,11 @@ class Schema extends React.Component {
 
         this.setState({
             x,
-            y,
         });
     }
 
     onDrag(e, ui) {
-        let { x, y, node } = ui;
+        let { x, node } = ui;
 
         // Get the width of the slider
         const sliderWidth = node.firstElementChild.offsetWidth;
@@ -61,6 +59,8 @@ class Schema extends React.Component {
         // Fetch the width of the draggable, this means regardless of how far it comes out,
         // The following logic will still work
         const xMax = node.offsetWidth - sliderWidth;
+
+        console.log(node.previousSibling, node.offsetWidth, x, node.parentElement.style.flex = '0 0 100px');
 
         // Check if the header should be vertical or not (if >50% of the sidebar is visible)
         const isVerticalHeader = percentageRatio(x, xMax) < 50;
@@ -71,18 +71,16 @@ class Schema extends React.Component {
     }
 
     render() {
-        const { x, y, } = this.state;
+        const { x, } = this.state;
 
         return (
-            <aside className="ts-schema-container">
+            <aside>
                 <Draggable
                     axis="x"
-                    handle=".ts-schema-slide-handle"
-                    bounds="parent"
-                    position={{x, y}}
-                    onStop={this.onStop}
-                    onDrag={this.onDrag}>
-                    <div className="ts-schema d-flex flex-row bg-light border-left border-right">
+                    bounds={{left: 0, right: 276}}
+                    onDrag={this.onDrag}
+                >
+                    <div className="d-flex flex-row bg-light border-left border-right" style={{width: '300px', position: 'absolute', right: '-276px'}}>
                         <div className="ts-schema-slide-handle d-flex justify-content-center">
                             <span className="align-self-center text-muted ">||</span>
                         </div>
@@ -101,16 +99,28 @@ class Schema extends React.Component {
     }
 }
 
+/*<div className="ts--schema d-flex flex-row bg-light border-left border-right">
+                        <div className="ts-schema-slide-handle d-flex justify-content-center">
+                            <span className="align-self-center text-muted ">||</span>
+                        </div>
+                        <div className="border-left" style={{flexGrow: 1}}>
+                            <div className={`ts-schema-header ${(this.state.isVerticalHeader ? "vertical" : "")}`}>
+                                <h6 className="ml-2 mt-3">Database Schema</h6>
+                            </div>
+                            <div className="list-group list-group-flush">
+                                {this.state.data.map((tableName, i) => <Table clickHandler={this.handleClick} name={tableName} key={i} /> )}
+                            </div>
+                        </div>
+                    </div>*/
+
 Schema.defaultProps = {
     x: 0,
-    y: 0,
     data: [],
     isVerticalHeader: true,
 };
 
 Schema.propTypes = {
     x: PropTypes.number,
-    y: PropTypes.number,
     data: PropTypes.array,
     clickHandler: PropTypes.func,
 };
