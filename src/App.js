@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Nav from './components/Nav';
 import Schema from './components/Schema';
 
-import { DatabaseInput, DatabaseOutput, } from './components/Database';
+import { DatabaseInput, DatabaseOutput, DatabaseImport, } from './components/Database';
 
 import Alert from './components/Alert';
 
@@ -89,7 +89,9 @@ class App extends Component {
         if (this.state.database) {
             return (
                 <div className="d-flex flex-row">
-                    <Nav />
+                    <nav className="d-flex flex-column bg-light border-right">
+                        <DatabaseImport />
+                    </nav>
                     <main className="d-flex flex-column p-4 pr-5" style={{flexGrow: 1, overflow: "hidden"}}>
                         <Alert data={this.state.alert} />
                         <section className="mb-3">
