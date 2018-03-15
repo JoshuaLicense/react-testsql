@@ -19,4 +19,12 @@ class Alert extends React.Component {
     }
 }
 
+Alert.defaultProps = {
+    data: {},
+};
+
+Alert.propTypes = {
+    data: PropTypes.object,
+};
+
 export default Alert;

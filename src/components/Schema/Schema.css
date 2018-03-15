@@ -4,9 +4,17 @@
   *
   */
 
-
+@media (max-width: 767.98px) {
+    .ts-schema-container {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+    }
+}
+/*
 .ts-schema-container {
-    /* Two times the width of .ts-schema, minus the .ts-schema-slide-handle */
+    /* Two times the width of .ts-schema, minus the .ts-schema-slide-handle
     width: calc((18.75rem * 2) - 1.5rem);
     position: fixed;
     z-index: 990;
@@ -14,7 +22,7 @@
     bottom: 0;
     left: calc(100% - 18.75rem);
     pointer-events: none;
-}
+}*/
 
 .ts-schema {
     width: 18.75rem;

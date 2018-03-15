@@ -54,8 +54,18 @@ class App extends Component {
     }
 
     runStatement = (statement) => {
-        // Run the current statement that is saved in the state
-        this.runQuery(statement);
+        // If the statement is not empty
+        if(statement) {
+            // Run the current statement that is saved in the state
+            this.runQuery(statement);
+        } else {
+            this.setState({
+                alert: {
+                    type: `danger`,
+                    message: 'Please enter a statement to execute',
+                },
+            });
+        }
     }
 
     runQuery = (sql) => {
@@ -92,14 +102,10 @@ class App extends Component {
                     <Nav />
                     <main className="d-flex flex-column p-4 pr-5" style={{flexGrow: 1}}>
                         <Alert data={this.state.alert} />
-                        <section className="mb-3">
-                            <h5>SQL Statement</h5>
-                            <DatabaseInput submitHandler={this.runStatement} />
-                        </section>
-                        <section className="mb-3">
-                            <h5>Result</h5>
-                            <DatabaseOutput data={this.state.results} />
-                        </section>
+                        <h5>SQL Statement</h5>
+                        <DatabaseInput submitHandler={this.runStatement} />
+                        <h5 className="mt-3">Result</h5>
+                        <DatabaseOutput data={this.state.results} />
                     </main>
                     <Schema data={this.getAllTableNames()} clickHandler={this.runTableQuery} />
                 </div>

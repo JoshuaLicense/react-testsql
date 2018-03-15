@@ -60,7 +60,10 @@ class Schema extends React.Component {
         // The following logic will still work
         const xMax = node.offsetWidth - sliderWidth;
 
-        console.log(node.previousSibling, node.offsetWidth, x, node.parentElement.style.flex = '0 0 100px');
+        // The flipped value of the x axis is the width, could use Math.abs()
+        const width = -x;
+
+        node.parentElement.style.flexBasis = `${width}px`;
 
         // Check if the header should be vertical or not (if >50% of the sidebar is visible)
         const isVerticalHeader = percentageRatio(x, xMax) < 50;
@@ -71,16 +74,14 @@ class Schema extends React.Component {
     }
 
     render() {
-        const { x, } = this.state;
-
         return (
-            <aside>
+            <aside class="ts-schema-container">
                 <Draggable
                     axis="x"
-                    bounds={{left: 0, right: 276}}
+                    bounds={{left: -276, right: 0}}
                     onDrag={this.onDrag}
                 >
-                    <div className="d-flex flex-row bg-light border-left border-right" style={{width: '300px', position: 'absolute', right: '-276px'}}>
+                    <div className="d-flex flex-row bg-light border-left border-right" style={{width: '300px', position: 'absolute', right: '-276px', top: 0, bottom: 0, }}>
                         <div className="ts-schema-slide-handle d-flex justify-content-center">
                             <span className="align-self-center text-muted ">||</span>
                         </div>

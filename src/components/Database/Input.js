@@ -1,11 +1,11 @@
 import React from 'react';
 
-import PropTypes from 'prop-types';
-
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 
 import 'codemirror/mode/sql/sql.js';
+
+import PropTypes from 'prop-types';
 
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
@@ -46,6 +46,10 @@ class Form extends React.Component {
             </form>
         );
     }
-  }
-  
-  export default Form;
+}
+
+Form.propTypes = {
+    submitHandler: PropTypes.func,
+};
+
+export default Form;

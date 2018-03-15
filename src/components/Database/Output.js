@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 
 class Output extends React.Component {
     render() {
-        if(!this.props.data) {
+        if (!this.props.data) {
             return (
                 <p className="lead small">Click "Run SQL" to execute the SQL statement above.</p>
             );
         }
-    
+
         const [{ columns, values, }] = this.props.data;
 
         return (
@@ -26,13 +26,21 @@ class Output extends React.Component {
                                 <tr key={i}>
                                     {row.map((value, i) => <td key={i}>{value}</td>)}
                                 </tr>
-                            );    
+                            );
                         })}
                     </tbody>
                 </table>
             </div>
         );
     }
-  }
-  
-  export default Output;
+}
+
+Output.defaultProps = {
+    data: [],
+};
+
+Output.propTypes = {
+    data: PropTypes.array,
+};
+
+export default Output;
