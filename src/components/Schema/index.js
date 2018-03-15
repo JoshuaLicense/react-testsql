@@ -19,16 +19,13 @@ class Schema extends React.Component {
             data: props.data,
             isVerticalHeader: props.isVerticalHeader, 
         };
-
-        this.onStop = this.onStop.bind(this);
-        this.onDrag = this.onDrag.bind(this);
     }
 
     handleClick = (tableName) => {
         this.props.clickHandler(tableName)
     }
 
-    onStop(e, ui) {
+    onStop = (e, ui) => {
         let { x, y, node } = ui;
 
         // Get the width of the slider
@@ -52,7 +49,7 @@ class Schema extends React.Component {
         });
     }
 
-    onDrag(e, ui) {
+    onDrag = (e, ui) => {
         let { x, y, node } = ui;
 
         // Get the width of the slider
@@ -91,7 +88,7 @@ class Schema extends React.Component {
                                 <h6 className="ml-2 mt-3">Database Schema</h6>
                             </div>
                             <div className="list-group list-group-flush">
-                                {this.state.data.map((tableName, i) => <Table clickHandler={this.handleClick} name={tableName} key={i} /> )}
+                                {this.props.data.map((tableName, i) => <Table clickHandler={this.handleClick} name={tableName} key={i} /> )}
                             </div>
                         </div>
                     </div>
