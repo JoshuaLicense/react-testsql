@@ -26,6 +26,7 @@ dotenv.load({ path: '.env' });
 const userController = require('./controllers/user');
 
 // Config
+const config = require('./config/config');
 
 // API keys and Passport configuration.
 const passportConfig = require('./config/passport');
@@ -73,6 +74,15 @@ app.post('/register', userController.register);
 app.post('/login', userController.login);
 app.get('/logout', userController.logout);
 
+app.post('/database/save', passportConfig.isAuthenticated, userController.canSaveDB, upload.single('database'), userController.saveDB);
+
+app.get('/database/list', passportConfig.isAuthenticated, (req, res) => {
+  return res.json({ msg: 'List' });
+});
+
+app.get('/database/load/:index', passportConfig.isAuthenticated, (req, res) => {
+  return res.json({ msg: 'Load' });
+});
 
 // OAuth authentication routes. (Sign in)
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));
