@@ -12,6 +12,8 @@ import Alert from './components/Alert';
 
 import SQL from 'sql.js';
 
+import defaultDatabase from './default.sqlite';
+
 class App extends Component {
     constructor(props) {
         super(props);
@@ -25,22 +27,46 @@ class App extends Component {
     }
 
     componentDidMount() {
-        this.getDatabase();
+        this.getDatabase().then(() => this.getAllTableNames());
     }
 
-    getDatabase() {
-        fetch('default.sqlite')
-            .then(response => response.arrayBuffer())
-            .then(fileBuffer => {
-                const typedArray = new Uint8Array(fileBuffer);
-                const database = new SQL.Database(typedArray);
+    getDatabase = () => {
+        const savedDatabase = localStorage.getItem('__testSQL_Database__');
 
-                this.setState({ database, });
-            })
-            .catch(e => console.log(e));
+        if(savedDatabase) {
+            const database = new SQL.Database(toBinArray(savedDatabase));
+
+            this.setState({ database });
+
+            return Promise.resolve();
+        } else {
+            return fetch(defaultDatabase)
+                .then(response => response.arrayBuffer())
+                .then((fileBuffer) => {
+                    const typedArray = new Uint8Array(fileBuffer);
+                    const database = new SQL.Database(typedArray);
+
+                    this.setState({ database });
+                },
+                (error) => {
+                    this.setState({
+                        alert: {
+                            type: `danger`,
+                            message: error.message,
+                        },
+                    });
+                });
+        }     
     }
 
-    getAllTableNames() {
+    saveDatabase() {
+        // Convert the current database (ArrayBuffer) to a binary string
+        //const string = new Uint8Array().reduce((data, byte) => data + String.fromCharCode(byte), '');
+
+        localStorage.setItem('__testSQL_Database__', toBinString(this.state.database.export()));
+    }
+
+    getAllTableNames = () => {
         const sql = 'SELECT `tbl_name` FROM `sqlite_master` WHERE `type` = "table" AND `tbl_name` NOT LIKE "__testSQL_Database_%"';
 
         // Destructure the response to get only the values (the real schema data)
@@ -50,7 +76,7 @@ class App extends Component {
         tableNames = tableNames.map(([tableName]) => tableName);
 
         // Now they are in the format ["tbl_name", "tbl_name_2", ]
-        return tableNames;
+        this.setState({ schema: tableNames, });
     }
 
     runStatement = (statement) => {
@@ -69,8 +95,15 @@ class App extends Component {
                 }
             );
 
+            // Only save the database if a query has altered the dataset
+            if(this.state.database.getRowsModified(sql)) {
+                this.getAllTableNames();
+
+                this.saveDatabase();
+            }
+
             // Remove the alert(s) if any
-            this.setState({ alert: null, })
+            this.setState({ alert: null, });
         } catch(error) {
             this.setState({
                 alert: {
@@ -101,13 +134,24 @@ class App extends Component {
                             <DatabaseOutput data={this.state.results} />
                         </section>
                     </main>
-                    <Schema data={this.getAllTableNames()} clickHandler={this.runTableQuery} />
+                    <Schema data={this.state.schema} clickHandler={this.runTableQuery} />
                 </div>
             );
         }
 
         return null;
     }
+}
+
+function toBinArray (str) {
+	var l = str.length,
+			arr = new Uint8Array(l);
+	for (var i=0; i<l; i++) arr[i] = str.charCodeAt(i);
+	return arr;
+}
+
+function toBinString (arr) {
+	return arr.reduce((data, byte) => data + String.fromCharCode(byte), '');
 }
 
 export default App;
