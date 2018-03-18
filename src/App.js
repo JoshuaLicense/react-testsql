@@ -33,8 +33,12 @@ class App extends Component {
     getDatabase = () => {
         const savedDatabase = localStorage.getItem('__testSQL_Database__');
 
-        if(!savedDatabase) {
-            return savedDatabase;
+        if(savedDatabase) {
+            const database = new SQL.Database(toBinArray(savedDatabase));
+
+            this.setState({ database });
+
+            return Promise.resolve();
         } else {
             return fetch(defaultDatabase)
                 .then(response => response.arrayBuffer())
@@ -42,7 +46,7 @@ class App extends Component {
                     const typedArray = new Uint8Array(fileBuffer);
                     const database = new SQL.Database(typedArray);
 
-                    this.setState({ database, });
+                    this.setState({ database });
                 },
                 (error) => {
                     this.setState({
@@ -55,15 +59,11 @@ class App extends Component {
         }     
     }
 
-    loadDatabase = () => {
-
-    }
-
     saveDatabase() {
         // Convert the current database (ArrayBuffer) to a binary string
-        const string = new Uint8Array(this.state.database.export()).reduce((data, byte) => data + String.fromCharCode(byte), '');
+        //const string = new Uint8Array().reduce((data, byte) => data + String.fromCharCode(byte), '');
 
-        localStorage.setItem('__testSQL_Database__', string);
+        localStorage.setItem('__testSQL_Database__', toBinString(this.state.database.export()));
     }
 
     getAllTableNames = () => {
@@ -141,6 +141,17 @@ class App extends Component {
 
         return null;
     }
+}
+
+function toBinArray (str) {
+	var l = str.length,
+			arr = new Uint8Array(l);
+	for (var i=0; i<l; i++) arr[i] = str.charCodeAt(i);
+	return arr;
+}
+
+function toBinString (arr) {
+	return arr.reduce((data, byte) => data + String.fromCharCode(byte), '');
 }
 
 export default App;
