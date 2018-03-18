@@ -75,7 +75,7 @@ class Schema extends React.Component {
 
     render() {
         return (
-            <aside class="ts-schema-container">
+            <aside className="ts-schema-container">
                 <Draggable
                     axis="x"
                     bounds={{left: -276, right: 0}}
@@ -90,7 +90,7 @@ class Schema extends React.Component {
                                 <h6 className="ml-2 mt-3">Database Schema</h6>
                             </div>
                             <div className="list-group list-group-flush">
-                                {this.state.data.map((tableName, i) => <Table clickHandler={this.handleClick} name={tableName} key={i} /> )}
+                                {this.state.data.map((tableName, i) => <button className="list-group-item list-group-item-action" onClick={() => this.handleClick(tableName)} key={i}>{tableName}</button>)}
                             </div>
                         </div>
                     </div>
@@ -99,20 +99,6 @@ class Schema extends React.Component {
         );
     }
 }
-
-/*<div className="ts--schema d-flex flex-row bg-light border-left border-right">
-                        <div className="ts-schema-slide-handle d-flex justify-content-center">
-                            <span className="align-self-center text-muted ">||</span>
-                        </div>
-                        <div className="border-left" style={{flexGrow: 1}}>
-                            <div className={`ts-schema-header ${(this.state.isVerticalHeader ? "vertical" : "")}`}>
-                                <h6 className="ml-2 mt-3">Database Schema</h6>
-                            </div>
-                            <div className="list-group list-group-flush">
-                                {this.state.data.map((tableName, i) => <Table clickHandler={this.handleClick} name={tableName} key={i} /> )}
-                            </div>
-                        </div>
-                    </div>*/
 
 Schema.defaultProps = {
     x: 0,
