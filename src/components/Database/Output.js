@@ -39,4 +39,12 @@ class Output extends React.Component {
   }
 }
 
+Output.defaultProps = {
+  data: [],
+};
+
+Output.propTypes = {
+  data: PropTypes.array,
+};
+
 export default Output;
