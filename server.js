@@ -21,6 +21,8 @@ const dotenv = require('dotenv');
 dotenv.load({ path: '.env' });
 
 // Controllers
+const userController = require('./controllers/user');
+
 // API keys and Passport configuration.
 const passportConfig = require('./config/passport');
 
@@ -60,6 +62,12 @@ app.use(passport.session());
 if (app.get('env') === 'production') {
   app.use(express.static('client/build'));
 }
+
+// Routes
+app.post('/register', userController.register);
+
+app.post('/login', userController.login);
+app.get('/logout', userController.logout);
 
 // Error Handler
 app.use(errorHandler());
