@@ -27,6 +27,15 @@ const passportConfig = require('./config/passport');
 // Create express server
 const app = express();
 
+// Connect to the database
+mongoose.Promise = global.Promise;
+mongoose.connect(process.env.MONGODB_URI);
+mongoose.connection.on('error', (err) => {
+  console.error(err);
+  console.log('MongoDB connection error. Please make sure MongoDB is running.');
+  process.exit();
+});
+
 app.set('port', process.env.PORT || 3001);
 
 app.use(bodyParser.json());
