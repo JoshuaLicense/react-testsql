@@ -13,8 +13,6 @@ const expressValidator = require('express-validator');
 const path = require('path');
 const multer = require('multer');
 
-const glob = require('glob');
-
 const upload = multer({ dest: path.join(__dirname, 'saves') });
 
 const dotenv = require('dotenv');
@@ -24,6 +22,8 @@ dotenv.load({ path: '.env' });
 
 // Controllers
 const userController = require('./controllers/user');
+const databaseController = require('./controllers/database');
+const sessionController = require('./controllers/session');
 
 // Config
 const config = require('./config/config');
@@ -74,15 +74,13 @@ app.post('/register', userController.register);
 app.post('/login', userController.login);
 app.get('/logout', userController.logout);
 
-app.post('/database/save', passportConfig.isAuthenticated, userController.canSaveDB, upload.single('database'), userController.saveDB);
+app.get('/database/list', passportConfig.isAuthenticated, databaseController.listDatabase);
+app.post('/database/save', passportConfig.isAuthenticated, databaseController.canSaveDatabase, upload.single('database'), databaseController.saveDatabase);
+app.get('/database/load/:id', passportConfig.isAuthenticated, databaseController.loadDatabase);
 
-app.get('/database/list', passportConfig.isAuthenticated, (req, res) => {
-  return res.json({ msg: 'List' });
-});
-
-app.get('/database/load/:index', passportConfig.isAuthenticated, (req, res) => {
-  return res.json({ msg: 'Load' });
-});
+app.get('/session/list', passportConfig.isAuthenticated, sessionController.listSession);
+app.post('/session/create', passportConfig.isAuthenticated, sessionController.createSession);
+app.get('/session/join/:id', passportConfig.isAuthenticated, sessionController.joinSession);
 
 // OAuth authentication routes. (Sign in)
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));

@@ -5,8 +5,9 @@ const passport = require('passport');
 // Config
 const config = require('../config/config');
 
-// User model
+// Models
 const User = require('../models/User');
+const Database = require('../models/Database');
 
 /**
  * POST /login
@@ -96,38 +97,6 @@ exports.register = (req, res, next) => {
 
         return res.json({ user: req.user });
       });
-    });
-  });
-};
-
-exports.canSaveDB = (req, res, next) => {
-  User.findById(req.user.id, (err, user) => {
-    if (err) {
-      return next(err);
-    }
-
-    // Check if the user has reached their upload limit
-    if (user.savedDatabases.length >= config.database.limit) {
-      return res.json({ error: 'You have reached the limit of saved databases' });
-    }
-  });
-};
-
-exports.saveDB = (req, res, next) => {
-  User.findById(req.user.id, (err, user) => {
-    if (err) {
-      return next(err);
-    }
-
-    // Check if the user has reached their upload limit
-    //if(user.savedDatabases > config.database.)
-
-    user.savedDatabases.push(req.file.filename);
-
-    user.save((err) => {
-      if (err) {
-        return next(err);
-      }
     });
   });
 };
