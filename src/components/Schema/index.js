@@ -16,16 +16,13 @@ class Schema extends React.Component {
             data: props.data,
             isVerticalHeader: props.isVerticalHeader, 
         };
-
-        this.onStop = this.onStop.bind(this);
-        this.onDrag = this.onDrag.bind(this);
     }
 
     handleClick = (tableName) => {
         this.props.clickHandler(tableName)
     }
 
-    onStop(e, ui) {
+    onStop = (e, ui) => {
         let { x, node } = ui;
 
         // Get the width of the slider
@@ -48,7 +45,7 @@ class Schema extends React.Component {
         });
     }
 
-    onDrag(e, ui) {
+    onDrag = (e, ui) => {
         let { x, node } = ui;
 
         // Get the width of the slider
