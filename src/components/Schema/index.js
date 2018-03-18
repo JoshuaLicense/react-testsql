@@ -3,8 +3,6 @@ import Draggable from 'react-draggable';
 
 import PropTypes from 'prop-types';
 
-import Table from './Table';
-
 import './Schema.css';
 
 import { percentageRatio, shouldFullyOpen, shouldFullyClose, } from './Logic';
