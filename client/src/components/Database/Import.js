@@ -11,7 +11,7 @@ class Import extends React.Component {
     // No file selected, return
     if (files.length === 0) return false;
 
-    const [file,] = files;
+    const [file] = files;
 
     const fileReader = new FileReader();
     fileReader.onload = () => {

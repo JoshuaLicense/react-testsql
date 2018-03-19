@@ -31,6 +31,11 @@ class App extends Component {
   }
 
   loadDatabase = (typedArray) => {
+    // Provide a confirmation dialog to warn the user of potential dataloss  
+    if(this.state.database !== null && !window.confirm('Are you sure you want to import a new database? This will overwrite your existing one.')) {
+      return;
+    }
+
     const database = new SQL.Database(typedArray);
 
     this.setState({ database });
