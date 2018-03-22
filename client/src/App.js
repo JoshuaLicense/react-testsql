@@ -20,14 +20,16 @@ class App extends Component {
 
     this.state = {
       database: null,
+      statement: null,
       results: null,
       alert: null,
       history: [],
+      schema: []
     };
   }
 
-  componentDidMount() {
-    this.getDatabase().then(() => this.getAllTableNames());
+  componentDidMount = () => {
+    this.getDatabase();
   }
 
   loadDatabase = (typedArray) => {
@@ -38,7 +40,7 @@ class App extends Component {
 
     const database = new SQL.Database(typedArray);
 
-    this.setState({ database });
+    this.setState({ database }, () => this.getAllTableNames());
   }
 
   getDatabase = () => {
@@ -58,14 +60,14 @@ class App extends Component {
 
           this.loadDatabase(typedArray);
         },
-          (error) => {
-            this.setState({
-              alert: {
-                type: `danger`,
-                message: error.message,
-              },
-            });
+        (error) => {
+          this.setState({
+            alert: {
+              type: `danger`,
+              message: error.message,
+            },
           });
+        });
     }
   }
 
@@ -89,13 +91,20 @@ class App extends Component {
     this.setState({ schema: tableNames, });
   }
 
-  runStatement = (statement) => {
+  runStatement = () => {
     // Run the current statement that is saved in the state
-    this.runQuery(statement);
+    this.runQuery(this.state.statement);
   }
 
+  changeStatement = (statement) => {
+    this.setState({ statement });
+  }
+
+
+  
+
   runQuery = (sql) => {
-    try {
+    try {  
       const results = this.state.database.exec(sql);
 
       this.setState(
@@ -125,7 +134,9 @@ class App extends Component {
   }
 
   runTableQuery = (tableName) => {
-    return this.runQuery(`SELECT * FROM ${tableName}`);
+    const sql = `SELECT * FROM ${tableName}`;
+
+    return this.runQuery(sql);
   }
 
   render() {

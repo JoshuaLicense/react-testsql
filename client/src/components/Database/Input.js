@@ -12,38 +12,39 @@ import PropTypes from 'prop-types';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
 class Form extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            statement: null,
-        };
-    }
-
     handleSubmit = (e) => {
         // Don't submit the form
         e.preventDefault();
 
         // Run the submit handler from the parent component
-        this.props.submitHandler(this.state.statement);
+        this.props.submitHandler();
+    }
+
+    handleChange = (editor, data, statement) => {
+        this.props.changeHandler(statement);
+    }
+
+    handleClear = (e) => {
+        e.preventDefault();
+
+        this.props.clearHandler();
     }
 
     render() {
         return (
             <form onSubmit={this.handleSubmit}>
                 <CodeMirror
-                    value={this.state.statement}
+                    value={this.props.statement}
                     options={{
                         mode: 'text/x-sql',
                         theme: 'material',
                         lineNumbers: true,
                     }}
-                    onBeforeChange={(editor, data, statement) => {
-                        this.setState({ statement, });
-                    }} />
+                    onBeforeChange={this.handleChange} 
+                />
                 <div className="mt-1">
                     <button type="submit" className="btn btn-success btn-sm">Run SQL</button>
-                    <button type="button" className="ml-1 btn btn-outline-danger btn-sm" onClick={() => this.setState({ statement: null, })}>Clear</button>
+                    <button type="button" className="ml-1 btn btn-outline-danger btn-sm" onClick={this.handleClear}>Clear</button>
                 </div>
             </form>
         );
