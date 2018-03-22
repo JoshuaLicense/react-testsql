@@ -1,5 +1,7 @@
 import React from 'react';
 
+import './input.css';
+
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 

@@ -1,17 +1,24 @@
 /**
   * Z-Index's used
-  * 990 - .ts-schema-container
+  * 10 - .ts-schema-container
   *
   */
 
-@media (max-width: 767.98px) {
+@media (min-width: 768px) {
     .ts-schema-container {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
+        flex: 0 0 276px;
     }
 }
+
+.ts-schema {
+    width: 300px;
+    position: fixed; 
+    right: -276px; 
+    top: 0;
+    bottom: 0;
+}
+
+
 /*
 .ts-schema-container {
     /* Two times the width of .ts-schema, minus the .ts-schema-slide-handle
@@ -23,7 +30,7 @@
     left: calc(100% - 18.75rem);
     pointer-events: none;
 }*/
-
+/*
 .ts-schema {
     width: 18.75rem;
     position: absolute;
@@ -33,6 +40,7 @@
     pointer-events: all;
     transition: left 0.5s ease;
 }
+*/
 
 .ts-schema-header {
     transition: transform 0.6s ease;

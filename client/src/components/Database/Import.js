@@ -14,6 +14,7 @@ class Import extends React.Component {
     const [file] = files;
 
     const fileReader = new FileReader();
+
     fileReader.onload = () => {
       const typedArray = new Uint8Array(fileReader.result);
 
@@ -32,7 +33,7 @@ class Import extends React.Component {
     return (
       <div>
         <input type="file" className="d-none" id="ts-import" onChange={this.handleChange} />
-        <label htmlFor="ts-import" className="btn btn-light rounded-0 border-bottom">
+        <label htmlFor="ts-import" className="btn btn-light btn-block rounded-0 border-bottom">
           <ImportIcon />
         </label>
       </div>

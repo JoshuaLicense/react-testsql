@@ -129,29 +129,27 @@ class App extends Component {
   }
 
   render() {
-    if (this.state.database) {
       return (
-        <div className="d-flex flex-row">
-          <nav className="d-flex flex-column bg-light border-right">
+        <div className="d-flex flex-row text-dark">
+          <nav className="ts-nav d-flex flex-column bg-light border-right">
             <DatabaseImport changeHandler={this.loadDatabase} />
           </nav>
-          <main className="d-flex flex-column p-4 pr-5" style={{ flexGrow: 1, overflow: "hidden" }}>
+          <main className="ts-main d-flex flex-column p-4 pr-5">
             <Alert data={this.state.alert} />
+            <h5>SQL Statement</h5>
             <section className="mb-3">
-              <h5>SQL Statement</h5>
-              <DatabaseInput submitHandler={this.runStatement} />
+              <DatabaseInput statement={this.state.statement} submitHandler={this.runStatement} changeHandler={this.changeStatement} clearHandler={() => this.setState({ statement: null })} />
             </section>
-            <section className="mb-3">
-              <h5>Result</h5>
+            <h5>Result</h5>
+            <section className="mb-3" style={{ overflow: 'auto' }}>
               <DatabaseOutput data={this.state.results} />
             </section>
           </main>
-          <Schema data={this.state.schema} clickHandler={this.runTableQuery} />
+          <aside className="ts-schema-container">
+            <Schema data={this.state.schema} clickHandler={this.runTableQuery} />
+          </aside>
         </div>
       );
-    }
-
-    return null;
   }
 }
 
