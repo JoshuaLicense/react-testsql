@@ -11,10 +11,11 @@ class Schema extends React.Component {
     constructor(props) {
         super(props);
 
+        const isLargeScreen = (window.innerWidth > 768);
+
         this.state = { 
-            x: props.x,
-            data: props.data,
-            isVerticalHeader: props.isVerticalHeader, 
+            x: (isLargeScreen ? -276 : 0),
+            isVerticalHeader: !isLargeScreen, 
         };
     }
 
@@ -31,12 +32,14 @@ class Schema extends React.Component {
         // Fetch the width of the draggable, this means regardless of how far it comes out,
         // The following logic will still work
         const xMax = node.offsetWidth - sliderWidth;
+        
+        // In onStop aswell as drag to allow the flex-basis to fix itself after some rough dragging 
+        node.parentElement.style.flexBasis = `${-x}px`;
 
+        // Evaluate if the schema section should fully open or close
         if(shouldFullyOpen(x, xMax)) {
             x = -xMax;
-        }
-
-        if(shouldFullyClose(x, xMax)) {
+        } else if(shouldFullyClose(x, xMax)) {
             x = 0;
         }
 
@@ -48,6 +51,8 @@ class Schema extends React.Component {
     onDrag = (e, ui) => {
         let { x, node } = ui;
 
+        if(x === this.state.x) return;
+
         // Get the width of the slider
         const sliderWidth = node.firstElementChild.offsetWidth;
 
@@ -56,9 +61,7 @@ class Schema extends React.Component {
         const xMax = node.offsetWidth - sliderWidth;
 
         // The flipped value of the x axis is the width, could use Math.abs()
-        const width = -x;
-
-        node.parentElement.style.flexBasis = `${width}px`;
+        node.parentElement.style.flexBasis = `${-x}px`;
 
         // Check if the header should be vertical or not (if >50% of the sidebar is visible)
         const isVerticalHeader = percentageRatio(x, xMax) < 50;
@@ -70,27 +73,27 @@ class Schema extends React.Component {
 
     render() {
         return (
-            <aside className="ts-schema-container">
-                <Draggable
-                    axis="x"
-                    bounds={{left: -276, right: 0}}
-                    onDrag={this.onDrag}
-                >
-                    <div className="d-flex flex-row bg-light border-left border-right" style={{width: '300px', position: 'absolute', right: '-276px', top: 0, bottom: 0, }}>
-                        <div className="ts-schema-slide-handle d-flex justify-content-center">
-                            <span className="align-self-center text-muted ">||</span>
+            <Draggable
+            axis="x"
+            handle=".ts-schema-slide-handle"
+            defaultPosition={{ x: this.state.x, y: 0 }}
+            bounds={{left: -276, right: 0}}
+            onDrag={this.onDrag}
+            onStop={this.onStop}>
+                <div className="ts-schema d-flex flex-row bg-light border-left border-right">
+                    <div className="ts-schema-slide-handle d-flex justify-content-center">
+                        <span className="align-self-center text-muted ">||</span>
+                    </div>
+                    <div className="border-left" style={{flexGrow: 1}}>
+                        <div className={`ts-schema-header${(this.state.isVerticalHeader ? " vertical" : "")}`}>
+                            <h6 className="ml-2 mt-3">Database Schema</h6>
                         </div>
-                        <div className="border-left" style={{flexGrow: 1}}>
-                            <div className={`ts-schema-header ${(this.state.isVerticalHeader ? "vertical" : "")}`}>
-                                <h6 className="ml-2 mt-3">Database Schema</h6>
-                            </div>
-                            <div className="list-group list-group-flush">
-                                {this.state.data.map((tableName, i) => <button className="list-group-item list-group-item-action" onClick={() => this.handleClick(tableName)} key={i}>{tableName}</button>)}
-                            </div>
+                        <div className="list-group list-group-flush">
+                            {this.props.data.map((tableName, i) => <button className="list-group-item list-group-item-action" onClick={() => this.handleClick(tableName)} key={i}>{tableName}</button>)}
                         </div>
                     </div>
-                </Draggable>
-            </aside>
+                </div>
+            </Draggable>
         );
     }
 }
