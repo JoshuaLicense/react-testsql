@@ -33,7 +33,7 @@ class Import extends React.Component {
     return (
       <div>
         <input type="file" className="d-none" id="ts-import" onChange={this.handleChange} />
-        <label htmlFor="ts-import" className="btn btn-light btn-block rounded-0 border-bottom">
+        <label htmlFor="ts-import" className="btn btn-light btn-block rounded-0 border-bottom mb-0 p-2">
           <ImportIcon />
         </label>
       </div>

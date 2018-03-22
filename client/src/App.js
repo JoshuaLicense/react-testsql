@@ -6,7 +6,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Nav from './components/Nav';
 import Schema from './components/Schema';
 
-import { DatabaseInput, DatabaseOutput, DatabaseImport, } from './components/Database';
+import { 
+  DatabaseInput, 
+  DatabaseOutput, 
+  DatabaseImport, 
+  DatabaseExport 
+} from './components/Database';
 
 import Alert from './components/Alert';
 
@@ -71,6 +76,27 @@ class App extends Component {
     }
   }
 
+  downloadDatabase = () => {
+    const blob = new Blob(
+      [
+        this.state.database.export()
+      ], 
+      {
+        type: `application/x-sqlite-3`
+      }
+    );
+
+    const a = document.createElement('a');
+    a.href = window.URL.createObjectURL(blob);
+    a.download = 'testSQL.sqlite';
+    a.onclick = () => {
+      setTimeout(() => {
+        window.URL.revokeObjectURL(a.href);
+      }, 1500);
+    }
+    a.click();
+  }
+
   saveDatabase() {
     // Convert the current database (ArrayBuffer) to a binary string
     //const string = new Uint8Array().reduce((data, byte) => data + String.fromCharCode(byte), '');
@@ -99,9 +125,6 @@ class App extends Component {
   changeStatement = (statement) => {
     this.setState({ statement });
   }
-
-
-  
 
   runQuery = (sql) => {
     try {  
@@ -144,6 +167,7 @@ class App extends Component {
         <div className="d-flex flex-row text-dark">
           <nav className="ts-nav d-flex flex-column bg-light border-right">
             <DatabaseImport changeHandler={this.loadDatabase} />
+            <DatabaseExport clickHandler={this.downloadDatabase} />
           </nav>
           <main className="ts-main d-flex flex-column p-4 pr-5">
             <Alert data={this.state.alert} />
