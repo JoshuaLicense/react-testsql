@@ -4,16 +4,17 @@
   "private": true,
   "homepage": "https://joshualicense.github.io/react-testsql",
   "dependencies": {
-    "bootstrap": "^4.0.0",
     "codemirror": "^5.35.0",
     "gh-pages": "^1.1.0",
-    "jquery": "^3.3.1",
-    "popper.js": "^1.12.9",
-    "react": "^16.2.0",
+    "material-ui": "^1.0.0-beta.38",
+    "material-ui-icons": "^1.0.0-beta.36",
+    "react": "^16.3.0",
     "react-codemirror2": "^4.1.0",
     "react-dom": "^16.2.0",
     "react-draggable": "^3.0.5",
+    "react-redux": "^5.0.7",
     "react-scripts": "1.1.1",
+    "redux": "^3.7.2",
     "sql.js": "^0.5.0"
   },
   "scripts": {

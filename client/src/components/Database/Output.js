@@ -1,48 +1,42 @@
 import React from 'react';
 
+import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
+
+import { withStyles } from 'material-ui/styles';
+
 import PropTypes from 'prop-types';
 
-class Output extends React.Component {
-  render() {
-    if (!this.props.data) {
-      return (
-        <p className="lead small">Click "Run SQL" to execute the SQL statement above.</p>
-      );
-    }
+const styles = theme => ({
+  customTable: {
+    padding: theme.spacing.unit,
+  },
+  customRow: {
+    height: '2rem',
+  },
+});
 
-    if (this.props.data.length === 0) {
-      return <p>Database updated</p>;
-    }
+const DatabaseOutput = ({ classes, columns, values }) => (
+  <Table>
+    <TableHead>
+      <TableRow className={classes.customRow}>
+        {columns.map((name, i) => <TableCell padding="none" key={i}>{name}</TableCell>)}
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {values.map((row, i) => {
+        return (
+          <TableRow key={i} className={classes.customRow}>
+            {row.map((value, i) => <TableCell padding="none" key={i}>{value}</TableCell>)}
+          </TableRow>
+        );
+      })}
+    </TableBody>
+  </Table>
+);
 
-    const [{ columns, values, }] = this.props.data;
-
-    return (
-      <table className="table table-sm table-bordered">
-        <thead className="thead-light">
-          <tr>
-            {columns.map((name, i) => <th key={i} scope="col">{name}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {values.map((row, i) => {
-            return (
-              <tr key={i}>
-                {row.map((value, i) => <td key={i}>{value}</td>)}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    );
-  }
-}
-
-Output.defaultProps = {
-  data: [],
+DatabaseOutput.propTypes = {
+  columns: PropTypes.arrayOf(PropTypes.string).isRequired,
+  values: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))).isRequired,
 };
 
-Output.propTypes = {
-  data: PropTypes.array,
-};
-
-export default Output;
+export default withStyles(styles)(DatabaseOutput);
