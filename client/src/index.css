@@ -1,20 +1,4 @@
 html,
-body,
-#app {
-  height: 100%;
-}
-
-#app > div {
-  height: 100vh;
-}
-
-.ts-nav {
-  flex: 0 0 3.5rem;
-}
-
-.ts-main {
-  flex: auto;
-
-  /* To allow childs to handle their own overflow */
-  overflow: hidden;
+body {
+  margin: 0;
 }

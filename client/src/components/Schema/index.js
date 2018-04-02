@@ -1,113 +1,161 @@
 import React from 'react';
-import Draggable from 'react-draggable';
 
-import PropTypes from 'prop-types';
+import Drawer from 'material-ui/Drawer';
 
-import './Schema.css';
+import Typography from 'material-ui/Typography';
 
-import { percentageRatio, shouldFullyOpen, shouldFullyClose, } from './Logic';
+import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
+
+import Hidden from 'material-ui/Hidden';
+
+import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavigation';
+import DownloadIcon from 'material-ui-icons/FileDownload';
+import UploadIcon from 'material-ui-icons/FileUpload';
+import RestoreIcon from 'material-ui-icons/Restore';
+
+import { withStyles } from 'material-ui/styles';
+
+const drawerWidth = 240;
+
+const styles = theme => ({
+  schemaButton: {
+    position: 'absolute',
+    bottom: theme.spacing.unit,
+    right: theme.spacing.unit,
+    transition: theme.transitions.create('right', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  schemaButtonShift: {
+    right: theme.spacing.unit + drawerWidth,
+    transition: theme.transitions.create('transform', {
+      easing: theme.transitions.easing.easeInOut,
+      duration: theme.transitions.duration.standard,
+    }),
+    transform: 'rotate(180deg)',
+  },
+  heading: {
+    marginTop: theme.spacing.unit * 3,
+    marginBottom: theme.spacing.unit,
+  },
+  drawerPaper: {
+    width: drawerWidth,
+    [theme.breakpoints.up('md')]: {
+      position: 'relative',
+    },
+  },
+  toolbar: theme.mixins.toolbar,
+  pinToBottom: {
+    marginTop: 'auto',
+  }
+});
 
 class Schema extends React.Component {
-    constructor(props) {
-        super(props);
+  state = {
+    open: this.props.open,
+  }
 
-        const isLargeScreen = (window.innerWidth > 768);
+  handleUpload = (e) => {
+    const files = e.target.files;
 
-        this.state = { 
-            x: (isLargeScreen ? -276 : 0),
-            isVerticalHeader: !isLargeScreen, 
-        };
+    // No file selected, return
+    if (files.length === 0) return false;
+
+    const [file] = files;
+
+    const fileReader = new FileReader();
+
+    fileReader.onload = () => {
+      const typedArray = new Uint8Array(fileReader.result);
+
+      // Run the submit handler from the parent component
+      this.props.uploadHandler(typedArray);
     }
 
-    handleClick = (tableName) => {
-        this.props.clickHandler(tableName)
-    }
+    // Tell the file reader to read the selected file as an array buffer
+    fileReader.readAsArrayBuffer(file);
 
-    onStop = (e, ui) => {
-        let { x, node } = ui;
+    // Reset the import back to blank so in theory could re-upload the same file
+    e.target.value = '';
+  }
 
-        // Get the width of the slider
-        const sliderWidth = node.firstElementChild.offsetWidth;
+  render() {
+    const { 
+      classes, 
+      schema, 
+      open, 
+      sidebarHandler,
+      clickHandler,
+      restoreHandler,
+      downloadHandler
+    } = this.props;
 
-        // Fetch the width of the draggable, this means regardless of how far it comes out,
-        // The following logic will still work
-        const xMax = node.offsetWidth - sliderWidth;
-        
-        // In onStop aswell as drag to allow the flex-basis to fix itself after some rough dragging 
-        node.parentElement.style.flexBasis = `${-x}px`;
+    const tables = schema.map(({ name, count}, i) => 
+      <ListItem key={i} onClick={() => clickHandler(name)} button>
+        <ListItemText primary={name} />
+        <ListItemSecondaryAction>
+          <ListItemText secondary={count} />
+        </ListItemSecondaryAction>
+      </ListItem>
+    );
 
-        // Evaluate if the schema section should fully open or close
-        if(shouldFullyOpen(x, xMax)) {
-            x = -xMax;
-        } else if(shouldFullyClose(x, xMax)) {
-            x = 0;
-        }
+    const actions = (
+      <BottomNavigation
+        value="1"
+        className={classes.pinToBottom}
+        showLabels
+      >
+        <BottomNavigationAction 
+          label={
+            <span>Upload
+              <input type="file" 
+                style={{display: 'none'}} 
+                onChange={(e) => this.handleUpload(e)} 
+              />
+            </span>
+          } 
+          icon={<UploadIcon />} 
+          component="label" 
+          style={{boxSizing: 'border-box'}} 
+        />
+        <BottomNavigationAction label="Download" icon={<DownloadIcon />} onClick={() => downloadHandler()} />
+        <BottomNavigationAction label="Restore" icon={<RestoreIcon />} onClick={() => restoreHandler()} />
+      </BottomNavigation>
+    );
 
-        this.setState({
-            x,
-        });
-    }
-
-    onDrag = (e, ui) => {
-        let { x, node } = ui;
-
-        if(x === this.state.x) return;
-
-        // Get the width of the slider
-        const sliderWidth = node.firstElementChild.offsetWidth;
-
-        // Fetch the width of the draggable, this means regardless of how far it comes out,
-        // The following logic will still work
-        const xMax = node.offsetWidth - sliderWidth;
-
-        // The flipped value of the x axis is the width, could use Math.abs()
-        node.parentElement.style.flexBasis = `${-x}px`;
-
-        // Check if the header should be vertical or not (if >50% of the sidebar is visible)
-        const isVerticalHeader = percentageRatio(x, xMax) < 50;
-
-        this.setState({
-            isVerticalHeader,
-        });
-    }
-
-    render() {
-        return (
-            <Draggable
-            axis="x"
-            handle=".ts-schema-slide-handle"
-            defaultPosition={{ x: this.state.x, y: 0 }}
-            bounds={{left: -276, right: 0}}
-            onDrag={this.onDrag}
-            onStop={this.onStop}>
-                <div className="ts-schema d-flex flex-row bg-light border-left border-right">
-                    <div className="ts-schema-slide-handle d-flex justify-content-center">
-                        <span className="align-self-center text-muted ">||</span>
-                    </div>
-                    <div className="border-left" style={{flexGrow: 1}}>
-                        <div className={`ts-schema-header${(this.state.isVerticalHeader ? " vertical" : "")}`}>
-                            <h6 className="ml-2 mt-3">Database Schema</h6>
-                        </div>
-                        <div className="list-group list-group-flush">
-                            {this.props.data.map((tableName, i) => <button className="list-group-item list-group-item-action" onClick={() => this.handleClick(tableName)} key={i}>{tableName}</button>)}
-                        </div>
-                    </div>
-                </div>
-            </Draggable>
-        );
-    }
+    return (
+      <div>
+        <Hidden mdUp>
+          <Drawer
+            classes={{ paper: classes.drawerPaper}}
+            anchor="left" 
+            open={open} 
+            onClose={() => sidebarHandler(false)}
+          >
+            <Typography variant="title" component="h3" align="center" classes={{ root: classes.heading }}>
+              Database Schema
+            </Typography>
+            <List dense>{tables}</List>
+            {actions}
+          </Drawer>
+        </Hidden>
+        <Hidden smDown implementation="css">
+          <Drawer
+          variant="permanent" 
+          classes={{ paper: classes.drawerPaper}}
+          open>
+            <div className={classes.toolbar} />
+            <Typography variant="title" component="h3" align="center" classes={{ root: classes.heading }}>
+              Database Schema
+            </Typography>
+            <List dense>{tables}</List>
+            {actions}
+          </Drawer>
+        </Hidden>
+      </div>
+    );
+  }
 }
 
-Schema.defaultProps = {
-    x: 0,
-    data: [],
-    isVerticalHeader: true,
-};
-
-Schema.propTypes = {
-    x: PropTypes.number,
-    data: PropTypes.array,
-    clickHandler: PropTypes.func,
-};
-
-export default Schema;
+export default withStyles(styles)(Schema);
