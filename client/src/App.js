@@ -19,69 +19,6 @@ import defaultDatabase from "./default.sqlite";
 
 import { withStyles } from "material-ui/styles";
 
-class QuestionError extends Error { }
-
-const getXTables = (db, x) => {
-  const getTables = db.exec(
-    `SELECT "tbl_name" FROM "sqlite_master" WHERE "type" = 'table' AND "tbl_name" != "ts-questions" ORDER BY RANDOM() ${x &&
-      `LIMIT ${x}`}`
-  );
-
-  // Did we recieve any tables back?
-  if (getTables[0].values.length > 0) {
-    return getTables[0].values;
-  }
-
-  throw new Error(`No tables found in the database`);
-};
-
-const _questions = [
-  {
-    set: "Easy",
-    question: "Display all the contents of {table}",
-    answer: "SELECT * FROM {table}",
-    func: (db) => {
-      let [[table]] = getXTables(db, 1);
-      
-      if(!table) {
-        throw new QuestionError('Cannot get two unique tables from the database');
-      }
-
-      return {
-        'table': table
-      };
-    },
-    completed: true
-  },
-  {
-    set: "Easy",
-    answer: "SELECT * FROM {table}",
-    question: "Display all the {column1} and {column2} from {table}",
-    func: (db) => {
-      let [[table]] = getXTables(db, 1);
-
-      return {
-        'table': table,
-        'column1': 'orange',
-        'column2': 'apple',
-      };
-    },
-  },
-  {
-    set: "Intermediate",
-    func: (db) => {
-      //let [[table]] = this.getXTables(1);
-
-      return {
-        'table': 'apple',
-        'column': 'orange'
-      };
-    },
-    answer: "SELECT * FROM {table}",
-    question: "Display all the different %column% that exist in %table%"
-  }
-];
-
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -180,17 +117,21 @@ class App extends Component {
   componentDidMount = async () => {
     await this.getDatabase();
 
-    // Extract all the unique question sets
-    const questionSetNames = [...new Set(_questions.map(question => question.set))];
+    console.log('asd')
+  
+    import("./components/Question/questions.js").then(({ default: _questions }) => {
+      // Extract all the unique question sets
+      const questionSetNames = [...new Set(_questions.map(question => question.set))];
 
-    // The default active set until changed
-    const activeSet = questionSetNames[0];
+      // The default active set until changed
+      const activeSet = questionSetNames[0];
 
-    const questions = _questions.map(question => this.buildQuestion(question));
-    
-    const activeQuestionSet = [...questions.filter(question => question.set === activeSet)];
+      const questions = _questions.map(question => this.buildQuestion(question));
+      
+      const activeQuestionSet = [...questions.filter(question => question.set === activeSet)];
 
-    this.setState({ activeSet, questionSetNames, questions, activeQuestionSet });
+      this.setState({ activeSet, questionSetNames, questions, activeQuestionSet });
+    });
   };
 
   loadDatabase = typedArray => {
@@ -305,6 +246,8 @@ class App extends Component {
   };
 
   runQuery = sql => {
+    console.log(this.state.activeQuestionSet[this.state.activeQuestion].answer)
+
     try {
       const results = this.state.database.exec(sql);
 
@@ -350,7 +293,6 @@ class App extends Component {
 
   render() {
     const { classes } = this.props;
-
 
     const { 
       results, 
