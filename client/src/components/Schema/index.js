@@ -36,8 +36,7 @@ const styles = theme => ({
     transform: 'rotate(180deg)',
   },
   heading: {
-    marginTop: theme.spacing.unit * 3,
-    marginBottom: theme.spacing.unit,
+    marginTop: theme.spacing.unit * 2,
   },
   drawerPaper: {
     width: drawerWidth,
@@ -133,7 +132,7 @@ class Schema extends React.Component {
             open={open} 
             onClose={() => sidebarHandler(false)}
           >
-            <Typography variant="title" component="h3" align="center" classes={{ root: classes.heading }}>
+            <Typography variant="body2" color="textSecondary" component="h3" className={classes.heading} gutterBottom align="center">
               Database Schema
             </Typography>
             <List dense>{tables}</List>
@@ -146,7 +145,7 @@ class Schema extends React.Component {
           classes={{ paper: classes.drawerPaper}}
           open>
             <div className={classes.toolbar} />
-            <Typography variant="title" component="h3" align="center" classes={{ root: classes.heading }}>
+            <Typography variant="body2" color="textSecondary" component="h3" className={classes.heading} gutterBottom align="center">
               Database Schema
             </Typography>
             <List dense>{tables}</List>

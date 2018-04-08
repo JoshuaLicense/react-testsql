@@ -29,7 +29,7 @@ import AccountCircle from 'material-ui-icons/AccountCircle';
 const drawerWidth = 240;
 
 const styles = theme => ({
-  root: {
+  rootroot: {
     flexGrow: 1,
     height: 430,
     zIndex: 1,
@@ -104,14 +104,14 @@ class ApplicationStructure extends React.Component {
     return (
         <AppBar
         position="fixed"
-        className={classNames(classes.appBar)}>
+        className={classes.appBar}>
           <Toolbar>
             <Hidden mdUp>
               <IconButton
               color="inherit"
               aria-label="open drawer"
               onClick={() => sidebarToggler()}
-              className={classNames(classes.menuButton)}>
+              className={classes.menuButton}>
                 <MenuIcon />
               </IconButton>
             </Hidden>

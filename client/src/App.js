@@ -31,11 +31,9 @@ const styles = theme => ({
     minWidth: 0 // So the Typography noWrap works
   },
   mainSection: {
-    height: `calc(100vh - 56px)`,
+    // minHeight of the toolbar is now constant so the below can work
+    height: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
     overflow: "auto",
-    [theme.breakpoints.up("sm")]: {
-      height: `calc(100vh - 64px)`
-    }
   },
   toolbar: theme.mixins.toolbar,
   heading: {
@@ -246,12 +244,13 @@ class App extends Component {
           <div className={classes.toolbar} />
           <section className={classes.mainSection}>
             <Section title="Statement">
+            <Section title="Statement" gutters>
               <DatabaseInput submitHandler={this.runQuery} />
             </Section>
 
             {results &&
               results.map((result, i) => (
-                <Section title="Results" key={i}>
+                <Section title="Results" key={i} gutters>
                   <DatabaseOutput
                     columns={result.columns}
                     values={result.values}
@@ -261,28 +260,6 @@ class App extends Component {
           </section>
         </main>
       </div>
-
-      /*
-            
-            <DatabaseImport changeHandler={this.loadDatabase} />
-            <DatabaseExport clickHandler={this.downloadDatabase} />
-          <main className="ts-main d-flex flex-column p-4 pr-5">
-            <Alert data={this.state.alert} />
-            <h5>SQL Statement</h5>
-            <section className="mb-3">
-              <DatabaseInput statement={this.state.statement} submitHandler={this.runStatement} changeHandler={this.changeStatement} clearHandler={() => this.setState({ statement: null })} />
-            </section>
-            <h5>Result</h5>
-            <section className="mb-3" style={{ overflow: 'auto' }}>
-              <DatabaseOutput data={this.state.results} />
-            </section>
-          </main>
-          <aside className="ts-schema-container">
-            <Schema data={this.state.schema} clickHandler={this.runTableQuery} />
-          </aside>
-        </div>
-
-        */
     );
   }
 }
