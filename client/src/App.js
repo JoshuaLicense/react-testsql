@@ -109,15 +109,16 @@ class App extends Component {
       const obj = { ..._obj, question, answer };
   
       return obj;
-    } catch(QuestionError) {
-      console.log(QuestionError)
+    } catch(Error) {
+      // Mark as error'd question
+      const obj = { ..._obj, question: `Error: ${Error.message}`, answer: null, error: true };
+
+      return obj;
     }
   };
 
   componentDidMount = async () => {
     await this.getDatabase();
-
-    console.log('asd')
   
     import("./components/Question/questions.js").then(({ default: _questions }) => {
       // Extract all the unique question sets

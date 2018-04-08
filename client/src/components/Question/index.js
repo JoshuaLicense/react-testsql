@@ -95,6 +95,7 @@ class Question extends React.Component {
                 >
                   <StepLabel
                     classes={{ iconContainer: classes.stepperLabel }}
+                    error={!!question.error}
                   />
                 </StepButton>
               </Step>
@@ -106,7 +107,7 @@ class Question extends React.Component {
           <Typography
             variant="body2"
             component="span"
-            color="primary"
+            color={activeQuestionSet[activeQuestion].error ? "error" : "primary"}
             gutterBottom
           >
             {activeQuestionSet[activeQuestion].question}
