@@ -19,6 +19,69 @@ import defaultDatabase from "./default.sqlite";
 
 import { withStyles } from "material-ui/styles";
 
+class QuestionError extends Error { }
+
+const getXTables = (db, x) => {
+  const getTables = db.exec(
+    `SELECT "tbl_name" FROM "sqlite_master" WHERE "type" = 'table' AND "tbl_name" != "ts-questions" ORDER BY RANDOM() ${x &&
+      `LIMIT ${x}`}`
+  );
+
+  // Did we recieve any tables back?
+  if (getTables[0].values.length > 0) {
+    return getTables[0].values;
+  }
+
+  throw new Error(`No tables found in the database`);
+};
+
+const _questions = [
+  {
+    set: "Easy",
+    question: "Display all the contents of {table}",
+    answer: "SELECT * FROM {table}",
+    func: (db) => {
+      let [[table]] = getXTables(db, 1);
+      
+      if(!table) {
+        throw new QuestionError('Cannot get two unique tables from the database');
+      }
+
+      return {
+        'table': table
+      };
+    },
+    completed: true
+  },
+  {
+    set: "Easy",
+    answer: "SELECT * FROM {table}",
+    question: "Display all the {column1} and {column2} from {table}",
+    func: (db) => {
+      let [[table]] = getXTables(db, 1);
+
+      return {
+        'table': table,
+        'column1': 'orange',
+        'column2': 'apple',
+      };
+    },
+  },
+  {
+    set: "Intermediate",
+    func: (db) => {
+      //let [[table]] = this.getXTables(1);
+
+      return {
+        'table': 'apple',
+        'column': 'orange'
+      };
+    },
+    answer: "SELECT * FROM {table}",
+    question: "Display all the different %column% that exist in %table%"
+  }
+];
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -61,11 +124,75 @@ class App extends Component {
     alert: null,
     history: [],
     schema: null,
-    openSidebar: false
+    openSidebar: false,
+
+    activeQuestion: 0,
+    activeSet: 0,
+    setNames: null,
+    questions: null,
+    activeQuestionSet: null,
   };
 
-  componentDidMount = () => {
-    this.getDatabase();
+  changeQuestion = number => {
+    this.setState({ activeQuestion: number });
+  };
+
+  changeQuestionSet = set => {
+    const { questions } = this.state;
+
+    const activeQuestionSet = [...questions.filter(question => question.set === set)];
+    const activeQuestion = 0;
+    const activeSet = set;
+
+    this.setState({ activeSet, activeQuestion, activeQuestionSet });
+  }
+
+  activeQuestion = () => {
+    const { activeSet, activeQuestion } = this.state;
+
+    return this.questions[activeSet][activeQuestion];
+  };
+
+  buildQuestion = _obj => {
+    const { question: _question, answer: _answer, func: _func } = _obj;
+  
+    // Try running the question callable
+    try {
+      const config = _func(this.state.database);
+
+      const format = (_template, config) => {
+        let template = _template;
+  
+        Object.keys(config).map(key => template = template.replace(new RegExp(`{${key}}`, "g"), config[key]))
+  
+        return template;      
+      };
+  
+      const question = format(_question, config);
+      const answer = format(_answer, config);
+  
+      const obj = { ..._obj, question, answer };
+  
+      return obj;
+    } catch(QuestionError) {
+      console.log(QuestionError)
+    }
+  };
+
+  componentDidMount = async () => {
+    await this.getDatabase();
+
+    // Extract all the unique question sets
+    const questionSetNames = [...new Set(_questions.map(question => question.set))];
+
+    // The default active set until changed
+    const activeSet = questionSetNames[0];
+
+    const questions = _questions.map(question => this.buildQuestion(question));
+    
+    const activeQuestionSet = [...questions.filter(question => question.set === activeSet)];
+
+    this.setState({ activeSet, questionSetNames, questions, activeQuestionSet });
   };
 
   loadDatabase = typedArray => {
@@ -226,12 +353,20 @@ class App extends Component {
   render() {
     const { classes } = this.props;
 
-    const { results, schema, openSidebar } = this.state;
+
+    const { 
+      results, 
+      schema, 
+      openSidebar, 
+      activeSet, 
+      questionSetNames, 
+      activeQuestion, 
+      activeQuestionSet,
+    } = this.state;
 
     return (
       <div className={classes.root}>
         <Header sidebarToggler={this.toggleSidebar} auth={false} />
-
         {schema && (
           <Schema
             schema={schema}
@@ -247,7 +382,20 @@ class App extends Component {
         <main className={classes.main}>
           <div className={classes.toolbar} />
           <section className={classes.mainSection}>
-            <Section title="Statement">
+            {activeQuestionSet && (
+              <Section title="Questions">
+                <Question 
+                  activeSet={activeSet}
+                  questionSetNames={questionSetNames}
+                  activeQuestion={activeQuestion}
+                  activeQuestionSet={activeQuestionSet}
+                  changeQuestionHandler={this.changeQuestion}
+                  changeQuestionSetHandler={this.changeQuestionSet}
+                />
+              </Section>
+            )}
+
+            <Section title="Statement" gutters>
               <DatabaseInput submitHandler={this.runQuery} />
             </Section>
 
