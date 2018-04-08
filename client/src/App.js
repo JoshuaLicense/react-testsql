@@ -4,6 +4,8 @@ import Schema from "./components/Schema";
 
 import Header from "./components/Header";
 
+import Question from "./components/Question";
+
 import Section from "./components/Section.js";
 
 import DatabaseInput from "./components/Database/Input";
