@@ -25,6 +25,7 @@ export const getColumns = (db, { x = 1, type = "varchar", nullable = false, same
   
   for(let i = 0; i < tables.length && x > result.length; ++i) {
     const tableInfo = db.exec(`PRAGMA table_info(${tables[i]})`);
+    // Shuffle?
     const columns = tableInfo[0].values;
     console.log(tableInfo);
 
@@ -46,4 +47,52 @@ export const getColumns = (db, { x = 1, type = "varchar", nullable = false, same
   }
 
   return result;
+}
+
+export const getForeignColumns = (db, x = 1) => {
+  const tables = getTables();
+  const result = [];
+
+  for(let i = 0; i < tables.length; ++i) {
+    const foreignKeys = db.exec(`PRAGMA foreign_key_list(${tables[i]})`);
+
+    if(foreignKeys.length > 0) {
+      if(foreignKeys[0].values.length < x) {
+        continue;
+      }
+
+      // shuffle
+      const keys = foreignKeys[0].values;
+      keys.length = x;
+
+      for(let j = 0; j < x; ++j) {
+        result.push({
+          from : {
+            table : keys[j][2],
+            column : keys[j][3],
+          },
+          to : {
+            table : getTables[i][0],
+            column : keys[j][4],
+          }
+        });
+      }
+    }
+  }
+
+  if(result.length > 0) {
+    return result;
+  }
+
+  throw new Error(`A foreign key was not found`);
+}
+
+export const getRowsFrom = (db, table, column, x = 1) => {
+  const rows = db.exec(`SELECT "${column}" FROM "${table}" ORDER BY RANDOM() LIMIT ${x}`);
+
+  if(rows[0].values.length < x) {
+    throw new Error(`The table doesn't contain enough rows`);
+  }
+
+  return rows;
 }
