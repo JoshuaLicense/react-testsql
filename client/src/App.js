@@ -15,6 +15,8 @@ import DatabaseOutput from "./components/Database/Output";
 
 import SQL from "sql.js";
 
+import checkAnswer from "./components/Question/answer";
+
 import defaultDatabase from "./default.sqlite";
 
 import { withStyles } from "material-ui/styles";
@@ -116,6 +118,10 @@ class App extends Component {
       return obj;
     }
   };
+
+  componentWillUnmount = () => {
+
+  }
 
   componentDidMount = async () => {
     await this.getDatabase();
@@ -247,18 +253,20 @@ class App extends Component {
   };
 
   runQuery = sql => {
-    console.log(this.state.activeQuestionSet[this.state.activeQuestion].answer)
+    const { database, history, activeQuestionSet, activeQuestion } = this.state;
+
+    console.log(checkAnswer(database, sql, activeQuestionSet[activeQuestion]))
 
     try {
-      const results = this.state.database.exec(sql);
+      const results = database.exec(sql);
 
       this.setState({
         results,
-        history: [...this.state.history, sql]
+        history: [...history, sql]
       });
 
       // Only save the database if a query has altered the dataset
-      if (this.state.database.getRowsModified(sql)) {
+      if (database.getRowsModified(sql)) {
         this.getAllTableNames();
 
         this.saveDatabase();
