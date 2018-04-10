@@ -1,8 +1,7 @@
-export class KeywordError extends Error {}
+export class IncorrectAnswer extends Error {}
 
 const checkAnswer = (db, sql, question) => {
-  console.log(sql, question);
-  // Check to make sure syntax includes certain keywords, if set
+  // 1. Check to make sure syntax includes certain keywords, if set
   if (question.keywords) {
     const keywords = question.keywords;
     // Change the sql to uppercase, String.includes is case sensitive
@@ -17,60 +16,65 @@ const checkAnswer = (db, sql, question) => {
 
       // If the keyword was not found
       if (lastIndex === -1) {
-        throw new KeywordError(
-          `Looking for the incursion of the keyword: ${
-            keywords[i]
-          }, but not found in the correct position!`
-        );
+        //throw new IncorrectAnswer(`Looking for the incursion of the keyword: ${keywords[i]}, but not found in the correct position!`);
       }
     }
   }
 
-  console.log(db.exec(sql))
-  console.log(db.exec(question.answer))
-
-  // set the blank arrays
   const modelResults = [];
   const userResults = [];
 
-  // prepare both queries
-  var stmt = db.prepare(sql);
-  var answerStmt = db.prepare(question.answer);
+  const stmt = db.prepare(sql);
+  const answerStmt = db.prepare(question.answer);
 
-  // run the statements in steps to loop each row
   while (answerStmt.step()) modelResults.push(answerStmt.getAsObject());
   while (stmt.step()) userResults.push(stmt.getAsObject());
 
-  console.log(modelResults)
-  console.log(userResults)
-
-  // free the statements to prevent memory leaks
   stmt.free();
   answerStmt.free();
 
-  // check both result objects are of equal length
-  if (modelResults.length !== userResults.length || !userResults.length) {
-    return (
-      "Expected a total of " +
-      modelResults.length +
-      " row(s) to be returned" +
-      ", instead got " +
-      userResults.length +
-      "!"
-    );
+  // 2. Check both objects are of equal length
+  if (!userResults.length || modelResults.length !== userResults.length) {
+    //throw new IncorrectAnswer(`Expected a total of ${modelResults.length} row(s) to be returned, instead got ${userResults.length}!`);
   }
 
-  // extract the column names via the object keys
-  var userColumns = Object.keys(userResults[0]);
-  var modelColumns = Object.keys(modelResults[0]);
+  // Extract the column names from each object
+  const userColumns = Object.keys(userResults[0]);
+  const modelColumns = Object.keys(modelResults[0]);
 
-  // check if the columns selected is the same LENGTH as the model answer
-  if (modelColumns.length != userColumns.length) {
-    return (
-      "Expected only the following column(s) to be selected: " +
-      modelColumns.join(", ")
-    );
+  // 3. Check the same amount of columns exists in both the submitted query and the model query
+  if (modelColumns.length !== userColumns.length) {
+    //throw new IncorrectAnswer(`Expected only the following column(s) to be selected: ${modelColumns.join(", ")}`);
   }
+
+  modelColumns.forEach((column) => {
+    // 4. Does the model column appear in the user selected columns
+    if(!userColumns[column]) {
+      //throw new IncorrectAnswer(`Expected only the following column(s) to be selected: ${modelColumns.join(", ")}`)
+    }
+
+    // Retrieve an array from the model result object for this column only
+    const modelColumnValues = modelResults.map(object => object[column]);
+
+    // Retrieve an array from the model result object for this column only
+    const userColumnValues = userResults.map(object => object[column]);
+
+    // 5. Ensure every value appear in both set of values
+    const leftoverValues = modelColumnValues.reduce((prev, value) => {
+      console.log(prev, value);
+      return ['a'];
+    }, [])
+    console.log(modelColumnValues, userColumnValues);
+
+  });
+
+  console.log(userColumns);
+
+  console.log(modelColumns);
+
+  console.log(userResults);
+
+  console.log(modelResults);
 
   // loop through each column
   for (var i = 0; i < userColumns.length; i++) {
@@ -121,6 +125,7 @@ const checkAnswer = (db, sql, question) => {
       );
     }
   }
+
   // if the code executed to this point, the solution is valid
   return true;
 };
