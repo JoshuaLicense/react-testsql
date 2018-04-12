@@ -37,7 +37,6 @@ const styles = theme => ({
 });
 
 class Question extends React.Component {
-
   handleNext = () => {
     const total = this.props.activeQuestionSet.length;
 
@@ -53,8 +52,8 @@ class Question extends React.Component {
     // Allows the looping of questions (if it was allowed)
     const prev =
       this.props.activeQuestion - 1 >= 0
-        ? (this.props.activeQuestion - 1)
-        : (total - 1);
+        ? this.props.activeQuestion - 1
+        : total - 1;
 
     this.handleQuestionChange(prev);
   };
@@ -76,7 +75,7 @@ class Question extends React.Component {
       activeSet,
       activeQuestionSet,
       activeQuestion
-    } = this.props
+    } = this.props;
 
     return (
       <div>
@@ -107,7 +106,9 @@ class Question extends React.Component {
           <Typography
             variant="body2"
             component="span"
-            color={activeQuestionSet[activeQuestion].error ? "error" : "primary"}
+            color={
+              activeQuestionSet[activeQuestion].error ? "error" : "primary"
+            }
             gutterBottom
           >
             {activeQuestionSet[activeQuestion].question}

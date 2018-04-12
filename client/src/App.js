@@ -37,7 +37,7 @@ const styles = theme => ({
   mainSection: {
     // minHeight of the toolbar is now constant so the below can work
     height: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
-    overflow: "auto",
+    overflow: "auto"
   },
   toolbar: theme.mixins.toolbar,
   heading: {
@@ -67,7 +67,7 @@ class App extends Component {
     activeSet: 0,
     setNames: null,
     questions: null,
-    activeQuestionSet: null,
+    activeQuestionSet: null
   };
 
   changeQuestion = number => {
@@ -77,12 +77,14 @@ class App extends Component {
   changeQuestionSet = set => {
     const { questions } = this.state;
 
-    const activeQuestionSet = [...questions.filter(question => question.set === set)];
+    const activeQuestionSet = [
+      ...questions.filter(question => question.set === set)
+    ];
     const activeQuestion = 0;
     const activeSet = set;
 
     this.setState({ activeSet, activeQuestion, activeQuestionSet });
-  }
+  };
 
   activeQuestion = () => {
     const { activeSet, activeQuestion } = this.state;
@@ -92,53 +94,75 @@ class App extends Component {
 
   buildQuestion = _obj => {
     const { question: _question, answer: _answer, func: _func } = _obj;
-  
+
     // Try running the question callable
     try {
       const config = _func(this.state.database);
 
       const format = (_template, config) => {
         let template = _template;
-  
-        Object.keys(config).map(key => template = template.replace(new RegExp(`{${key}}`, "g"), config[key]))
-  
-        return template;      
+
+        Object.keys(config).map(
+          key =>
+            (template = template.replace(
+              new RegExp(`{${key}}`, "g"),
+              config[key]
+            ))
+        );
+
+        return template;
       };
-  
+
       const question = format(_question, config);
       const answer = format(_answer, config);
-  
+
       const obj = { ..._obj, question, answer };
-  
+
       return obj;
-    } catch(Error) {
+    } catch (Error) {
       // Mark as error'd question
-      const obj = { ..._obj, question: `Error: ${Error.message}`, answer: null, error: true };
+      const obj = {
+        ..._obj,
+        question: `Error: ${Error.message}`,
+        answer: null,
+        error: true
+      };
 
       return obj;
     }
   };
 
-  componentWillUnmount = () => {
-
-  }
+  componentWillUnmount = () => {};
 
   componentDidMount = async () => {
     await this.getDatabase();
-  
-    import("./components/Question/questions.js").then(({ default: _questions }) => {
-      // Extract all the unique question sets
-      const questionSetNames = [...new Set(_questions.map(question => question.set))];
 
-      // The default active set until changed
-      const activeSet = questionSetNames[0];
+    import("./components/Question/questions.js").then(
+      ({ default: _questions }) => {
+        // Extract all the unique question sets
+        const questionSetNames = [
+          ...new Set(_questions.map(question => question.set))
+        ];
 
-      const questions = _questions.map(question => this.buildQuestion(question));
-      
-      const activeQuestionSet = [...questions.filter(question => question.set === activeSet)];
+        // The default active set until changed
+        const activeSet = questionSetNames[0];
 
-      this.setState({ activeSet, questionSetNames, questions, activeQuestionSet });
-    });
+        const questions = _questions.map(question =>
+          this.buildQuestion(question)
+        );
+
+        const activeQuestionSet = [
+          ...questions.filter(question => question.set === activeSet)
+        ];
+
+        this.setState({
+          activeSet,
+          questionSetNames,
+          questions,
+          activeQuestionSet
+        });
+      }
+    );
   };
 
   loadDatabase = typedArray => {
@@ -255,7 +279,15 @@ class App extends Component {
   runQuery = sql => {
     const { database, history, activeQuestionSet, activeQuestion } = this.state;
 
-    console.log(checkAnswer(database, sql, activeQuestionSet[activeQuestion]))
+    const time = () => performance.now();
+
+    const tick = time();
+
+    //for(let i = 0; i < 1000; ++i) {
+    checkAnswer(database, sql, activeQuestionSet[activeQuestion]);
+    //}
+
+    console.log(time() - tick);
 
     try {
       const results = database.exec(sql);
@@ -303,14 +335,14 @@ class App extends Component {
   render() {
     const { classes } = this.props;
 
-    const { 
-      results, 
-      schema, 
-      openSidebar, 
-      activeSet, 
-      questionSetNames, 
-      activeQuestion, 
-      activeQuestionSet,
+    const {
+      results,
+      schema,
+      openSidebar,
+      activeSet,
+      questionSetNames,
+      activeQuestion,
+      activeQuestionSet
     } = this.state;
 
     return (
@@ -333,7 +365,7 @@ class App extends Component {
           <section className={classes.mainSection}>
             {activeQuestionSet && (
               <Section title="Questions">
-                <Question 
+                <Question
                   activeSet={activeSet}
                   questionSetNames={questionSetNames}
                   activeQuestion={activeQuestion}
