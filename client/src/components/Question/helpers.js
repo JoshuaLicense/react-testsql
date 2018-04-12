@@ -23,24 +23,22 @@ export const getTables = (db, x = false) => {
 
 export const getColumns = (
   db,
-  { x = 1, type = "varchar", nullable = false, sameTable = true } = {}
+  tables,
+  { x = 1, type = "varchar", notnull = null, sameTable = true } = {}
 ) => {
-  const tables = getTables(db);
   const result = [];
 
   for (let i = 0; i < tables.length && x > result.length; ++i) {
-    const tableInfo = db.exec(`PRAGMA table_info(${tables[i]})`);
-    // Shuffle?
-    const columns = tableInfo[0].values;
-    console.log(tableInfo);
+    const [{ values: columns }] = db.exec(`PRAGMA table_info(${tables[i]})`);
 
     for (let j = 0; j < columns.length && x > result.length; ++j) {
-      if (columns[j][COLUMN_NOT_NULL] !== +nullable) {
+      if (notnull !== null && columns[j][COLUMN_NOT_NULL] !== +notnull) {
         continue;
       }
 
       if (columns[j][COLUMN_NAME].indexOf(type) !== -1) {
         result.push({ table: tables[i], column: columns[j][COLUMN_NAME] });
+
         continue;
       }
 
