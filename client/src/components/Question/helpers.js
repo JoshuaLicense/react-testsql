@@ -6,19 +6,19 @@ const DEFAULT = 4;
 const PRIMARY_KEY = 5;
 
 export const getTables = (db, x = false) => {
-  const getTables = db.exec(
+  const [{ values: tables }] = db.exec(
     `SELECT "tbl_name" FROM "sqlite_master" WHERE "type" = 'table' AND "tbl_name" != "ts-questions" ORDER BY RANDOM() ${
       x ? `LIMIT ${x}` : ""
     }`
   );
 
-  // Did we recieve any tables back?
-  if (getTables[0].values.length > 0) {
+  // Did we recieve the wanted number of tables back?
+  if (x && tables.length !== x) {
     // Flatten the array
-    return [].concat(...getTables[0].values);
+    throw new Error(`Not enough tables found in the database.`);
   }
 
-  throw new Error(`No tables found in the database`);
+  return [].concat(...tables);
 };
 
 export const getColumns = (

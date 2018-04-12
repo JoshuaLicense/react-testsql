@@ -1,4 +1,4 @@
-import { getTables, getColumns } from './logic';
+import { getTables, getColumns } from "./helpers";
 
 const _questions = [
   {
