@@ -5,6 +5,7 @@ import Schema from "./components/Schema";
 import Header from "./components/Header";
 
 import Question from "./components/Question";
+import Feedback from "./components/Feedback";
 
 import Section from "./components/Section.js";
 
@@ -15,7 +16,7 @@ import DatabaseOutput from "./components/Database/Output";
 
 import SQL from "sql.js";
 
-import checkAnswer from "./components/Question/answer";
+import checkAnswer, { IncorrectAnswer } from "./components/Question/answer";
 
 import defaultDatabase from "./default.sqlite";
 
@@ -58,7 +59,7 @@ class App extends Component {
     database: null,
     initalDatabase: null,
     results: null,
-    alert: null,
+    feedback: null,
     history: [],
     schema: null,
     openSidebar: false,
@@ -68,6 +69,10 @@ class App extends Component {
     setNames: null,
     questions: null,
     activeQuestionSet: null
+  };
+
+  changeFeedback = feedback => {
+    this.setState({ feedback });
   };
 
   changeQuestion = number => {
@@ -267,27 +272,38 @@ class App extends Component {
     this.setState({ schema });
   };
 
-  runStatement = () => {
-    // Run the current statement that is saved in the state
-    this.runQuery(this.state.statement);
-  };
-
-  changeStatement = statement => {
-    this.setState({ statement });
-  };
-
   runQuery = sql => {
-    const { database, history, activeQuestionSet, activeQuestion } = this.state;
+    const { database, activeQuestionSet, activeQuestion } = this.state;
 
     const time = () => performance.now();
 
     const tick = time();
 
     //for(let i = 0; i < 1000; ++i) {
-    checkAnswer(database, sql, activeQuestionSet[activeQuestion]);
+    try {
+      if (checkAnswer(database, sql, activeQuestionSet[activeQuestion])) {
+        this.changeFeedback("Correct Answer");
+      }
+    } catch (IncorrectAnswer) {
+      this.changeFeedback(IncorrectAnswer.message);
+    }
     //}
 
     console.log(time() - tick);
+
+    // Run the sql query
+    this.run(sql);
+
+    // Only save the database if a query has altered the dataset
+    if (database.getRowsModified(sql)) {
+      this.getAllTableNames();
+
+      this.saveDatabase();
+    }
+  };
+
+  run = sql => {
+    const { history, database } = this.state;
 
     try {
       const results = database.exec(sql);
@@ -296,30 +312,15 @@ class App extends Component {
         results,
         history: [...history, sql]
       });
-
-      // Only save the database if a query has altered the dataset
-      if (database.getRowsModified(sql)) {
-        this.getAllTableNames();
-
-        this.saveDatabase();
-      }
-
-      // Remove the alert(s) if any
-      this.setState({ alert: null });
-    } catch (error) {
-      this.setState({
-        alert: {
-          type: `danger`,
-          message: error.message
-        }
-      });
+    } catch (Error) {
+      this.changeFeedback(Error.message);
     }
   };
 
   runTableQuery = tableName => {
     const sql = `SELECT * FROM ${tableName}`;
 
-    return this.runQuery(sql);
+    return this.run(sql);
   };
 
   toggleSidebar = open => {
@@ -336,6 +337,7 @@ class App extends Component {
     const { classes } = this.props;
 
     const {
+      feedback,
       results,
       schema,
       openSidebar,
@@ -391,6 +393,7 @@ class App extends Component {
               ))}
           </section>
         </main>
+        <Feedback message={feedback} changeHandler={this.changeFeedback} />
       </div>
     );
   }
