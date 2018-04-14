@@ -4,6 +4,9 @@ import Schema from "./components/Schema";
 
 import Header from "./components/Header";
 
+import Question from "./components/Question";
+import Feedback from "./components/Feedback";
+
 import Section from "./components/Section.js";
 
 import DatabaseInput from "./components/Database/Input";
@@ -12,6 +15,8 @@ import DatabaseOutput from "./components/Database/Output";
 // import Alert from "./components/Alert";
 
 import SQL from "sql.js";
+
+import checkAnswer, { IncorrectAnswer } from "./components/Question/answer";
 
 import defaultDatabase from "./default.sqlite";
 
@@ -31,11 +36,9 @@ const styles = theme => ({
     minWidth: 0 // So the Typography noWrap works
   },
   mainSection: {
-    height: `calc(100vh - 56px)`,
-    overflow: "auto",
-    [theme.breakpoints.up("sm")]: {
-      height: `calc(100vh - 64px)`
-    }
+    // minHeight of the toolbar is now constant so the below can work
+    height: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
+    overflow: "auto"
   },
   toolbar: theme.mixins.toolbar,
   heading: {
@@ -56,14 +59,127 @@ class App extends Component {
     database: null,
     initalDatabase: null,
     results: null,
-    alert: null,
+    feedback: null,
     history: [],
     schema: null,
-    openSidebar: false
+    openSidebar: false,
+
+    activeQuestion: 0,
+    activeSet: 0,
+    setNames: null,
+    questions: null,
+    activeQuestionSet: null
   };
 
-  componentDidMount = () => {
-    this.getDatabase();
+  changeFeedback = feedback => {
+    this.setState({ feedback });
+  };
+
+  changeQuestion = number => {
+    this.setState({ activeQuestion: number });
+  };
+
+  changeQuestionSet = set => {
+    const { questions } = this.state;
+
+    const activeQuestionSet = [
+      ...questions.filter(question => question.set === set)
+    ];
+    const activeQuestion = 0;
+    const activeSet = set;
+
+    this.setState({ activeSet, activeQuestion, activeQuestionSet });
+  };
+
+  activeQuestion = () => {
+    const { activeSet, activeQuestion } = this.state;
+
+    return this.questions[activeSet][activeQuestion];
+  };
+
+  buildQuestion = _obj => {
+    const { question: _question, answer: _answer, func: _func } = _obj;
+
+    // Try running the question callable
+    try {
+      const config = _func(this.state.database);
+
+      const format = (_template, config) => {
+        let template = _template;
+
+        Object.keys(config).map(
+          key =>
+            (template = template.replace(
+              new RegExp(`{${key}}`, "g"),
+              config[key]
+            ))
+        );
+
+        return template;
+      };
+
+      const question = format(_question, config);
+      const answer = format(_answer, config);
+
+      const obj = { ..._obj, question, answer };
+
+      return obj;
+    } catch (Error) {
+      // Mark as error'd question
+      const obj = {
+        ..._obj,
+        question: `Error: ${Error.message}`,
+        answer: null,
+        error: true
+      };
+
+      return obj;
+    }
+  };
+
+  componentWillUnmount = () => {};
+
+  loadQuestions = questions => {
+    const questionSetNames = [
+      ...new Set(questions.map(question => question.set))
+    ];
+
+    // The default active set until changed
+    const activeSet = questionSetNames[0];
+
+    // Save the built questions object to the clients localStorage to survive refresh
+    localStorage.setItem("__testSQL_Questions__", JSON.stringify(questions));
+
+    const activeQuestionSet = [
+      ...questions.filter(question => question.set === activeSet)
+    ];
+
+    this.setState({
+      activeSet,
+      questionSetNames,
+      questions,
+      activeQuestionSet
+    });
+  };
+
+  componentDidMount = async () => {
+    await this.getDatabase();
+
+    const cachedQuestions = localStorage.getItem("__testSQL_Questions__");
+
+    if (null === cachedQuestions) {
+      import("./components/Question/questions.js").then(
+        ({ default: _questions }) => {
+          const questions = _questions.map(question =>
+            this.buildQuestion(question)
+          );
+
+          this.loadQuestions(questions);
+        }
+      );
+    } else {
+      this.loadQuestions(JSON.parse(cachedQuestions));
+    }
   };
 
   loadDatabase = typedArray => {
@@ -168,47 +284,71 @@ class App extends Component {
     this.setState({ schema });
   };
 
-  runStatement = () => {
-    // Run the current statement that is saved in the state
-    this.runQuery(this.state.statement);
-  };
+  markActiveQuestionAsComplete() {
+    const { questions, activeQuestionSet, activeQuestion } = this.state;
 
-  changeStatement = statement => {
-    this.setState({ statement });
-  };
+    // This will also alter the "parent" array of questions (pass-by-reference)
+    activeQuestionSet[activeQuestion].completed = true;
+
+    console.log(questions);
+
+    // Resave the questions in the localstorage to save the object with the completed property as true
+    localStorage.setItem("__testSQL_Questions__", JSON.stringify(questions));
+
+    this.setState({ activeQuestionSet });
+  }
 
   runQuery = sql => {
+    const { database, activeQuestionSet, activeQuestion } = this.state;
+
+    const time = () => performance.now();
+
+    const tick = time();
+
+    //for(let i = 0; i < 1000; ++i) {
     try {
-      const results = this.state.database.exec(sql);
+      if (checkAnswer(database, sql, activeQuestionSet[activeQuestion])) {
+        this.changeFeedback("Correct Answer");
+
+        this.markActiveQuestionAsComplete();
+      }
+    } catch (IncorrectAnswer) {
+      this.changeFeedback(IncorrectAnswer.message);
+    }
+    //}
+
+    console.log(time() - tick);
+
+    // Run the sql query
+    this.run(sql);
+
+    // Only save the database if a query has altered the dataset
+    if (database.getRowsModified(sql)) {
+      this.getAllTableNames();
+
+      this.saveDatabase();
+    }
+  };
+
+  run = sql => {
+    const { history, database } = this.state;
+
+    try {
+      const results = database.exec(sql);
 
       this.setState({
         results,
-        history: [...this.state.history, sql]
+        history: [...history, sql]
       });
-
-      // Only save the database if a query has altered the dataset
-      if (this.state.database.getRowsModified(sql)) {
-        this.getAllTableNames();
-
-        this.saveDatabase();
-      }
-
-      // Remove the alert(s) if any
-      this.setState({ alert: null });
-    } catch (error) {
-      this.setState({
-        alert: {
-          type: `danger`,
-          message: error.message
-        }
-      });
+    } catch (Error) {
+      this.changeFeedback(Error.message);
     }
   };
 
   runTableQuery = tableName => {
     const sql = `SELECT * FROM ${tableName}`;
 
-    return this.runQuery(sql);
+    return this.run(sql);
   };
 
   toggleSidebar = open => {
@@ -224,12 +364,20 @@ class App extends Component {
   render() {
     const { classes } = this.props;
 
-    const { results, schema, openSidebar } = this.state;
+    const {
+      feedback,
+      results,
+      schema,
+      openSidebar,
+      activeSet,
+      questionSetNames,
+      activeQuestion,
+      activeQuestionSet
+    } = this.state;
 
     return (
       <div className={classes.root}>
         <Header sidebarToggler={this.toggleSidebar} auth={false} />
-
         {schema && (
           <Schema
             schema={schema}
@@ -245,13 +393,26 @@ class App extends Component {
         <main className={classes.main}>
           <div className={classes.toolbar} />
           <section className={classes.mainSection}>
-            <Section title="Statement">
+            {activeQuestionSet && (
+              <Section title="Questions">
+                <Question
+                  activeSet={activeSet}
+                  questionSetNames={questionSetNames}
+                  activeQuestion={activeQuestion}
+                  activeQuestionSet={activeQuestionSet}
+                  changeQuestionHandler={this.changeQuestion}
+                  changeQuestionSetHandler={this.changeQuestionSet}
+                />
+              </Section>
+            )}
+
+            <Section title="Statement" gutters>
               <DatabaseInput submitHandler={this.runQuery} />
             </Section>
 
             {results &&
               results.map((result, i) => (
-                <Section title="Results" key={i}>
+                <Section title="Results" key={i} gutters>
                   <DatabaseOutput
                     columns={result.columns}
                     values={result.values}
@@ -260,29 +421,8 @@ class App extends Component {
               ))}
           </section>
         </main>
+        <Feedback message={feedback} changeHandler={this.changeFeedback} />
       </div>
-
-      /*
-            
-            <DatabaseImport changeHandler={this.loadDatabase} />
-            <DatabaseExport clickHandler={this.downloadDatabase} />
-          <main className="ts-main d-flex flex-column p-4 pr-5">
-            <Alert data={this.state.alert} />
-            <h5>SQL Statement</h5>
-            <section className="mb-3">
-              <DatabaseInput statement={this.state.statement} submitHandler={this.runStatement} changeHandler={this.changeStatement} clearHandler={() => this.setState({ statement: null })} />
-            </section>
-            <h5>Result</h5>
-            <section className="mb-3" style={{ overflow: 'auto' }}>
-              <DatabaseOutput data={this.state.results} />
-            </section>
-          </main>
-          <aside className="ts-schema-container">
-            <Schema data={this.state.schema} clickHandler={this.runTableQuery} />
-          </aside>
-        </div>
-
-        */
     );
   }
 }

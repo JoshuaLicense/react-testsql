@@ -3,10 +3,27 @@ import ReactDOM from 'react-dom';
 
 import './index.css';
 
+import 'typeface-roboto';
+
 import App from './App';
 
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App />, document.getElementById('app'));
+import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+
+const theme = createMuiTheme({
+  mixins: {
+    toolbar: {
+      minHeight: 48,
+    }
+  }
+});
+
+ReactDOM.render(
+  <MuiThemeProvider theme={theme}>
+    <App />
+  </MuiThemeProvider>, 
+  document.getElementById('app')
+);
 
 registerServiceWorker();
