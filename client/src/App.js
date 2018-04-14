@@ -162,12 +162,10 @@ class App extends Component {
     });
   };
 
-  componentDidMount = async () => {
-    await this.getDatabase();
-
+  getQuestions = (forceRebuild = false) => {
     const cachedQuestions = localStorage.getItem("__testSQL_Questions__");
 
-    if (null === cachedQuestions) {
+    if (forceRebuild || null === cachedQuestions) {
       import("./components/Question/questions.js").then(
         ({ default: _questions }) => {
           const questions = _questions.map(question =>
@@ -180,6 +178,12 @@ class App extends Component {
     } else {
       this.loadQuestions(JSON.parse(cachedQuestions));
     }
+  };
+
+  componentDidMount = async () => {
+    await this.getDatabase();
+
+    this.getQuestions();
   };
 
   loadDatabase = typedArray => {
@@ -358,7 +362,14 @@ class App extends Component {
   };
 
   restoreDatabase = () => {
-    return this.loadDatabase(this.state.initalDatabase);
+    this.loadDatabase(this.state.initalDatabase);
+  };
+
+  uploadDatabase = async typedArray => {
+    await this.loadDatabase(typedArray);
+
+    // Force rebuild of questions
+    this.getQuestions(true);
   };
 
   render() {
@@ -384,7 +395,7 @@ class App extends Component {
             open={openSidebar}
             sidebarHandler={this.toggleSidebar}
             clickHandler={this.runTableQuery}
-            uploadHandler={this.loadDatabase}
+            uploadHandler={this.uploadDatabase}
             restoreHandler={this.restoreDatabase}
             downloadHandler={this.downloadDatabase}
           />
