@@ -255,15 +255,14 @@ class App extends Component {
     a.click();
   };
 
-  saveDatabase() {
+  saveDatabase = database => {
     // Convert the current database (ArrayBuffer) to a binary string
     //const string = new Uint8Array().reduce((data, byte) => data + String.fromCharCode(byte), '');
-
     localStorage.setItem(
       "__testSQL_Database__",
-      toBinString(this.state.database.export())
+      toBinString(database.export())
     );
-  }
+  };
 
   getAllTableNames = () => {
     const sql =
@@ -330,7 +329,7 @@ class App extends Component {
     if (database.getRowsModified(sql)) {
       this.getAllTableNames();
 
-      this.saveDatabase();
+      this.saveDatabase(database);
     }
   };
 
@@ -370,6 +369,8 @@ class App extends Component {
 
     // Force rebuild of questions
     this.getQuestions(true);
+
+    this.saveDatabase(this.state.database);
   };
 
   render() {
