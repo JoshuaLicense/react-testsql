@@ -139,35 +139,47 @@ class App extends Component {
 
   componentWillUnmount = () => {};
 
+  loadQuestions = questions => {
+    const questionSetNames = [
+      ...new Set(questions.map(question => question.set))
+    ];
+
+    // The default active set until changed
+    const activeSet = questionSetNames[0];
+
+    // Save the built questions object to the clients localStorage to survive refresh
+    localStorage.setItem("__testSQL_Questions__", JSON.stringify(questions));
+
+    const activeQuestionSet = [
+      ...questions.filter(question => question.set === activeSet)
+    ];
+
+    this.setState({
+      activeSet,
+      questionSetNames,
+      questions,
+      activeQuestionSet
+    });
+  };
+
   componentDidMount = async () => {
     await this.getDatabase();
 
-    import("./components/Question/questions.js").then(
-      ({ default: _questions }) => {
-        // Extract all the unique question sets
-        const questionSetNames = [
-          ...new Set(_questions.map(question => question.set))
-        ];
+    const cachedQuestions = localStorage.getItem("__testSQL_Questions__");
 
-        // The default active set until changed
-        const activeSet = questionSetNames[0];
+    if (null === cachedQuestions) {
+      import("./components/Question/questions.js").then(
+        ({ default: _questions }) => {
+          const questions = _questions.map(question =>
+            this.buildQuestion(question)
+          );
 
-        const questions = _questions.map(question =>
-          this.buildQuestion(question)
-        );
-
-        const activeQuestionSet = [
-          ...questions.filter(question => question.set === activeSet)
-        ];
-
-        this.setState({
-          activeSet,
-          questionSetNames,
-          questions,
-          activeQuestionSet
-        });
-      }
-    );
+          this.loadQuestions(questions);
+        }
+      );
+    } else {
+      this.loadQuestions(JSON.parse(cachedQuestions));
+    }
   };
 
   loadDatabase = typedArray => {
@@ -272,6 +284,20 @@ class App extends Component {
     this.setState({ schema });
   };
 
+  markActiveQuestionAsComplete() {
+    const { questions, activeQuestionSet, activeQuestion } = this.state;
+
+    // This will also alter the "parent" array of questions (pass-by-reference)
+    activeQuestionSet[activeQuestion].completed = true;
+
+    console.log(questions);
+
+    // Resave the questions in the localstorage to save the object with the completed property as true
+    localStorage.setItem("__testSQL_Questions__", JSON.stringify(questions));
+
+    this.setState({ activeQuestionSet });
+  }
+
   runQuery = sql => {
     const { database, activeQuestionSet, activeQuestion } = this.state;
 
@@ -283,6 +309,8 @@ class App extends Component {
     try {
       if (checkAnswer(database, sql, activeQuestionSet[activeQuestion])) {
         this.changeFeedback("Correct Answer");
+
+        this.markActiveQuestionAsComplete();
       }
     } catch (IncorrectAnswer) {
       this.changeFeedback(IncorrectAnswer.message);
