@@ -1,22 +1,21 @@
-const bluebird = require('bluebird');
-const crypto = bluebird.promisifyAll(require('crypto'));
-const passport = require('passport');
+const bluebird = require("bluebird");
+const crypto = bluebird.promisifyAll(require("crypto"));
+const passport = require("passport");
 
 // Config
-const config = require('../config/config');
+const config = require("../config/config");
 
 // Models
-const User = require('../models/User');
-const Database = require('../models/Database');
+const User = require("../models/User");
+const Database = require("../models/Database");
 
 /**
  * POST /login
- * Sign in using email and password.
+ * Sign in using username and password.
  */
 exports.login = (req, res, next) => {
-  req.assert('email', 'Email is not valid').isEmail();
-  req.assert('password', 'Password cannot be blank').notEmpty();
-  req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
+  req.assert("username", "Username is not valid").notEmpty();
+  req.assert("password", "Password cannot be blank").notEmpty();
 
   const errors = req.validationErrors();
 
@@ -24,7 +23,7 @@ exports.login = (req, res, next) => {
     return res.status(400).json({ error: errors });
   }
 
-  passport.authenticate('local', (err, user, info) => {
+  passport.authenticate("local", (err, user, info) => {
     if (err) {
       return next(err);
     }
@@ -33,7 +32,7 @@ exports.login = (req, res, next) => {
       return res.status(400).json({ error: info });
     }
 
-    req.login(user, (err) => {
+    req.login(user, err => {
       if (err) {
         return next(err);
       }
@@ -50,7 +49,7 @@ exports.login = (req, res, next) => {
 exports.logout = (req, res) => {
   req.logout();
 
-  return res.json({ msg: 'Good' });
+  return res.json({ msg: "Good" });
 };
 
 /**
@@ -58,12 +57,12 @@ exports.logout = (req, res) => {
  * Create a new local account.
  */
 exports.register = (req, res, next) => {
-  req.assert('email', 'Email is not valid').isEmail();
-  req.assert('password', 'Password must be at least 4 characters long').len(4);
+  req.assert("username", "Username is not valid").notEmpty();
+  req.assert("password", "Password must be at least 4 characters long").len(4);
 
-  req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
-
-  req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
+  req
+    .assert("confirmPassword", "Passwords do not match")
+    .equals(req.body.password);
 
   const errors = req.validationErrors();
 
@@ -71,26 +70,26 @@ exports.register = (req, res, next) => {
     return res.status(400).json({ error: errors });
   }
 
-  User.findOne({ email: req.body.email }, (err, existingUser) => {
+  User.findOne({ username: req.body.username }, (err, existingUser) => {
     if (err) {
       return next(err);
     }
 
     if (existingUser) {
-      return res.status(400).json({ error: 'That email is already taken.' });
+      return res.status(400).json({ error: "That username is already taken." });
     }
 
     const user = new User({
-      email: req.body.email,
-      password: req.body.password,
+      username: req.body.username,
+      password: req.body.password
     });
 
-    user.save((err) => {
+    user.save(err => {
       if (err) {
         return next(err);
       }
 
-      req.logIn(user, (err) => {
+      req.logIn(user, err => {
         if (err) {
           return next(err);
         }
