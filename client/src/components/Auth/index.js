@@ -1,96 +1,56 @@
 import React from "react";
 //import PropTypes from 'prop-types';
 
-import Button from "material-ui/Button";
-
-import TextField from "material-ui/TextField";
-import Dialog, {
-  DialogActions,
-  DialogTitle,
-  DialogContent
-} from "material-ui/Dialog";
+import Guest from "./Guest";
+import LoggedIn from "./LoggedIn";
 
 class Auth extends React.Component {
   state = {
-    currentTab: 0,
-    open: false,
-
-    username: "",
-    password: ""
+    user: null
   };
 
-  login = e => {
-    const { username, password } = this.state;
-
+  login = (username, password) => {
     const data = { username, password };
 
     fetch("/login", {
       method: "POST",
       body: JSON.stringify(data),
+      credentials: "same-origin",
       headers: new Headers({
         "Content-Type": "application/json"
       })
     })
       .then(response => response.json())
       .catch(error => console.error("Error:", error))
-      .then(response => console.log("Success:", response));
+      .then(response => {
+        this.setState({ user: response });
+
+        fetch("/database/list", {
+          method: "GET",
+          credentials: "same-origin",
+          headers: new Headers({
+            "Content-Type": "application/json"
+          })
+        });
+      });
   };
 
-  handleChange = event => {
-    this.setState({ [event.target.id]: event.target.value });
-  };
-
-  open = () => {
-    this.setState({ open: true });
-  };
-
-  close = () => {
-    this.setState({ open: false });
+  logout = () => {
+    fetch("/logout", {
+      method: "GET",
+      headers: new Headers({
+        "Content-Type": "application/json"
+      })
+    }).then(response => this.setState({ user: null }));
   };
 
   render() {
-    return (
-      <div>
-        <Button color="inherit" onClick={this.open}>
-          Login
-        </Button>
-        <Dialog
-          open={this.state.open}
-          onClose={this.close}
-          aria-labelledby="form-dialog-title"
-        >
-          <DialogTitle id="form-dialog-title">Login</DialogTitle>
-          <DialogContent>
-            <TextField
-              type="text"
-              id="username"
-              label="Username"
-              onChange={this.handleChange}
-              margin="dense"
-              autoFocus
-              fullWidth
-              required
-            />
-            <TextField
-              type="password"
-              id="password"
-              label="Password"
-              onChange={this.handleChange}
-              margin="dense"
-              fullWidth
-              required
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.close} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.login} color="primary" variant="raised">
-              Login
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
+    const { user } = this.state;
+
+    return user ? (
+      <LoggedIn logoutHandler={this.logout} />
+    ) : (
+      <Guest loginHandler={this.login} />
     );
   }
 }

@@ -120,38 +120,7 @@ class Header extends React.Component {
           >
             React testSQL
           </Typography>
-          {!auth && <Auth />}
-
-          {auth && (
-            <div>
-              <IconButton
-                aria-haspopup="true"
-                onClick={event =>
-                  this.setState({ anchorEl: event.currentTarget })
-                }
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right"
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right"
-                }}
-                onClose={event => this.setState({ anchorEl: null })}
-              >
-                <MenuItem>Profile</MenuItem>
-                <MenuItem>My account</MenuItem>
-              </Menu>
-            </div>
-          )}
+          <Auth />
         </Toolbar>
       </AppBar>
     );

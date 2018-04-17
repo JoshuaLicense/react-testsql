@@ -322,8 +322,10 @@ class App extends Component {
 
     console.log(time() - tick);
 
+    const tock = time();
     // Run the sql query
     this.run(sql);
+    console.log(time() - tock);
 
     // Only save the database if a query has altered the dataset
     if (database.getRowsModified(sql)) {
