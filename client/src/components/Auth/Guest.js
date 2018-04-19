@@ -22,10 +22,6 @@ class Guest extends React.Component {
   login = () => {
     const { username, password } = this.state;
 
-    const data = { username, password };
-
-    console.log(data);
-
     this.props.loginHandler(username, password);
   };
 

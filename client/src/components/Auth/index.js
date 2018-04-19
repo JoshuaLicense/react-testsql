@@ -9,6 +9,18 @@ class Auth extends React.Component {
     user: null
   };
 
+  componentDidMount = () => {
+    const userString = sessionStorage.getItem("user");
+
+    // If a user exists in the session storage
+    if (userString) {
+      // Decode it and set the user state
+      const user = JSON.parse(userString);
+
+      this.setState({ user });
+    }
+  };
+
   login = (username, password) => {
     const data = { username, password };
 
@@ -25,6 +37,9 @@ class Auth extends React.Component {
       .then(response => {
         this.setState({ user: response });
 
+        // Save to the state and the session, refreshing will still persist the login client side
+        sessionStorage.setItem("user", JSON.stringify(response));
+
         fetch("/database/list", {
           method: "GET",
           credentials: "same-origin",
@@ -38,6 +53,7 @@ class Auth extends React.Component {
   logout = () => {
     fetch("/logout", {
       method: "GET",
+      credentials: "same-origin",
       headers: new Headers({
         "Content-Type": "application/json"
       })
@@ -48,7 +64,7 @@ class Auth extends React.Component {
     const { user } = this.state;
 
     return user ? (
-      <LoggedIn logoutHandler={this.logout} />
+      <LoggedIn user={user} logoutHandler={this.logout} />
     ) : (
       <Guest loginHandler={this.login} />
     );
