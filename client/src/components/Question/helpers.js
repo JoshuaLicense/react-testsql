@@ -90,14 +90,14 @@ export const getForeignColumns = (db, x = 1) => {
   throw new Error(`A foreign key was not found`);
 };
 
-export const getRowsFrom = (db, table, column, x = 1) => {
-  const rows = db.exec(
+export const getRows = (db, table, column, x = 1) => {
+  const [{ values }] = db.exec(
     `SELECT "${column}" FROM "${table}" ORDER BY RANDOM() LIMIT ${x}`
   );
 
-  if (rows[0].values.length < x) {
-    throw new Error(`The table doesn't contain enough rows`);
+  if (values.length < x) {
+    throw new Error(`The table doesn't contain enough rows.`);
   }
 
-  return rows;
+  return [].concat(...values);
 };

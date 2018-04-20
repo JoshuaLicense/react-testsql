@@ -1,4 +1,4 @@
-import { getTables, getColumns } from "./helpers";
+import { getTables, getColumns, getRows } from "./helpers";
 
 const _questions = [
   {
@@ -47,6 +47,10 @@ const _questions = [
       const tables = getTables(db, 1);
 
       const [{ table, column }] = getColumns(db, tables);
+
+      let rows = getRows(db, table, column, 3);
+
+      //console.log(rows);
 
       return {
         table,

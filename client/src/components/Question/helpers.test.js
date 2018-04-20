@@ -2,7 +2,7 @@ import {
   getTables,
   getColumns,
   getForeignColumns,
-  getRowsFrom
+  getRows
 } from "./helpers";
 
 const mockDB = {
@@ -157,5 +157,54 @@ describe("getColumns()", () => {
         column: "Address"
       }
     ]);
+  });
+
+  it("returns an int column", () => {
+    mockDB.exec.mockReturnValueOnce([
+      {
+        columns: ["cid", "name", "type", "notnull", "dflt_value", "pk"],
+        values: [
+          [0, "EmployeeID", "INTEGER", 1, null, 1],
+          [1, "LastName", "VARCHAR(20)", 1, null, 0],
+          [2, "FirstName", "VARCHAR(20)", 0, null, 0],
+          [3, "Title", "VARCHAR(60)", 0, null, 0],
+          [4, "Address", "VARCHAR(40)", 0, null, 0],
+          [5, "HireDate", "VARCHAR(25)", 1, null, 0]
+        ]
+      }
+    ]);
+
+    expect(getColumns(mockDB, tables, { type: "int" })).toEqual([
+      {
+        table: "Employees",
+        column: "EmployeeID"
+      },
+    ]);
+  });
+});
+
+describe("getRows()", () => {
+  it("fails lack of available rows", () => {
+    mockDB.exec.mockReturnValueOnce([
+      {
+        columns: ["EmployeeID"],
+        values: [[2], [1], [4]]
+      }
+    ]);
+
+    expect(() => getRows(mockDB, "", "", 5)).toThrowError(
+      /^The table doesn't contain enough rows.$/
+    );
+  });
+
+  it("returns 4 rows", () => {
+    mockDB.exec.mockReturnValueOnce([
+      {
+        columns: ["EmployeeID"],
+        values: [[2], [1], [4], [3]]
+      }
+    ]);
+
+    expect(getRows(mockDB, "", "", 4)).toEqual([2, 1, 4, 3]);
   });
 });
