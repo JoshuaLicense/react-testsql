@@ -137,8 +137,6 @@ class App extends Component {
     }
   };
 
-  componentWillUnmount = () => {};
-
   loadQuestions = questions => {
     const questionSetNames = [
       ...new Set(questions.map(question => question.set))
@@ -205,7 +203,10 @@ class App extends Component {
         initalDatabase: typedArray,
         results: null
       },
-      () => this.getAllTableNames()
+      () => {
+        this.getAllTableNames();
+        this.saveDatabase(this.state.database);
+      }
     );
   };
 
@@ -391,7 +392,10 @@ class App extends Component {
 
     return (
       <div className={classes.root}>
-        <Header sidebarToggler={this.toggleSidebar} auth={false} />
+        <Header
+          sidebarToggleHandler={this.toggleSidebar}
+          loadDatabaseHandler={this.loadDatabase}
+        />
         {schema && (
           <Schema
             schema={schema}
