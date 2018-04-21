@@ -63,8 +63,14 @@ class Auth extends React.Component {
   render() {
     const { user } = this.state;
 
+    const { loadDatabaseHandler } = this.props;
+
     return user ? (
-      <LoggedIn user={user} logoutHandler={this.logout} />
+      <LoggedIn
+        user={user}
+        loadDatabaseHandler={loadDatabaseHandler}
+        logoutHandler={this.logout}
+      />
     ) : (
       <Guest loginHandler={this.login} />
     );

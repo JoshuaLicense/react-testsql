@@ -95,9 +95,10 @@ class Header extends React.Component {
     this.setState({ anchorEl: null });
   };
 
+  handleSidebarToggle = () => this.props.sidebarToggleHandler();
+
   render() {
-    const { classes, auth, sidebarToggler } = this.props;
-    const { anchorEl, currentTab } = this.state;
+    const { classes, loadDatabaseHandler } = this.props;
 
     return (
       <AppBar position="fixed" className={classes.appBar}>
@@ -106,7 +107,7 @@ class Header extends React.Component {
             <IconButton
               color="inherit"
               aria-label="open drawer"
-              onClick={() => sidebarToggler()}
+              onClick={this.handleSidebarToggle}
               className={classes.menuButton}
             >
               <MenuIcon />
@@ -120,7 +121,7 @@ class Header extends React.Component {
           >
             React testSQL
           </Typography>
-          <Auth />
+          <Auth loadDatabaseHandler={loadDatabaseHandler} />
         </Toolbar>
       </AppBar>
     );

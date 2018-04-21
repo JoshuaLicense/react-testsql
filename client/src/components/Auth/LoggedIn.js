@@ -17,9 +17,11 @@ class LoggedIn extends React.Component {
   handleLogout = () => this.props.logoutHandler();
 
   render() {
+    const { loadDatabaseHandler } = this.props;
+
     return (
       <div>
-        <ManageDatabase />
+        <ManageDatabase loadDatabaseHandler={loadDatabaseHandler} />
         <ManageSession />
         <IconButton
           color="inherit"
