@@ -134,7 +134,17 @@ class DatabaseList extends React.Component {
   handleSaveDatabase = title => {
     const currentDatabase = localStorage.getItem("__testSQL_Database__");
 
-    const blob = new Blob([currentDatabase], {
+    function toBinArray(str) {
+      var l = str.length,
+        arr = new Uint8Array(l);
+      for (var i = 0; i < l; i++) arr[i] = str.charCodeAt(i);
+      return arr;
+    }
+
+    // localStorage is saved as a binary string, covert it back to an array
+    const typedArray = toBinArray(currentDatabase);
+
+    const blob = new Blob([typedArray], {
       type: `application/x-sqlite-3`
     });
 
@@ -157,8 +167,12 @@ class DatabaseList extends React.Component {
       method: "GET",
       credentials: "same-origin"
     })
-      .then(res => console.log(res))
-      .then(res => this.load());
+      .then(res => res.arrayBuffer())
+      .then(fileBuffer => {
+        const typedArray = new Uint8Array(fileBuffer);
+
+        this.props.loadDatabaseHandler(typedArray);
+      });
   };
 
   handleDeleteDatabase = id => {
@@ -228,7 +242,6 @@ class DatabaseManager extends React.Component {
 
   render() {
     const { open } = this.state;
-    const { loadDatabaseHandler } = this.props;
 
     return (
       <span>
@@ -237,7 +250,7 @@ class DatabaseManager extends React.Component {
         </IconButton>
         <DatabaseList
           open={open}
-          loadDatabaseHandler={loadDatabaseHandler}
+          loadDatabaseHandler={this.props.loadDatabaseHandler}
           closeHandler={this.close}
         />
       </span>

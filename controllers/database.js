@@ -65,6 +65,9 @@ exports.deleteDatabase = (req, res, next) => {
     (err, database) => {
       if (err) return next(err);
 
+      // Remove the file from the server too.
+      fs.unlink(`./saves/${database.path}`);
+
       return res.sendStatus(200);
     }
   );
