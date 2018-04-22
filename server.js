@@ -88,10 +88,17 @@ app.post(
   upload.single("database"),
   databaseController.saveDatabase
 );
+
 app.get(
   "/database/load/:id",
   passportConfig.isAuthenticated,
   databaseController.loadDatabase
+);
+
+app.get(
+  "/database/delete/:id",
+  passportConfig.isAuthenticated,
+  databaseController.deleteDatabase
 );
 
 app.get(

@@ -19,7 +19,8 @@ import List, {
 import Dialog, {
   DialogTitle,
   DialogActions,
-  DialogContent
+  DialogContent,
+  DialogContentText
 } from "material-ui/Dialog";
 
 import SaveIcon from "material-ui-icons/Save";
@@ -27,19 +28,23 @@ import DatabaseIcon from "material-ui-icons/Storage";
 import DeleteIcon from "material-ui-icons/Delete";
 
 class DatabaseItem extends React.Component {
-  handleClick = () => {
-    this.props.clickHandler(this.props.object._id);
+  handleLoadDatabase = () => {
+    this.props.loadDatabaseHandler(this.props.item._id);
+  };
+
+  handleDeleteDatabase = () => {
+    this.props.deleteDatabaseHandler(this.props.item._id);
   };
 
   render() {
-    const { title, createdAt } = this.props.object;
+    const { title, createdAt } = this.props.item;
 
     const date = new Date(createdAt).toDateString();
 
     return (
-      <ListItem onClick={this.handleClick} button>
+      <ListItem onClick={this.handleLoadDatabase} button>
         <ListItemText primary={title} secondary={date} />
-        <ListItemSecondaryAction>
+        <ListItemSecondaryAction onClick={this.handleDeleteDatabase}>
           <IconButton aria-label="Delete">
             <DeleteIcon />
           </IconButton>
@@ -148,12 +153,21 @@ class DatabaseList extends React.Component {
   };
 
   handleLoadDatabase = id => {
-    console.log(id);
-
-    /*fetch("/database/load", {
+    fetch(`/database/load/${id}`, {
       method: "GET",
       credentials: "same-origin"
-    }).then(res => console.log(res));*/
+    })
+      .then(res => console.log(res))
+      .then(res => this.load());
+  };
+
+  handleDeleteDatabase = id => {
+    fetch(`/database/delete/${id}`, {
+      method: "GET",
+      credentials: "same-origin"
+    })
+      .then(res => console.log(res))
+      .then(res => this.load());
   };
 
   render() {
@@ -173,16 +187,22 @@ class DatabaseList extends React.Component {
         />
         <Divider />
         <DialogTitle id="simple-dialog-title">All Saved Databases</DialogTitle>
-        <List>
-          {list &&
-            list.map(database => (
+        {count > 0 ? (
+          <List>
+            {list.map(database => (
               <DatabaseItem
                 key={database._id}
-                clickHandler={this.handleLoadDatabase}
-                object={database}
+                loadDatabaseHandler={this.handleLoadDatabase}
+                deleteDatabaseHandler={this.handleDeleteDatabase}
+                item={database}
               />
             ))}
-        </List>
+          </List>
+        ) : (
+          <DialogContent>
+            <DialogContentText>No saved databases yet!</DialogContentText>
+          </DialogContent>
+        )}
         <DialogActions>
           <Button onClick={this.props.closeHandler} color="primary">
             Cancel

@@ -56,3 +56,16 @@ exports.saveDatabase = (req, res, next) => {
 exports.loadDatabase = (req, res, next) => {
   res.send("NOT IMPLEMENTED");
 };
+
+exports.deleteDatabase = (req, res, next) => {
+  const { id } = req.params;
+
+  Database.findOneAndRemove(
+    { _id: id, creator: req.user.id },
+    (err, database) => {
+      if (err) return next(err);
+
+      return res.sendStatus(200);
+    }
+  );
+};
