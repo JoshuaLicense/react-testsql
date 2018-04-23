@@ -2,6 +2,8 @@ const bluebird = require("bluebird");
 const crypto = bluebird.promisifyAll(require("crypto"));
 const passport = require("passport");
 
+const fs = require("fs");
+
 // Config
 const config = require("../config/config");
 
@@ -54,7 +56,24 @@ exports.saveDatabase = (req, res, next) => {
 };
 
 exports.loadDatabase = (req, res, next) => {
-  res.send("NOT IMPLEMENTED");
+  const { id } = req.params;
+
+  Database.findById(id, (err, database) => {
+    const filename = database.path;
+
+    const options = {
+      root: `./saves/`,
+      dotfiles: "deny",
+      headers: {
+        "x-timestamp": Date.now(),
+        "x-sent": true
+      }
+    };
+
+    res.sendFile(filename, options, err => {
+      if (err) return next(err);
+    });
+  });
 };
 
 exports.deleteDatabase = (req, res, next) => {
