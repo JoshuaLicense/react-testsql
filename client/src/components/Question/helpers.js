@@ -14,10 +14,10 @@ export const getTables = (db, x = false) => {
 
   // Did we recieve the wanted number of tables back?
   if (x && tables.length !== x) {
-    // Flatten the array
     throw new Error(`Not enough tables found in the database.`);
   }
 
+  // Flatten the array
   return [].concat(...tables);
 };
 
@@ -49,45 +49,43 @@ export const getColumns = (
     if (sameTable && result.length < x) result.length = 0;
   }
 
+  if (x && result.length !== x) {
+    throw new Error(`Not enough columns found in the database.`);
+  }
+
   return result;
 };
 
-export const getForeignColumns = (db, x = 1) => {
-  const tables = getTables();
+export const getForeignColumns = (db, tables, x = 1) => {
   const result = [];
 
-  for (let i = 0; i < tables.length; ++i) {
-    const foreignKeys = db.exec(`PRAGMA foreign_key_list(${tables[i]})`);
+  for (let i = 0; i < tables.length && x > result.length; ++i) {
+    // Will be unable to destructure if no foreign keys exist, continue to the next table
+    try {
+      const [{ values: foreignKeys }] = db.exec(`PRAGMA foreign_key_list(${tables[i]})`);
 
-    if (foreignKeys.length > 0) {
-      if (foreignKeys[0].values.length < x) {
-        continue;
-      }
-
-      // shuffle
-      const keys = foreignKeys[0].values;
-      keys.length = x;
-
-      for (let j = 0; j < x; ++j) {
+      for (let j = 0; j < foreignKeys.length && x > result.length; ++j) {
         result.push({
           from: {
-            table: keys[j][2],
-            column: keys[j][3]
+            table: foreignKeys[j][2],
+            column: foreignKeys[j][3]
           },
           to: {
-            table: getTables[i][0],
-            column: keys[j][4]
+            table: tables[i],
+            column: foreignKeys[j][4]
           }
         });
       }
+    } catch(e) {
+      continue;
     }
   }
 
-  if (result.length > 0) {
-    return result;
+  if (x && result.length !== x) {
+    throw new Error(`Not enough foreign keys were found in the database.`);
   }
 
-  throw new Error(`A foreign key was not found`);
+  return result;
 };
 
 export const getRows = (db, table, column, x = 1) => {
@@ -98,6 +96,6 @@ export const getRows = (db, table, column, x = 1) => {
   if (values.length < x) {
     throw new Error(`The table doesn't contain enough rows.`);
   }
-
+ 
   return [].concat(...values);
 };
