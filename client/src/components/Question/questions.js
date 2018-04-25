@@ -1,4 +1,4 @@
-import { getTables, getColumns, getRows } from "./helpers";
+import { getTables, getColumns, getRows, getForeignColumns } from "./helpers";
 
 const _questions = [
   {
@@ -41,16 +41,12 @@ const _questions = [
   },
   {
     set: "Easy",
-    question: "Display all the different {column}'s which exist in {table}",
+    question: "Display all the different {column}'s that exist in {table}",
     answer: "SELECT DISTINCT {column} FROM {table}",
     func: db => {
       const tables = getTables(db, 1);
 
       const [{ table, column }] = getColumns(db, tables);
-
-      let rows = getRows(db, table, column, 3);
-
-      //console.log(rows);
 
       return {
         table,
@@ -61,23 +57,27 @@ const _questions = [
   },
   {
     set: "Easy",
-    question: "Display all the {column1}'s and {column2}'s from {table}",
+    question: "Display the {column1}'s and {column2}'s from {table} that have a {column3} of {row}",
     answer: "SELECT `{column1}`, `{column2}` FROM {table}",
     func: db => {
       const tables = getTables(db);
-
-      const [{ table, column: column1 }, { column: column2 }] = getColumns(
+  
+      const [{ table, column: column1 }, { column: column2 }, { column: column3 }] = getColumns(
         db,
         tables,
         {
-          x: 2
+          x: 3
         }
       );
+
+      const [row] = getRows(db, table, column3, 1);
 
       return {
         table,
         column1,
-        column2
+        column2,
+        column3,
+        row,
       };
     }
   },

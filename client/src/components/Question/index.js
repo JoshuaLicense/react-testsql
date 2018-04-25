@@ -104,10 +104,10 @@ class Question extends React.Component {
         <Divider />
         <div className={classes.innerPadding}>
           <Typography
-            variant="body2"
+            variant="subheading"
             component="span"
             color={
-              activeQuestionSet[activeQuestion].error ? "error" : "primary"
+              activeQuestionSet[activeQuestion].error ? "error" : "inherit"
             }
             gutterBottom
           >
