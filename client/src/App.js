@@ -312,12 +312,12 @@ class App extends Component {
     //for(let i = 0; i < 1000; ++i) {
     try {
       if (checkAnswer(database, sql, activeQuestionSet[activeQuestion])) {
-        this.changeFeedback("Correct Answer");
+        this.changeFeedback({ message: "Correct Answer" });
 
         this.markActiveQuestionAsComplete();
       }
     } catch (IncorrectAnswer) {
-      this.changeFeedback(IncorrectAnswer.message);
+      this.changeFeedback({ message: IncorrectAnswer.message, error: true });
     }
     //}
 
@@ -347,7 +347,7 @@ class App extends Component {
         history: [...history, sql]
       });
     } catch (Error) {
-      this.changeFeedback(Error.message);
+      this.changeFeedback({ message: Error.message, error: true });
     }
   };
 
@@ -439,7 +439,7 @@ class App extends Component {
               ))}
           </section>
         </main>
-        <Feedback message={feedback} changeHandler={this.changeFeedback} />
+        <Feedback {...feedback} changeHandler={this.changeFeedback} />
       </div>
     );
   }

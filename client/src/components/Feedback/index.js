@@ -7,9 +7,11 @@ import Snackbar from "material-ui/Snackbar";
 import IconButton from "material-ui/IconButton";
 import CloseIcon from "material-ui-icons/Close";
 
+import Typography from "material-ui/Typography";
+
 class Feedback extends React.Component {
   render() {
-    const { message, changeHandler } = this.props;
+    const { message, error, changeHandler } = this.props;
 
     return (
       <Snackbar
@@ -23,7 +25,11 @@ class Feedback extends React.Component {
         SnackbarContentProps={{
           "aria-describedby": "message-id"
         }}
-        message={<span id="message-id">{message}</span>}
+        message={
+          <Typography color={error ? "error" : "inherit"} id="message-id">
+            {message}
+          </Typography>
+        }
         action={
           <IconButton
             key="close"
