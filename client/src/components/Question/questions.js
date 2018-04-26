@@ -116,7 +116,7 @@ const _questions = [
   {
     set: "Easy",
     question: "Display the rows from {table} showing the highest {column1} first, using {column2} as a secondary ascending sort",
-    answer: "SELECT * FROM {table} ORDER BY {column1} DESC",
+    answer: "SELECT * FROM {table} ORDER BY {column1} DESC, {column2} ASC",
     func: db => {
       const tables = getTables(db);
   
