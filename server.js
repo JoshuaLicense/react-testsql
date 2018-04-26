@@ -8,7 +8,9 @@ const MongoStore = require("connect-mongo")(session);
 
 const passport = require("passport");
 const bodyParser = require("body-parser");
-const expressValidator = require("express-validator");
+
+const { check, validationResult } = require("express-validator/check");
+const { matchedData, sanitize } = require("express-validator/filter");
 
 const path = require("path");
 const multer = require("multer");
@@ -48,7 +50,6 @@ app.set("port", process.env.PORT || 3001);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(expressValidator());
 app.use(
   session({
     resave: true,
@@ -82,8 +83,15 @@ app.get(
   databaseController.listDatabase
 );
 app.post(
-  "/database/save",
+  "/database/save/:title?",
   passportConfig.isAuthenticated,
+  [
+    check("title")
+      .exists()
+      .withMessage("Must specify a database title.")
+      .isLength({ max: 32 })
+      .withMessage("Database title must be within 32 characters.")
+  ],
   databaseController.canSaveDatabase,
   upload.single("database"),
   databaseController.saveDatabase

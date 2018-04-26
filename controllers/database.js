@@ -10,6 +10,8 @@ const config = require("../config/config");
 // Models
 const Database = require("../models/Database");
 
+const { check, validationResult } = require("express-validator/check");
+
 exports.listDatabase = (req, res, next) => {
   Database.find({ creator: req.user.id }, (err, databases) => {
     if (err) {
@@ -21,6 +23,12 @@ exports.listDatabase = (req, res, next) => {
 };
 
 exports.canSaveDatabase = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.mapped() });
+  }
+
   Database.find({ creator: req.user.id }, (err, databases) => {
     if (err) {
       return next(err);
@@ -28,8 +36,10 @@ exports.canSaveDatabase = (req, res, next) => {
 
     // Check if the user has reached their upload limit
     if (databases.length >= config.database.limit) {
-      return res.json({
-        error: "You have reached the limit of saved databases"
+      return res.status(403).json({
+        errors: {
+          length: { msg: "You have reached the limit of saved databases" }
+        }
       });
     }
 
@@ -40,7 +50,7 @@ exports.canSaveDatabase = (req, res, next) => {
 exports.saveDatabase = (req, res, next) => {
   // Create a new database instance
   const database = new Database({
-    title: req.body.title,
+    title: req.params.title,
     path: req.file.filename,
 
     creator: req.user.id

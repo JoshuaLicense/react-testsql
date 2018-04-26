@@ -1,18 +1,20 @@
 import React from "react";
 //import PropTypes from 'prop-types';
 
+import api from "../../utils/api";
+
 import IconButton from "material-ui/IconButton";
 
 import Divider from "material-ui/Divider";
 
 import Button from "material-ui/Button";
 
-import TextField from "material-ui/TextField";
+import Input, { InputLabel } from "material-ui/Input";
+import { FormControl, FormHelperText } from "material-ui/Form";
 
 import List, {
   ListItem,
   ListItemText,
-  ListItemIcon,
   ListItemSecondaryAction
 } from "material-ui/List";
 
@@ -23,7 +25,6 @@ import Dialog, {
   DialogContentText
 } from "material-ui/Dialog";
 
-import SaveIcon from "material-ui-icons/Save";
 import DatabaseIcon from "material-ui-icons/Storage";
 import DeleteIcon from "material-ui-icons/Delete";
 
@@ -56,13 +57,21 @@ class DatabaseItem extends React.Component {
 
 class SaveDatabase extends React.Component {
   state = {
-    title: ""
+    title: "",
+    errors: {}
   };
 
-  handleSaveDatabase = async e => {
-    await this.props.saveDatabaseHandler(this.state.title);
-
-    this.setState({ title: "" });
+  handleSaveDatabase = e => {
+    this.props
+      .saveDatabaseHandler(this.state.title)
+      .then(json => {
+        this.setState({ title: "", errors: {} });
+      })
+      .catch(error => {
+        error.json().then(({ errors }) => {
+          this.setState({ errors });
+        });
+      });
   };
 
   handleChange = e => {
@@ -70,7 +79,7 @@ class SaveDatabase extends React.Component {
   };
 
   render() {
-    const { title } = this.state;
+    const { title, errors } = this.state;
 
     const { currentCount } = this.props;
 
@@ -95,16 +104,26 @@ class SaveDatabase extends React.Component {
         <DialogTitle style={{ paddingBottom: 0 }}>
           Save the current database
         </DialogTitle>
-        <DialogContent style={{ paddingBottom: 0 }}>
-          <TextField
-            label="Choose a name..."
-            value={title}
-            onChange={this.handleChange}
-            autoFocus
-            margin="dense"
-            disabled={disabled}
+        <DialogContent style={{ paddingBottom: 4 }}>
+          <FormControl
+            error={Boolean(errors.title)}
+            aria-describedby="name-error-text"
             fullWidth
-          />
+          >
+            <InputLabel htmlFor="name">Name</InputLabel>
+            <Input
+              id="name"
+              value={title}
+              onChange={this.handleChange}
+              margin="dense"
+              disabled={disabled}
+              autoFocus
+              fullWidth
+            />
+            <FormHelperText id="name-error-text">
+              {errors.title && errors.title.msg}
+            </FormHelperText>
+          </FormControl>
         </DialogContent>
         <DialogActions>{button}</DialogActions>
       </div>
@@ -142,44 +161,26 @@ class DatabaseList extends React.Component {
     }
 
     // localStorage is saved as a binary string, covert it back to an array
-    const typedArray = toBinArray(currentDatabase);
+    const database = toBinArray(currentDatabase);
 
-    const blob = new Blob([typedArray], {
-      type: `application/x-sqlite-3`
+    return api.saveDatabase(title, database).then(json => {
+      this.load();
+
+      return json;
     });
-
-    const data = new FormData();
-
-    data.set("database", blob);
-    data.set("title", title);
-
-    fetch("/database/save", {
-      method: "POST",
-      body: data,
-      credentials: "same-origin"
-    })
-      .then(res => console.log(res))
-      .then(res => this.load());
   };
 
   handleLoadDatabase = id => {
-    fetch(`/database/load/${id}`, {
-      method: "GET",
-      credentials: "same-origin"
-    })
-      .then(res => res.arrayBuffer())
-      .then(fileBuffer => {
-        const typedArray = new Uint8Array(fileBuffer);
+    api.loadDatabase(id).then(fileBuffer => {
+      const typedArray = new Uint8Array(fileBuffer);
 
-        this.props.loadDatabaseHandler(typedArray);
-      });
+      this.props.loadDatabaseHandler(typedArray);
+    });
   };
 
   handleDeleteDatabase = id => {
-    fetch(`/database/delete/${id}`, {
-      method: "GET",
-      credentials: "same-origin"
-    })
+    api
+      .deleteDatabase(id)
       .then(res => console.log(res))
       .then(res => this.load());
   };

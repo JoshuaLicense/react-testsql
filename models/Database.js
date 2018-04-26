@@ -4,7 +4,11 @@ const { Schema } = mongoose;
 
 const databaseSchema = new mongoose.Schema(
   {
-    title: String,
+    title: {
+      type: String,
+      required: true
+    },
+
     path: String,
     creator: { type: Schema.Types.ObjectId, ref: "User" }
   },
