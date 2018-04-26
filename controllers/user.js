@@ -14,13 +14,10 @@ const Database = require("../models/Database");
  * Sign in using username and password.
  */
 exports.login = (req, res, next) => {
-  req.assert("username", "Username is not valid").notEmpty();
-  req.assert("password", "Password cannot be blank").notEmpty();
+  const errors = validationResult(req);
 
-  const errors = req.validationErrors();
-
-  if (errors) {
-    return res.status(400).json({ error: errors });
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.mapped() });
   }
 
   passport.authenticate("local", (err, user, info) => {

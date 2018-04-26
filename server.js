@@ -74,7 +74,20 @@ if (app.get("env") === "production") {
 // Routes
 app.post("/register", userController.register);
 
-app.post("/login", userController.login);
+app.post(
+  "/login",
+  [
+    check("username")
+      .exists()
+      .withMessage("Username field cannot be blank."),
+
+    check("password")
+      .exists()
+      .withMessage("Password field cannot be blank.")
+  ],
+  userController.login
+);
+
 app.get("/logout", userController.logout);
 
 app.get(
