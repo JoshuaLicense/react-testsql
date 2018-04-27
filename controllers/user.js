@@ -54,17 +54,10 @@ exports.logout = (req, res) => {
  * Create a new local account.
  */
 exports.register = (req, res, next) => {
-  req.assert("username", "Username is not valid").notEmpty();
-  req.assert("password", "Password must be at least 4 characters long").len(4);
+  const errors = validationResult(req);
 
-  req
-    .assert("confirmPassword", "Passwords do not match")
-    .equals(req.body.password);
-
-  const errors = req.validationErrors();
-
-  if (errors) {
-    return res.status(400).json({ error: errors });
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.mapped() });
   }
 
   User.findOne({ username: req.body.username }, (err, existingUser) => {
