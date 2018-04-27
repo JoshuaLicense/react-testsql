@@ -9,6 +9,8 @@ const config = require("../config/config");
 const User = require("../models/User");
 const Database = require("../models/Database");
 
+const { check, validationResult } = require("express-validator/check");
+
 /**
  * POST /login
  * Sign in using username and password.

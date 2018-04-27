@@ -73,7 +73,7 @@ if (app.get("env") === "production") {
 
 // Routes
 app.post(
-  "/register", 
+  "/register",
   [
     check("username")
       .exists()
@@ -85,9 +85,9 @@ app.post(
       .isLength({ min: 5 })
       .withMessage("A password must be over 5 characters long."),
 
-  check('passwordConfirmation', 'Confirmed passwords do not match each other.')
-    .exists()
-    .custom((value, { req }) => value === req.body.password)
+    check("confirmPassword", "Confirmed passwords do not match each other.")
+      .exists()
+      .custom((value, { req }) => value === req.body.password)
   ],
   userController.register
 );

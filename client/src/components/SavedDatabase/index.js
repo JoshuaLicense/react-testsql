@@ -166,11 +166,14 @@ class DatabaseList extends React.Component {
   };
 
   handleLoadDatabase = id => {
-    api.loadDatabase(id).then(fileBuffer => {
-      const typedArray = new Uint8Array(fileBuffer);
+    api
+      .loadDatabase(id)
+      .then(fileBuffer => {
+        const typedArray = new Uint8Array(fileBuffer);
 
-      this.props.loadDatabaseHandler(typedArray);
-    });
+        this.props.loadDatabaseHandler(typedArray);
+      })
+      .then(() => this.props.closeHandler());
   };
 
   handleDeleteDatabase = id => {
