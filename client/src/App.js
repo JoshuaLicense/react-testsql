@@ -18,7 +18,7 @@ import SQL from "sql.js";
 
 import checkAnswer, { IncorrectAnswer } from "./components/Question/answer";
 
-import defaultDatabase from "./default.sqlite";
+import api from "./utils/api";
 
 import { withStyles } from "material-ui/styles";
 
@@ -220,23 +220,21 @@ class App extends Component {
 
       return Promise.resolve();
     } else {
-      return fetch(defaultDatabase)
-        .then(response => response.arrayBuffer())
-        .then(
-          fileBuffer => {
-            const typedArray = new Uint8Array(fileBuffer);
+      return api.getDefaultDatabase().then(
+        fileBuffer => {
+          const typedArray = new Uint8Array(fileBuffer);
 
-            this.loadDatabase(typedArray);
-          },
-          error => {
-            this.setState({
-              alert: {
-                type: `danger`,
-                message: error.message
-              }
-            });
-          }
-        );
+          this.loadDatabase(typedArray);
+        },
+        error => {
+          this.setState({
+            alert: {
+              type: `danger`,
+              message: error.message
+            }
+          });
+        }
+      );
     }
   };
 
