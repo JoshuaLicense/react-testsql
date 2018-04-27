@@ -1,9 +1,40 @@
+import defaultDatabase from "../default.sqlite";
+
 const handleError = res => {
   if (!res.ok) {
     throw res;
   }
 
   return res;
+};
+
+const getDefaultDatabase = () => {
+  return fetch(defaultDatabase).then(res => res.arrayBuffer());
+};
+
+const login = (username, password) => {
+  const data = { username, password };
+
+  return fetch("/login", {
+    method: "POST",
+    body: JSON.stringify(data),
+    credentials: "same-origin",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  })
+    .then(handleError)
+    .then(response => response.json());
+};
+
+const logout = () => {
+  return fetch("/logout", {
+    method: "GET",
+    credentials: "same-origin",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  }).then(handleError);
 };
 
 const saveDatabase = (title, database) => {
@@ -28,14 +59,16 @@ const loadDatabase = id => {
   return fetch(`/database/load/${id}`, {
     method: "GET",
     credentials: "same-origin"
-  }).then(res => res.arrayBuffer());
+  })
+    .then(handleError)
+    .then(res => res.arrayBuffer());
 };
 
 const deleteDatabase = id => {
   return fetch(`/database/delete/${id}`, {
     method: "GET",
     credentials: "same-origin"
-  });
+  }).then(handleError);
 };
 
 const listDatabases = () => {
@@ -45,10 +78,15 @@ const listDatabases = () => {
     headers: new Headers({
       "Content-Type": "application/json"
     })
-  }).then(res => res.json());
+  })
+    .then(handleError)
+    .then(res => res.json());
 };
 
 const api = {
+  getDefaultDatabase,
+  login,
+  logout,
   saveDatabase,
   loadDatabase,
   listDatabases,

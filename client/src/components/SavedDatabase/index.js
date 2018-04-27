@@ -137,15 +137,10 @@ class DatabaseList extends React.Component {
   };
 
   load = () => {
-    fetch("/database/list", {
-      method: "GET",
-      credentials: "same-origin",
-      headers: new Headers({
-        "Content-Type": "application/json"
-      })
-    })
-      .then(res => res.json())
-      .then(response => this.setState({ list: response }));
+    api
+      .listDatabases()
+      .then(list => this.setState({ list }))
+      .catch(e => console.log(e));
   };
 
   componentDidMount = () => this.load();
@@ -179,10 +174,7 @@ class DatabaseList extends React.Component {
   };
 
   handleDeleteDatabase = id => {
-    api
-      .deleteDatabase(id)
-      .then(res => console.log(res))
-      .then(res => this.load());
+    api.deleteDatabase(id).then(res => this.load());
   };
 
   render() {

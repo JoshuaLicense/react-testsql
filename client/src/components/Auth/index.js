@@ -1,6 +1,8 @@
 import React from "react";
 //import PropTypes from 'prop-types';
 
+import api from "../../utils/api";
+
 import Guest from "./Guest";
 import LoggedIn from "./LoggedIn";
 
@@ -22,42 +24,16 @@ class Auth extends React.Component {
   };
 
   login = (username, password) => {
-    const data = { username, password };
+    api.login(username, password).then(response => {
+      this.setState({ user: response });
 
-    fetch("/login", {
-      method: "POST",
-      body: JSON.stringify(data),
-      credentials: "same-origin",
-      headers: new Headers({
-        "Content-Type": "application/json"
-      })
-    })
-      .then(response => response.json())
-      .catch(error => console.error("Error:", error))
-      .then(response => {
-        this.setState({ user: response });
-
-        // Save to the state and the session, refreshing will still persist the login client side
-        sessionStorage.setItem("user", JSON.stringify(response));
-
-        fetch("/database/list", {
-          method: "GET",
-          credentials: "same-origin",
-          headers: new Headers({
-            "Content-Type": "application/json"
-          })
-        });
-      });
+      // Save to the state and the session, refreshing will still persist the login client side
+      sessionStorage.setItem("user", JSON.stringify(response));
+    });
   };
 
   logout = () => {
-    fetch("/logout", {
-      method: "GET",
-      credentials: "same-origin",
-      headers: new Headers({
-        "Content-Type": "application/json"
-      })
-    }).then(response => this.setState({ user: null }));
+    api.logout().then(response => this.setState({ user: null }));
   };
 
   render() {
