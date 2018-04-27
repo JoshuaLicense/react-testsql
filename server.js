@@ -72,7 +72,25 @@ if (app.get("env") === "production") {
 }
 
 // Routes
-app.post("/register", userController.register);
+app.post(
+  "/register", 
+  [
+    check("username")
+      .exists()
+      .withMessage("Username field cannot be blank."),
+
+    check("password")
+      .exists()
+      .withMessage("Password field cannot be blank.")
+      .isLength({ min: 5 })
+      .withMessage("A password must be over 5 characters long."),
+
+  check('passwordConfirmation', 'Confirmed passwords do not match each other.')
+    .exists()
+    .custom((value, { req }) => value === req.body.password)
+  ],
+  userController.register
+);
 
 app.post(
   "/login",
