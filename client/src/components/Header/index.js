@@ -7,22 +7,12 @@ import { withStyles } from "material-ui/styles";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 
-import Button from "material-ui/Button";
-
-import Menu, { MenuItem } from "material-ui/Menu";
 import IconButton from "material-ui/IconButton";
 import MenuIcon from "material-ui-icons/Menu";
 
 import Typography from "material-ui/Typography";
 
 import Hidden from "material-ui/Hidden";
-
-import TextField from "material-ui/TextField";
-import Dialog, { DialogActions, DialogContent } from "material-ui/Dialog";
-
-import Tabs, { Tab } from "material-ui/Tabs";
-
-import AccountCircle from "material-ui-icons/AccountCircle";
 
 const drawerWidth = 240;
 

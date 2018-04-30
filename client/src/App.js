@@ -16,7 +16,7 @@ import DatabaseOutput from "./components/Database/Output";
 
 import SQL from "sql.js";
 
-import checkAnswer, { IncorrectAnswer } from "./components/Question/answer";
+import checkAnswer, { IncorrectAnswer } from "./components/Question/answer"; // eslint-disable-line no-unused-vars
 
 import api from "./utils/api";
 

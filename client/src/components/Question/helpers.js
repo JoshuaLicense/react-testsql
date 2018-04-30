@@ -1,9 +1,9 @@
-const COLUMN_ID = 0;
+const COLUMN_ID = 0; // eslint-disable-line no-unused-vars
 const COLUMN_NAME = 1;
-const COLUMN_TYPE = 2;
+const COLUMN_TYPE = 2; // eslint-disable-line no-unused-vars
 const COLUMN_NOT_NULL = 3;
-const DEFAULT = 4;
-const PRIMARY_KEY = 5;
+const DEFAULT = 4; // eslint-disable-line no-unused-vars
+const PRIMARY_KEY = 5; // eslint-disable-line no-unused-vars
 
 export const getTables = (db, x = false) => {
   const [{ values: tables }] = db.exec(
@@ -62,7 +62,9 @@ export const getForeignColumns = (db, tables, x = 1) => {
   for (let i = 0; i < tables.length && x > result.length; ++i) {
     // Will be unable to destructure if no foreign keys exist, continue to the next table
     try {
-      const [{ values: foreignKeys }] = db.exec(`PRAGMA foreign_key_list(${tables[i]})`);
+      const [{ values: foreignKeys }] = db.exec(
+        `PRAGMA foreign_key_list(${tables[i]})`
+      );
 
       for (let j = 0; j < foreignKeys.length && x > result.length; ++j) {
         result.push({
@@ -76,7 +78,7 @@ export const getForeignColumns = (db, tables, x = 1) => {
           }
         });
       }
-    } catch(e) {
+    } catch (e) {
       continue;
     }
   }
@@ -96,6 +98,6 @@ export const getRows = (db, table, column, x = 1) => {
   if (values.length < x) {
     throw new Error(`The table doesn't contain enough rows.`);
   }
- 
+
   return [].concat(...values);
 };

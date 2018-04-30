@@ -1,6 +1,6 @@
 import React from "react";
 
-import PropTypes from "prop-types";
+import PropTypes from "prop-types"; // eslint-disable-line no-unused-vars
 import { withStyles } from "material-ui/styles";
 import Stepper, { Step, StepButton, StepLabel } from "material-ui/Stepper";
 import Typography from "material-ui/Typography";

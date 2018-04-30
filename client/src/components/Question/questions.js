@@ -1,4 +1,4 @@
-import { getTables, getColumns, getRows, getForeignColumns } from "./helpers";
+import { getTables, getColumns, getRows, getForeignColumns } from "./helpers"; // eslint-disable-line no-unused-vars
 
 const _questions = [
   {
@@ -144,7 +144,7 @@ const _questions = [
 
       const tables = getTables(db);
 
-      const [{ table, column: column }] = getColumns(db, tables, {
+      const [{ table, column }] = getColumns(db, tables, {
         x: 1,
         notnull: false
       });
