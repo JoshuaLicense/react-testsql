@@ -3,12 +3,21 @@ global.document.createRange = () => {
     setEnd: () => {},
     setStart: () => {},
     getBoundingClientRect: () => {}
-  }
-}
+  };
+};
 
 const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
+  getItem: jest.fn(() => null),
+  setItem: jest.fn(() => null),
   clear: jest.fn()
 };
-global.localStorage = localStorageMock
+
+global.localStorage = localStorageMock;
+
+const sessionStorageMock = {
+  getItem: jest.fn(() => null),
+  setItem: jest.fn(() => null),
+  clear: jest.fn()
+};
+
+global.sessionStorage = sessionStorageMock;
