@@ -1,6 +1,6 @@
 {
   "name": "react-testsql",
-  "version": "0.1.0",
+  "version": "0.7.0",
   "private": true,
   "homepage": "https://joshualicense.github.io/react-testsql",
   "proxy": "http://localhost:3001/",
@@ -17,7 +17,8 @@
     "react-scripts": "1.1.1",
     "redux": "^3.7.2",
     "sql.js": "^0.5.0",
-    "typeface-roboto": "^0.0.54"
+    "typeface-roboto": "^0.0.54",
+    "why-did-you-update": "^0.1.1"
   },
   "scripts": {
     "predeploy": "npm run build",
