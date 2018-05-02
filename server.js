@@ -66,10 +66,11 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Express only serves static assets in production
-if (app.get("env") === "production") {
-  app.use(express.static("client/build"));
-}
+app.use(express.static(path.join("client", "build")));
+
+app.get("/", function(req, res) {
+  res.sendFile(path.join("client", "build", "index.html"));
+});
 
 // Routes
 app.post(

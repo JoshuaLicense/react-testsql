@@ -2,7 +2,7 @@
   "name": "react-testsql",
   "version": "0.7.0",
   "private": true,
-  "homepage": "https://joshualicense.github.io/react-testsql",
+  "homepage": ".",
   "proxy": "http://localhost:3001/",
   "dependencies": {
     "codemirror": "^5.35.0",
