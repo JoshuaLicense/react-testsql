@@ -1,5 +1,3 @@
-const bluebird = require("bluebird");
-const crypto = bluebird.promisifyAll(require("crypto"));
 const passport = require("passport");
 
 const fs = require("fs");
