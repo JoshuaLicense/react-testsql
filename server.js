@@ -213,7 +213,10 @@ app.get(
 );
 
 // Error Handler
-app.use(errorHandler());
+if (process.env.NODE_ENV === "development") {
+  // only use in development
+  app.use(errorhandler());
+}
 
 app.listen(app.get("port"), () => {
   console.log(
