@@ -5,7 +5,7 @@ import IconButton from "material-ui/IconButton";
 
 import LogoutIcon from "material-ui-icons/PowerSettingsNew";
 
-//import ManageSession from "../Session";
+import ManageGroup from "../Group";
 import ManageDatabase from "../SavedDatabase";
 
 class LoggedIn extends React.Component {
@@ -17,7 +17,7 @@ class LoggedIn extends React.Component {
     return (
       <div>
         <ManageDatabase loadDatabaseHandler={loadDatabaseHandler} />
-        {/*<ManageSession />*/}
+        <ManageGroup loadDatabaseHandler={loadDatabaseHandler} />
         <IconButton
           color="inherit"
           aria-label="Logout"
