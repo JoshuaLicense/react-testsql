@@ -26,7 +26,7 @@ import Dialog, {
   DialogContentText
 } from "material-ui/Dialog";
 
-import DatabaseIcon from "material-ui-icons/Storage";
+import GroupIcon from "material-ui-icons/GroupWork";
 import DeleteIcon from "material-ui-icons/Delete";
 import LockIcon from "material-ui-icons/Lock";
 import { Typography } from "material-ui";
@@ -143,7 +143,7 @@ class GroupManager extends React.Component {
     return (
       <span>
         <IconButton color="inherit" aria-label="Group List">
-          <DatabaseIcon onClick={this.open} />
+          <GroupIcon onClick={this.open} />
         </IconButton>
         <GroupList open={open} closeHandler={this.close} />
       </span>

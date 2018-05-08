@@ -5,7 +5,7 @@ import IconButton from "@material-ui/core/IconButton";
 
 import LogoutIcon from "@material-ui/icons/PowerSettingsNew";
 
-//import ManageSession from "../Session";
+import ManageGroup from "../Group";
 import ManageDatabase from "../SavedDatabase";
 import api from "../../utils/api";
 import DatabaseContext from "../Database/Context";
