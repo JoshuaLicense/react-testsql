@@ -101,3 +101,45 @@ export const getRows = (db, table, column, x = 1) => {
 
   return [].concat(...values);
 };
+
+export const getRandomOperator = () => {
+  const operators = [
+    {
+      code: "=",
+      text: "equal"
+    },
+    {
+      code: ">=",
+      text: "greater or equal"
+    },
+    {
+      code: ">",
+      text: "greater than"
+    },
+    {
+      code: "<=",
+      text: "less or equal"
+    },
+    {
+      code: "<",
+      text: "less than"
+    }
+  ];
+
+  return operators[Math.floor(Math.random() * operators.length)];
+};
+
+export const getRandomConjunction = () => {
+  const conjunctions = [
+    {
+      code: "&&",
+      text: "and"
+    },
+    {
+      code: "||",
+      text: "or"
+    }
+  ];
+
+  return conjunctions[Math.floor(Math.random() * conjunctions.length)];
+};
