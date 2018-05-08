@@ -25,7 +25,7 @@ dotenv.load({ path: ".env" });
 // Controllers
 const userController = require("./controllers/user");
 const databaseController = require("./controllers/database");
-const sessionController = require("./controllers/session");
+const groupController = require("./controllers/group");
 
 // Config
 const config = require("./config/config");
@@ -150,19 +150,27 @@ app.get(
 );
 
 app.get(
-  "/session/list",
+  "/group/list",
   passportConfig.isAuthenticated,
-  sessionController.listSession
+  groupController.listGroup
 );
+
 app.post(
-  "/session/create",
+  "/group/create",
   passportConfig.isAuthenticated,
-  sessionController.createSession
+  groupController.createGroup
 );
+
 app.get(
-  "/session/join/:id",
+  "/group/join/:id",
   passportConfig.isAuthenticated,
-  sessionController.joinSession
+  groupController.joinGroup
+);
+
+app.get(
+  "/group/leave",
+  passportConfig.isAuthenticated,
+  groupController.leaveGroup
 );
 
 // OAuth authentication routes. (Sign in)

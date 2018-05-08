@@ -91,6 +91,18 @@ const listDatabases = () => {
     .then(res => res.json());
 };
 
+const listGroups = () => {
+  return fetch("/group/list", {
+    method: "GET",
+    credentials: "same-origin",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  })
+    .then(handleError)
+    .then(res => res.json());
+};
+
 const api = {
   login,
   getCurrentUser,
@@ -98,7 +110,8 @@ const api = {
   saveDatabase,
   loadDatabase,
   listDatabases,
-  deleteDatabase
+  deleteDatabase,
+  listGroups
 };
 
 export default api;
