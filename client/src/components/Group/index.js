@@ -28,6 +28,7 @@ import Dialog, {
 
 import GroupIcon from "material-ui-icons/GroupWork";
 import DeleteIcon from "material-ui-icons/Delete";
+import ManageIcon from "material-ui-icons/Settings";
 import LockIcon from "material-ui-icons/Lock";
 import { Typography } from "material-ui";
 
@@ -45,6 +46,8 @@ class GroupItem extends React.Component {
       isPrivate
     } = this.props.item;
 
+    const { canManage } = this.props;
+
     const date = new Date(createdAt).toDateString();
 
     return (
@@ -55,7 +58,13 @@ class GroupItem extends React.Component {
           </ListItemIcon>
         )}
         <ListItemText inset primary={title} secondary={createdBy} />
-        <Typography color="textSecondary">{capacity}/32</Typography>
+        {canManage && (
+          <ListItemSecondaryAction>
+            <IconButton aria-label="Manage">
+              <ManageIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
+        )}
       </ListItem>
     );
   }
@@ -63,19 +72,35 @@ class GroupItem extends React.Component {
 
 class GroupList extends React.Component {
   state = {
-    list: null
+    myList: null,
+    list: null,
+    error: null
   };
 
   load = () => {
+    api
+      .listMyGroups()
+      .then(myList => this.setState({ myList }))
+      .catch(e => console.log(e));
+
     api
       .listGroups()
       .then(list => this.setState({ list }))
       .catch(e => console.log(e));
   };
 
+  handleClose = () => {
+    this.props.closeHandler();
+
+    // Remove any errors from the modal.
+    this.setState({ error: null });
+  };
+
   componentDidMount = () => this.load();
 
   handleJoinGroup = id => {
+    this.setState({ error: null });
+
     api
       .joinGroup(id)
       .then(fileBuffer => {
@@ -90,28 +115,62 @@ class GroupList extends React.Component {
   };
 
   render() {
-    const { list } = this.state;
+    const { list, myList, error } = this.state;
 
-    const count = list && list.length;
+    const listCount = list && list.length;
+    const myListCount = myList && myList.length;
 
     return (
       <Dialog
         fullWidth
-        onClose={this.props.closeHandler}
+        onClose={this.handleClose}
         open={this.props.open}
         aria-labelledby="dialog-title"
       >
+        <DialogTitle id="dialog-title">Your Groups</DialogTitle>
+        {myListCount > 0 ? (
+          <div>
+            {error && (
+              <Typography color="error" align="center">
+                {error}
+              </Typography>
+            )}
+            <List dense={myListCount >= 5}>
+              {myList.map(group => (
+                <GroupItem
+                  key={group._id}
+                  joinGroupHandler={this.handleJoinGroup}
+                  item={group}
+                  canManage
+                />
+              ))}
+            </List>
+          </div>
+        ) : (
+          <DialogContent>
+            <DialogContentText>
+              You are not the owner of any groups!
+            </DialogContentText>
+          </DialogContent>
+        )}
         <DialogTitle id="dialog-title">All Available Groups</DialogTitle>
-        {count > 0 ? (
-          <List>
-            {list.map(group => (
-              <GroupItem
-                key={group._id}
-                joinGroupHandler={this.handleJoinGroup}
-                item={group}
-              />
-            ))}
-          </List>
+        {listCount > 0 ? (
+          <div>
+            {error && (
+              <Typography color="error" align="center">
+                {error}
+              </Typography>
+            )}
+            <List dense={listCount >= 5}>
+              {list.map(group => (
+                <GroupItem
+                  key={group._id}
+                  joinGroupHandler={this.handleJoinGroup}
+                  item={group}
+                />
+              ))}
+            </List>
+          </div>
         ) : (
           <DialogContent>
             <DialogContentText>No groups available!</DialogContentText>
