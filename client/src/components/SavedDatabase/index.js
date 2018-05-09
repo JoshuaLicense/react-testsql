@@ -241,8 +241,12 @@ class DatabaseManager extends React.Component {
 
     return (
       <span>
-        <IconButton color="inherit" aria-label="Saved Database Actions">
-          <DatabaseIcon onClick={this.open} />
+        <IconButton
+          color="inherit"
+          aria-label="Saved Database Actions"
+          onClick={this.open}
+        >
+          <DatabaseIcon />
         </IconButton>
         <DatabaseList
           open={open}

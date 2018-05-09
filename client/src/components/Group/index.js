@@ -81,9 +81,12 @@ class GroupList extends React.Component {
       .then(fileBuffer => {
         const typedArray = new Uint8Array(fileBuffer);
 
-        this.props.joinGroupHandler(typedArray);
+        this.props.loadDatabaseHandler(typedArray);
       })
-      .then(() => this.props.closeHandler());
+      .then(() => this.props.closeHandler())
+      .catch(error => {
+        error.json().then(json => this.setState({ error: json }));
+      });
   };
 
   render() {
@@ -142,10 +145,14 @@ class GroupManager extends React.Component {
 
     return (
       <span>
-        <IconButton color="inherit" aria-label="Group List">
-          <GroupIcon onClick={this.open} />
+        <IconButton color="inherit" aria-label="Group List" onClick={this.open}>
+          <GroupIcon />
         </IconButton>
-        <GroupList open={open} closeHandler={this.close} />
+        <GroupList
+          open={open}
+          loadDatabaseHandler={this.props.loadDatabaseHandler}
+          closeHandler={this.close}
+        />
       </span>
     );
   }
