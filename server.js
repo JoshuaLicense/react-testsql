@@ -147,6 +147,12 @@ app.get(
   groupController.listGroup
 );
 
+app.get(
+  "/group/mine",
+  passportConfig.isAuthenticated,
+  groupController.listMine
+);
+
 app.post(
   "/group/create",
   passportConfig.isAuthenticated,

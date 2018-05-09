@@ -83,8 +83,44 @@ const listDatabases = () => {
     .then(res => res.json());
 };
 
+const listMyGroups = () => {
+  return fetch("/group/mine/", {
+    method: "GET",
+    credentials: "same-origin",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  })
+    .then(handleError)
+    .then(res => res.json());
+};
+
 const listGroups = () => {
   return fetch("/group/list", {
+    method: "GET",
+    credentials: "same-origin",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  })
+    .then(handleError)
+    .then(res => res.json());
+};
+
+const joinGroup = id => {
+  return fetch(`/group/join/${id}`, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  })
+    .then(handleError)
+    .then(res => res.arrayBuffer());
+};
+
+const leaveGroup = id => {
+  return fetch(`/group/leave/`, {
     method: "GET",
     credentials: "same-origin",
     headers: new Headers({
@@ -103,7 +139,10 @@ const api = {
   loadDatabase,
   listDatabases,
   deleteDatabase,
-  listGroups
+  listGroups,
+  listMyGroups,
+  joinGroup,
+  leaveGroup
 };
 
 export default api;
