@@ -143,3 +143,7 @@ export const getRandomConjunction = () => {
 
   return conjunctions[Math.floor(Math.random() * conjunctions.length)];
 };
+
+export const getRandomElement = options => {
+  return options[Math.floor(Math.random() * options.length)];
+};
