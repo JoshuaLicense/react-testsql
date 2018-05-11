@@ -98,28 +98,11 @@ class App extends Component {
   };
 
   buildQuestion = _obj => {
-    const { question: _question, answer: _answer, func: _func } = _obj;
+    const { func: _func } = _obj;
 
     // Try running the question callable
     try {
-      const config = _func(this.state.database);
-
-      const format = (_template, config) => {
-        let template = _template;
-
-        Object.keys(config).map(
-          key =>
-            (template = template.replace(
-              new RegExp(`{${key}}`, "g"),
-              config[key]
-            ))
-        );
-
-        return template;
-      };
-
-      const question = format(_question, config);
-      const answer = format(_answer, config);
+      const { question, answer } = _func(this.state.database);
 
       const obj = { ..._obj, question, answer };
 
