@@ -1,5 +1,7 @@
 import React from "react";
 
+import Markdown from "markdown-to-jsx";
+
 import PropTypes from "prop-types"; // eslint-disable-line no-unused-vars
 import { withStyles } from "material-ui/styles";
 import Stepper, { Step, StepButton, StepLabel } from "material-ui/Stepper";
@@ -111,7 +113,7 @@ class Question extends React.Component {
             }
             gutterBottom
           >
-            {activeQuestionSet[activeQuestion].question}
+            <Markdown>{activeQuestionSet[activeQuestion].question}</Markdown>
           </Typography>
           <div style={{ display: "flex", marginTop: "16px" }}>
             <div style={{ marginRight: "auto" }}>
