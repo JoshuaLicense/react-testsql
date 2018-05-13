@@ -1,4 +1,6 @@
 import React from "react";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+
 //import PropTypes from 'prop-types';
 
 import api from "../../utils/api";
@@ -7,10 +9,27 @@ import IconButton from "material-ui/IconButton";
 
 import Divider from "material-ui/Divider";
 
+import Grid from "material-ui/Grid";
+
 import Button from "material-ui/Button";
 
+import Checkbox from "material-ui/Checkbox";
+
 import Input, { InputLabel } from "material-ui/Input";
-import { FormControl, FormHelperText } from "material-ui/Form";
+import {
+  FormControl,
+  FormHelperText,
+  FormControlLabel,
+  FormLabel,
+  FormGroup
+} from "material-ui/Form";
+
+import ExpansionPanel, {
+  ExpansionPanelSummary,
+  ExpansionPanelDetails
+} from "material-ui/ExpansionPanel";
+
+import Switch from "material-ui/Switch";
 
 import List, {
   ListItem,
@@ -30,7 +49,156 @@ import GroupIcon from "material-ui-icons/GroupWork";
 import DeleteIcon from "material-ui-icons/Delete";
 import ManageIcon from "material-ui-icons/Settings";
 import LockIcon from "material-ui-icons/Lock";
-import { Typography } from "material-ui";
+
+import ExpandMoreIcon from "material-ui-icons/ExpandMore";
+
+import AddIcon from "material-ui-icons/Add";
+import { Typography, Paper } from "material-ui";
+
+class CreateGroup extends React.Component {
+  state = {
+    name: "",
+    isPrivate: false,
+    errors: null
+  };
+
+  handleChange = e => {
+    this.setState({ [e.target.id]: e.target.value });
+  };
+
+  handleChecked = e => {
+    this.setState({ [e.target.id]: e.target.checked });
+  };
+
+  render() {
+    const { name, isPrivate, errors } = this.state;
+
+    return (
+      <div>
+        <DialogTitle id="dialog-title">
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            Creating a new group
+            <Button
+              component={Link}
+              color="secondary"
+              variant="raised"
+              size="small"
+              to="/"
+            >
+              &laquo; Back
+            </Button>
+          </div>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            A group allows others to join and share a common database allowing
+            the group owner to customize and track their user's experience.
+          </DialogContentText>
+        </DialogContent>
+        <DialogContent>
+          <Grid container spacing={24}>
+            <Grid item xs={3}>
+              <Typography align="right">Name</Typography>
+            </Grid>
+            <Grid item xs={9}>
+              <FormControl
+                error={Boolean(errors)}
+                aria-describedby="name-error-text"
+                fullWidth
+              >
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={this.handleChange}
+                  margin="dense"
+                  autoFocus
+                  fullWidth
+                />
+                {errors &&
+                  errors.name && (
+                    <FormHelperText id="name-error-text">
+                      {errors.name.msg}
+                    </FormHelperText>
+                  )}
+              </FormControl>
+            </Grid>
+            <Grid item xs={3}>
+              <Typography align="right">Group Database</Typography>
+            </Grid>
+            <Grid item xs={9}>
+              <FormControl
+                error={Boolean(errors)}
+                aria-describedby="group-database-help-text"
+                fullWidth
+              >
+                <input type="file" id="groupDatabase" />
+                <FormHelperText id="group-database-help-text">
+                  The database that will users of the group will get questions
+                  generated from.
+                </FormHelperText>
+                {errors &&
+                  errors.database && (
+                    <FormHelperText id="group-database-error-text">
+                      {errors.database.msg}
+                    </FormHelperText>
+                  )}
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Grid container spacing={8}>
+            <Grid item xs={3} />
+            <Grid item xs={9}>
+              <FormControl
+                error={Boolean(errors)}
+                aria-describedby="group-database-error-text"
+                fullWidth
+              >
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isPrivate}
+                      onChange={this.handleChecked}
+                      id="isPrivate"
+                      value="true"
+                    />
+                  }
+                  label="Private?"
+                />
+                {errors &&
+                  errors.visibility && (
+                    <FormHelperText id="group-database-error-text">
+                      {errors.visibility.msg}
+                    </FormHelperText>
+                  )}
+              </FormControl>
+            </Grid>
+          </Grid>
+
+          {/*<FormControlLabel
+            control={
+              <Switch
+                id="isPrivate"
+                value="true"
+                checked={isPrivate}
+                onChange={this.handleChecked}
+              />
+            }
+            label="Private"
+          />*/}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={this.props.closeHandler}
+            color="primary"
+            variant="raised"
+          >
+            Create
+          </Button>
+        </DialogActions>
+      </div>
+    );
+  }
+}
 
 class GroupItem extends React.Component {
   handleJoinGroup = () => {
@@ -121,31 +289,39 @@ class GroupList extends React.Component {
     const myListCount = myList && myList.length;
 
     return (
-      <Dialog
-        fullWidth
-        onClose={this.handleClose}
-        open={this.props.open}
-        aria-labelledby="dialog-title"
-      >
-        <DialogTitle id="dialog-title">Your Groups</DialogTitle>
-        {myListCount > 0 ? (
-          <div>
-            {error && (
-              <Typography color="error" align="center">
-                {error}
-              </Typography>
-            )}
-            <List dense={myListCount >= 5}>
-              {myList.map(group => (
-                <GroupItem
-                  key={group._id}
-                  joinGroupHandler={this.handleJoinGroup}
-                  item={group}
-                  canManage
-                />
-              ))}
-            </List>
+      <div>
+        {error && (
+          <DialogTitle disableTypography>
+            <Typography color="error" align="center">
+              {error}
+            </Typography>
+          </DialogTitle>
+        )}
+        <DialogTitle id="dialog-title">
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            Your Groups
+            <Button
+              component={Link}
+              to="/create-group"
+              color="primary"
+              variant="raised"
+              size="small"
+            >
+              Create &raquo;
+            </Button>
           </div>
+        </DialogTitle>
+        {myListCount > 0 ? (
+          <List dense={myListCount >= 5}>
+            {myList.map(group => (
+              <GroupItem
+                key={group._id}
+                joinGroupHandler={this.handleJoinGroup}
+                item={group}
+                canManage
+              />
+            ))}
+          </List>
         ) : (
           <DialogContent>
             <DialogContentText>
@@ -155,22 +331,15 @@ class GroupList extends React.Component {
         )}
         <DialogTitle id="dialog-title">All Available Groups</DialogTitle>
         {listCount > 0 ? (
-          <div>
-            {error && (
-              <Typography color="error" align="center">
-                {error}
-              </Typography>
-            )}
-            <List dense={listCount >= 5}>
-              {list.map(group => (
-                <GroupItem
-                  key={group._id}
-                  joinGroupHandler={this.handleJoinGroup}
-                  item={group}
-                />
-              ))}
-            </List>
-          </div>
+          <List dense={listCount >= 5}>
+            {list.map(group => (
+              <GroupItem
+                key={group._id}
+                joinGroupHandler={this.handleJoinGroup}
+                item={group}
+              />
+            ))}
+          </List>
         ) : (
           <DialogContent>
             <DialogContentText>No groups available!</DialogContentText>
@@ -178,10 +347,10 @@ class GroupList extends React.Component {
         )}
         <DialogActions>
           <Button onClick={this.props.closeHandler} color="primary">
-            Cancel
+            Close
           </Button>
         </DialogActions>
-      </Dialog>
+      </div>
     );
   }
 }
@@ -207,11 +376,22 @@ class GroupManager extends React.Component {
         <IconButton color="inherit" aria-label="Group List" onClick={this.open}>
           <GroupIcon />
         </IconButton>
-        <GroupList
-          open={open}
-          loadDatabaseHandler={this.props.loadDatabaseHandler}
-          closeHandler={this.close}
-        />
+
+        <Router>
+          <Dialog fullWidth onClose={this.close} open={open}>
+            <Route
+              exact
+              path="/"
+              render={() => (
+                <GroupList
+                  loadDatabaseHandler={this.props.loadDatabaseHandler}
+                  closeHandler={this.close}
+                />
+              )}
+            />
+            <Route path="/create-group" render={() => <CreateGroup />} />
+          </Dialog>
+        </Router>
       </span>
     );
   }
