@@ -145,7 +145,7 @@ class CreateGroup extends React.Component {
               </FormControl>
             </Grid>
           </Grid>
-          <Grid container spacing={8}>
+          {/*<Grid container spacing={8}>
             <Grid item xs={3} />
             <Grid item xs={9}>
               <FormControl
@@ -172,19 +172,7 @@ class CreateGroup extends React.Component {
                   )}
               </FormControl>
             </Grid>
-          </Grid>
-
-          {/*<FormControlLabel
-            control={
-              <Switch
-                id="isPrivate"
-                value="true"
-                checked={isPrivate}
-                onChange={this.handleChecked}
-              />
-            }
-            label="Private"
-          />*/}
+          </Grid>*/}
         </DialogContent>
         <DialogActions>
           <Button
@@ -220,11 +208,11 @@ class GroupItem extends React.Component {
 
     return (
       <ListItem onClick={this.handleJoinGroup} button>
-        {isPrivate && (
+        {/*isPrivate && (
           <ListItemIcon>
             <LockIcon />
           </ListItemIcon>
-        )}
+        )*/}
         <ListItemText inset primary={title} secondary={createdBy} />
         {canManage && (
           <ListItemSecondaryAction>
