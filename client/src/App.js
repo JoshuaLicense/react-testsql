@@ -76,7 +76,7 @@ class App extends Component {
   componentDidMount = async () => {
     await this.getDatabase();
 
-    this.getQuestions(true);
+    this.getQuestions();
   };
 
   changeFeedback = feedback => {
