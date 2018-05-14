@@ -5,6 +5,25 @@ const COLUMN_NOT_NULL = 3;
 const DEFAULT = 4; // eslint-disable-line no-unused-vars
 const PRIMARY_KEY = 5; // eslint-disable-line no-unused-vars
 
+export const buildQuestion = (db, config) => {
+  const { func } = config;
+
+  // Try running the question callable
+  try {
+    const { question, answer } = func(db);
+
+    return { ...config, question, answer };
+  } catch (Error) {
+    // Mark as error'd question
+    return {
+      ...config,
+      question: `Error: ${Error.message}`,
+      answer: null,
+      error: true
+    };
+  }
+};
+
 export const getTables = (db, x = false) => {
   const [{ values: tables }] = db.exec(
     `SELECT "tbl_name" FROM "sqlite_master" WHERE "type" = 'table' AND "tbl_name" != "ts-questions" ORDER BY RANDOM() ${
