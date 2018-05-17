@@ -9,6 +9,7 @@ import Dialog, {
   DialogTitle,
   DialogContent
 } from "material-ui/Dialog";
+import api from "../../utils/api";
 
 class Guest extends React.Component {
   state = {
@@ -22,7 +23,9 @@ class Guest extends React.Component {
   login = () => {
     const { username, password } = this.state;
 
-    this.props.loginHandler(username, password);
+    return api
+      .login(username, password)
+      .then(() => this.props.refreshUserContext());
   };
 
   handleChange = event => {

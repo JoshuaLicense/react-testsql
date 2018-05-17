@@ -7,17 +7,21 @@ import LogoutIcon from "material-ui-icons/PowerSettingsNew";
 
 //import ManageSession from "../Session";
 import ManageDatabase from "../SavedDatabase";
+import api from "../../utils/api";
 
 class LoggedIn extends React.Component {
-  handleLogout = () => this.props.logoutHandler();
+  handleLogout = () => {
+    return api.logout().then(() => this.props.refreshUserContext());
+  };
 
   render() {
     const { loadDatabaseHandler } = this.props;
 
     return (
-      <div>
+      <React.Fragment>
         <ManageDatabase loadDatabaseHandler={loadDatabaseHandler} />
         {/*<ManageSession />*/}
+
         <IconButton
           color="inherit"
           aria-label="Logout"
@@ -25,7 +29,7 @@ class LoggedIn extends React.Component {
         >
           <LogoutIcon />
         </IconButton>
-      </div>
+      </React.Fragment>
     );
   }
 }
