@@ -32,9 +32,7 @@ class Auth extends React.Component {
     });
   };
 
-  logout = () => {
-    api.logout().then(response => this.setState({ user: null }));
-  };
+  logout = () => api.logout();
 
   render() {
     const { user } = this.state;
@@ -43,7 +41,6 @@ class Auth extends React.Component {
 
     return user ? (
       <LoggedIn
-        user={user}
         loadDatabaseHandler={loadDatabaseHandler}
         logoutHandler={this.logout}
       />

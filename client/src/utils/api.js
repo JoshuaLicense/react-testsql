@@ -15,7 +15,7 @@ const getDefaultDatabase = () => {
 const login = (username, password) => {
   const data = { username, password };
 
-  return fetch("/login", {
+  return fetch("/user/login", {
     method: "POST",
     body: JSON.stringify(data),
     credentials: "same-origin",
@@ -27,14 +27,28 @@ const login = (username, password) => {
     .then(response => response.json());
 };
 
-const logout = () => {
-  return fetch("/logout", {
+const getCurrentUser = () => {
+  return fetch("/user/info", {
     method: "GET",
     credentials: "same-origin",
     headers: new Headers({
       "Content-Type": "application/json"
     })
-  }).then(handleError);
+  })
+    .then(handleError)
+    .then(response => response.json());
+};
+
+const logout = () => {
+  return fetch("/user/logout", {
+    method: "GET",
+    credentials: "same-origin",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  })
+    .then(handleError)
+    .then(response => response.json());
 };
 
 const saveDatabase = (title, database) => {
@@ -134,6 +148,7 @@ const leaveGroup = id => {
 const api = {
   getDefaultDatabase,
   login,
+  getCurrentUser,
   logout,
   saveDatabase,
   loadDatabase,
