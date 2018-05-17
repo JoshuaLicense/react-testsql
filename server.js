@@ -94,7 +94,7 @@ app.post(
 );
 
 app.post(
-  "/login",
+  "/user/login",
   [
     check("username")
       .exists()
@@ -107,7 +107,15 @@ app.post(
   userController.login
 );
 
-app.get("/logout", userController.logout);
+app.get("/user/info", (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.json(req.user);
+  }
+
+  return res.sendStatus(403);
+});
+
+app.get("/user/logout", userController.logout);
 
 app.get(
   "/database/list",
