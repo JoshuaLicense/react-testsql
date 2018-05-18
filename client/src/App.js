@@ -24,7 +24,7 @@ import checkAnswer, { IncorrectAnswer } from "./components/Question/answer"; // 
 
 import api from "./utils/api";
 
-import { withStyles } from "material-ui/styles";
+import { withStyles } from "@material-ui/core/styles";
 import UserContext from "./components/Auth/Context";
 
 const styles = theme => ({

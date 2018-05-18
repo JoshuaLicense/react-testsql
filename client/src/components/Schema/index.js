@@ -1,28 +1,24 @@
 import React from "react";
 
-import Drawer from "material-ui/Drawer";
+import Drawer from "@material-ui/core/Drawer";
 
-import Typography from "material-ui/Typography";
+import Typography from "@material-ui/core/Typography";
 
-import List, {
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText
-} from "material-ui/List";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
 
-import Hidden from "material-ui/Hidden";
+import Hidden from "@material-ui/core/Hidden";
 
-import BottomNavigation, {
-  BottomNavigationAction
-} from "material-ui/BottomNavigation";
-import DownloadIcon from "material-ui-icons/FileDownload";
-import UploadIcon from "material-ui-icons/FileUpload";
-import RestoreIcon from "material-ui-icons/Restore";
+import DownloadIcon from "@material-ui/icons/FileDownload";
+import UploadIcon from "@material-ui/icons/FileUpload";
+import RestoreIcon from "@material-ui/icons/Restore";
 
-import Button from "material-ui/Button";
-import IconButton from "material-ui/IconButton";
+import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 
-import { withStyles } from "material-ui/styles";
+import { withStyles } from "@material-ui/core/styles";
 import UserContext from "../Auth/Context";
 
 const styles = theme => ({
@@ -47,6 +43,9 @@ const styles = theme => ({
     justifyContent: "space-evenly",
     marginTop: "auto",
     marginBottom: theme.spacing.unit
+  },
+  uploadDatabaseFile: {
+    display: "none"
   }
 });
 
@@ -79,11 +78,12 @@ class Schema extends React.Component {
     e.target.value = "";
   };
 
+  toggleSidebar = () => this.props.sidebarHandler();
+
   render() {
     const {
       classes,
       open,
-      sidebarHandler,
       clickHandler,
       restoreHandler,
       downloadHandler
@@ -100,11 +100,23 @@ class Schema extends React.Component {
       </ListItem>
     ));
 
-    const bottomActions = (
+    const databaseActions = (
       <div className={classes.drawerBottomActions}>
-        <IconButton className={classes.button} aria-label="Upload Database">
-          <UploadIcon />
-        </IconButton>
+        <input
+          accept=".db,.sqlite"
+          className={classes.uploadDatabaseFile}
+          id="uploadfile"
+          type="file"
+        />
+        <label htmlFor="uploadfile">
+          <IconButton
+            className={classes.button}
+            component="span"
+            aria-label="Upload Database"
+          >
+            <UploadIcon />
+          </IconButton>
+        </label>
         <IconButton className={classes.button} aria-label="Download Database">
           <DownloadIcon />
         </IconButton>
@@ -124,7 +136,7 @@ class Schema extends React.Component {
             }}
             anchor="left"
             open={open}
-            onClose={() => sidebarHandler(false)}
+            onClose={this.toggleSidebar}
           >
             <Typography
               className={classes.heading}
@@ -137,7 +149,7 @@ class Schema extends React.Component {
               Database Schema
             </Typography>
             <List dense>{tables}</List>
-            {bottomActions}
+            {databaseActions}
           </Drawer>
         </Hidden>
         <Hidden implementation="css" smDown>
@@ -160,7 +172,7 @@ class Schema extends React.Component {
               Database Schema
             </Typography>
             <List dense>{tables}</List>
-            {bottomActions}
+            {databaseActions}
           </Drawer>
         </Hidden>
       </div>

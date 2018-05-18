@@ -1,20 +1,25 @@
 import React from "react";
 
 import PropTypes from "prop-types"; // eslint-disable-line no-unused-vars
-import { withStyles } from "material-ui/styles";
-import Stepper, { Step, StepButton, StepLabel } from "material-ui/Stepper";
-import Typography from "material-ui/Typography";
+import { withStyles } from "@material-ui/core/styles";
 
-import PreviousIcon from "material-ui-icons/KeyboardArrowLeft";
-import NextIcon from "material-ui-icons/KeyboardArrowRight";
+import Stepper from "@material-ui/core/Stepper";
+import Step from "@material-ui/core/Step";
+import StepButton from "@material-ui/core/StepButton";
+import StepLabel from "@material-ui/core/StepLabel";
 
-import Divider from "material-ui/Divider";
+import Typography from "@material-ui/core/Typography";
 
-import Button from "material-ui/Button";
+import PreviousIcon from "@material-ui/icons/KeyboardArrowLeft";
+import NextIcon from "@material-ui/icons/KeyboardArrowRight";
 
-import { MenuItem } from "material-ui/Menu";
+import Divider from "@material-ui/core/Divider";
 
-import Select from "material-ui/Select";
+import Button from "@material-ui/core/Button";
+
+import MenuItem from "@material-ui/core/MenuItem";
+
+import Select from "@material-ui/core/Select";
 
 const styles = theme => ({
   innerPadding: {
