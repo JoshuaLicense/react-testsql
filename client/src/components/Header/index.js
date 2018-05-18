@@ -6,17 +6,17 @@ import LoggedIn from "../Auth/LoggedIn";
 import Guest from "../Auth/Guest";
 
 //import PropTypes from 'prop-types';
-import { withStyles } from "material-ui/styles";
+import { withStyles } from "@material-ui/core/styles";
 
-import AppBar from "material-ui/AppBar";
-import Toolbar from "material-ui/Toolbar";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
 
-import IconButton from "material-ui/IconButton";
-import MenuIcon from "material-ui-icons/Menu";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
 
-import Typography from "material-ui/Typography";
+import Typography from "@material-ui/core/Typography";
 
-import Hidden from "material-ui/Hidden";
+import Hidden from "@material-ui/core/Hidden";
 import UserContext from "../Auth/Context";
 
 const styles = theme => ({
