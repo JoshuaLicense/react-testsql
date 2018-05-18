@@ -16,6 +16,7 @@
     "react-draggable": "^3.0.5",
     "react-scripts": "1.1.1",
     "sql.js": "^0.5.0",
+    "markdown-to-jsx": "^6.6.3",
     "typeface-roboto": "^0.0.54"
   },
   "scripts": {

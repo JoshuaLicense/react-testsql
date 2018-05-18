@@ -12,6 +12,7 @@ import Section from "./components/Section.js";
 import DatabaseInput from "./components/Database/Input";
 import DatabaseOutput from "./components/Database/Output";
 
+import { buildQuestion } from "./components/Question/helpers";
 import UserProvider from "./components/Auth/Provider";
 
 import Layout from "./components/Layout";
@@ -76,6 +77,12 @@ class App extends Component {
     activeQuestionSet: null
   };
 
+  componentDidMount = async () => {
+    await this.getDatabase();
+
+    this.getQuestions();
+  };
+
   changeFeedback = feedback => {
     this.setState({ feedback });
   };
@@ -100,46 +107,6 @@ class App extends Component {
     const { activeSet, activeQuestion } = this.state;
 
     return this.questions[activeSet][activeQuestion];
-  };
-
-  buildQuestion = _obj => {
-    const { question: _question, answer: _answer, func: _func } = _obj;
-
-    // Try running the question callable
-    try {
-      const config = _func(this.state.database);
-
-      const format = (_template, config) => {
-        let template = _template;
-
-        Object.keys(config).map(
-          key =>
-            (template = template.replace(
-              new RegExp(`{${key}}`, "g"),
-              config[key]
-            ))
-        );
-
-        return template;
-      };
-
-      const question = format(_question, config);
-      const answer = format(_answer, config);
-
-      const obj = { ..._obj, question, answer };
-
-      return obj;
-    } catch (Error) {
-      // Mark as error'd question
-      const obj = {
-        ..._obj,
-        question: `Error: ${Error.message}`,
-        answer: null,
-        error: true
-      };
-
-      return obj;
-    }
   };
 
   loadQuestions = questions => {
@@ -172,7 +139,7 @@ class App extends Component {
       import("./components/Question/questions.js").then(
         ({ default: _questions }) => {
           const questions = _questions.map(question =>
-            this.buildQuestion(question)
+            buildQuestion(this.state.database, question)
           );
 
           this.loadQuestions(questions);
@@ -181,12 +148,6 @@ class App extends Component {
     } else {
       this.loadQuestions(JSON.parse(cachedQuestions));
     }
-  };
-
-  componentDidMount = async () => {
-    await this.getDatabase();
-
-    this.getQuestions();
   };
 
   loadDatabase = typedArray => {
@@ -296,8 +257,6 @@ class App extends Component {
 
     // This will also alter the "parent" array of questions (pass-by-reference)
     activeQuestionSet[activeQuestion].completed = true;
-
-    console.log(questions);
 
     // Resave the questions in the localstorage to save the object with the completed property as true
     localStorage.setItem("__testSQL_Questions__", JSON.stringify(questions));

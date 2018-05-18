@@ -1,175 +1,171 @@
-import { getTables, getColumns, getRows, getForeignColumns } from "./helpers"; // eslint-disable-line no-unused-vars
+import {
+  getTables,
+  getColumns,
+  getRows,
+  // eslint-disable-next-line
+  getForeignColumns,
+  getRandomConjunction,
+  getRandomElement
+} from "./helpers";
 
-const _questions = [
-  {
-    set: "Easy",
-    question: "Display all the contents of {table}",
-    answer: "SELECT * FROM {table}",
-    func: db => {
-      let [table] = getTables(db, 1);
+const selectAll = {
+  set: "Easy",
+  func: db => {
+    let [table] = getTables(db, 1);
 
-      if (!table) {
-        throw new Error("Cannot get two unique tables from the database");
-      }
-
-      return {
-        table
-      };
-    }
-  },
-  {
-    set: "Easy",
-    answer: "SELECT `{column1}`, `{column2}` FROM {table}",
-    question: "Display all the {column1}'s and {column2}'s from {table}",
-    func: db => {
-      const tables = getTables(db);
-
-      const [{ table, column: column1 }, { column: column2 }] = getColumns(
-        db,
-        tables,
-        {
-          x: 2
-        }
-      );
-
-      return {
-        table,
-        column1,
-        column2
-      };
-    }
-  },
-  {
-    set: "Easy",
-    question: "Display all the different {column}'s that exist in {table}",
-    answer: "SELECT DISTINCT {column} FROM {table}",
-    func: db => {
-      const tables = getTables(db, 1);
-
-      const [{ table, column }] = getColumns(db, tables);
-
-      return {
-        table,
-        column
-      };
-    }
-  },
-  {
-    set: "Easy",
-    question:
-      "Display the {column1}'s and {column2}'s from {table} that have a {column3} of {row}",
-    answer:
-      "SELECT `{column1}`, `{column2}` FROM {table} WHERE {column3} = '{row}'",
-    func: db => {
-      const tables = getTables(db);
-
-      const [
-        { table, column: column1 },
-        { column: column2 },
-        { column: column3 }
-      ] = getColumns(db, tables, {
-        x: 3
-      });
-
-      const [row] = getRows(db, table, column3, 1);
-
-      /*
-
-      const fkTables = getTables(db);
-
-      let fk = getForeignColumns(db, fkTables, 1);
-
-      //console.log(fk);
-
-      //console.log(rows);*/
-
-      return {
-        table,
-        column1,
-        column2,
-        column3,
-        row
-      };
-    }
-  },
-  {
-    set: "Easy",
-    question:
-      "Display the rows from {table} showing the highest {column1} first.",
-    answer: "SELECT * FROM {table} ORDER BY {column1} DESC",
-    func: db => {
-      const tables = getTables(db);
-
-      const [{ table, column: column1 }] = getColumns(db, tables, {
-        x: 1,
-        type: "int"
-      });
-
-      return {
-        table,
-        column1
-      };
-    }
-  },
-  {
-    set: "Easy",
-    question:
-      "Display the rows from {table} showing the highest {column1} first, using {column2} as a secondary ascending sort",
-    answer: "SELECT * FROM {table} ORDER BY {column1} DESC, {column2} ASC",
-    func: db => {
-      const tables = getTables(db);
-
-      const [{ table, column: column1 }, { column: column2 }] = getColumns(
-        db,
-        tables,
-        {
-          x: 2
-        }
-      );
-
-      return {
-        table,
-        column1,
-        column2
-      };
-    }
-  },
-  {
-    set: "Easy",
-    question:
-      "Get a list of all the {table} where the {column} is {random} null",
-    answer: "SELECT * FROM {table} WHERE {column} IS {random} NULL",
-    func: db => {
-      const random = Math.random() >= 0.5 ? "not" : "";
-
-      const tables = getTables(db);
-
-      const [{ table, column }] = getColumns(db, tables, {
-        x: 1,
-        notnull: false
-      });
-
-      return {
-        table,
-        column,
-        random
-      };
-    }
-  },
-
-  {
-    set: "Intermediate",
-    func: db => {
-      //let [[table]] = this.getXTables(1);
-
-      return {
-        table: "apple",
-        column: "orange"
-      };
-    },
-    answer: "SELECT * FROM {table}",
-    question: "Display all the different %column% that exist in %table%"
+    return {
+      question: `Display all **${table}**`,
+      answer: `SELECT * FROM ${table}`
+    };
   }
-];
+};
 
-export default _questions;
+const selectSpecific = {
+  set: "Easy",
+  func: db => {
+    const tables = getTables(db);
+
+    const [{ table, column: column_1 }, { column: column_2 }] = getColumns(
+      db,
+      tables,
+      {
+        x: 2
+      }
+    );
+
+    return {
+      question: `Display all **${table}** only displaying **${column_1}** and **${column_2}**.`,
+      answer: `SELECT ${column_1}, ${column_2} FROM ${table}`
+    };
+  }
+};
+
+const selectUnique = {
+  set: "Easy",
+  func: db => {
+    const tables = getTables(db, 1);
+
+    const [{ table, column }] = getColumns(db, tables);
+
+    return {
+      question: `Display all the unique **${column}**'s that exist in **${table}**`,
+      answer: `SELECT DISTINCT ${column} FROM ${table}`
+    };
+  }
+};
+
+const basicWhere = {
+  set: "Easy",
+  func: db => {
+    const tables = getTables(db);
+
+    const [
+      { table, column: column_1 },
+      { column: column_2 },
+      { column: column_3 }
+    ] = getColumns(db, tables, {
+      x: 3
+    });
+
+    const [row] = getRows(db, table, column_3, 1);
+
+    return {
+      question: `Display the **${column_1}**'s and **${column_2}**'s from **${table}** that have a **${column_3}** of **${row}**`,
+      answer: `SELECT ${column_1}, ${column_2} FROM ${table} WHERE ${column_3} = "${row}"`
+    };
+  }
+};
+
+const whereConjunction = {
+  set: "Easy",
+  func: db => {
+    const tables = getTables(db);
+
+    const [{ table, column: column_1 }, { column: column_2 }] = getColumns(
+      db,
+      tables,
+      {
+        x: 3,
+        type: "varchar"
+      }
+    );
+
+    const [row_1] = getRows(db, table, column_1, 1);
+    const [row_2] = getRows(db, table, column_2, 1);
+
+    const { code: operator_code, text: operator_text } = getRandomConjunction();
+
+    return {
+      question: `Display all the **${table}** where **${column_1}** is **${row_1}** ${operator_text} **${column_2}** is **${row_2}**`,
+      answer: `SELECT * FROM ${table} WHERE ${column_1} = "${row_1}" ${operator_code} ${column_2} = ${row_2}`
+    };
+  }
+};
+
+const orderBy = {
+  set: "Intermediate",
+  func: db => {
+    const tables = getTables(db);
+
+    const [{ table, column: column_1 }] = getColumns(db, tables, {
+      x: 1,
+      type: "int"
+    });
+
+    return {
+      question: `Display the **${table}** showing the largest **${column_1}** first.`,
+      answer: `SELECT * FROM ${table} ORDER BY ${column_1} DESC`
+    };
+  }
+};
+
+const orderByMultiple = {
+  set: "Intermediate",
+  func: db => {
+    const tables = getTables(db);
+
+    const [{ table, column: column_1 }, { column: column_2 }] = getColumns(
+      db,
+      tables,
+      {
+        x: 2
+      }
+    );
+
+    return {
+      question: `Display the **${table}** showing the **${table}** with the highest **${column_1}** first, secondly sorting by the lowest **${column_2}**`,
+      answer: `SELECT * FROM ${table} ORDER BY ${column_1} DESC, ${column_2} ASC`
+    };
+  }
+};
+
+const selectNull = {
+  set: "Intermediate",
+  func: db => {
+    // Random "NOT". Otherwise blank.
+    const [null_code, null_text] = getRandomElement([["NOT", "not"], ["", ""]]);
+
+    const tables = getTables(db);
+
+    const [{ table, column: column_1 }] = getColumns(db, tables, {
+      x: 1,
+      notnull: false
+    });
+
+    return {
+      question: `Get a list of all the **${table}** where the **${column_1}** is **${null_text}** a null value`,
+      answer: `SELECT * FROM ${table} WHERE ${column_1} IS ${null_code} NULL`
+    };
+  }
+};
+
+export default [
+  selectAll,
+  selectSpecific,
+  selectUnique,
+  basicWhere,
+  whereConjunction,
+  orderBy,
+  orderByMultiple,
+  selectNull
+];
