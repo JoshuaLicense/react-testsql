@@ -1,68 +1,31 @@
 import React from "react";
 
 import Auth from "../Auth";
+
+import LoggedIn from "../Auth/LoggedIn";
+import Guest from "../Auth/Guest";
+
 //import PropTypes from 'prop-types';
-import { withStyles } from "material-ui/styles";
+import { withStyles } from "@material-ui/core/styles";
 
-import AppBar from "material-ui/AppBar";
-import Toolbar from "material-ui/Toolbar";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
 
-import IconButton from "material-ui/IconButton";
-import MenuIcon from "material-ui-icons/Menu";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
 
-import Typography from "material-ui/Typography";
+import Typography from "@material-ui/core/Typography";
 
-import Hidden from "material-ui/Hidden";
-
-const drawerWidth = 240;
+import Hidden from "@material-ui/core/Hidden";
+import UserContext from "../Auth/Context";
 
 const styles = theme => ({
-  rootroot: {
-    flexGrow: 1,
-    height: 430,
-    zIndex: 1,
-    overflow: "hidden",
-    position: "relative",
-    display: "flex"
+  sidebarToggleIcon: {
+    marginRight: theme.spacing.unit * 2
   },
-  userActions: {
-    marginRight: 16
-  },
-  flex: {
-    flex: 1
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20
-  },
-  drawerPaper: {
-    position: "relative",
-    width: drawerWidth,
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen
-    })
-  },
-  drawerPaperClose: {
-    overflowX: "hidden",
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    }),
-    width: theme.spacing.unit * 7,
-    [theme.breakpoints.up("sm")]: {
-      width: theme.spacing.unit * 9
-    }
-  },
-  toolbar: {
+  userActionsContainer: {
     display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    padding: "0 8px",
-    ...theme.mixins.toolbar
+    marginLeft: "auto"
   }
 });
 
@@ -91,27 +54,32 @@ class Header extends React.Component {
     const { classes, loadDatabaseHandler } = this.props;
 
     return (
-      <AppBar position="fixed" className={classes.appBar}>
+      <AppBar position="static">
         <Toolbar>
           <Hidden mdUp>
             <IconButton
               color="inherit"
-              aria-label="open drawer"
+              className={classes.sidebarToggleIcon}
               onClick={this.handleSidebarToggle}
-              className={classes.menuButton}
+              aria-label="Open drawer"
             >
               <MenuIcon />
             </IconButton>
           </Hidden>
-          <Typography
-            variant="title"
-            color="inherit"
-            className={classes.flex}
-            noWrap
-          >
-            React testSQL
+          <Typography variant="title" color="inherit" noWrap>
+            testSQL
           </Typography>
-          <Auth loadDatabaseHandler={loadDatabaseHandler} />
+          <div className={classes.userActionsContainer}>
+            <UserContext.Consumer>
+              {({ user, refresh }) =>
+                user ? (
+                  <LoggedIn refreshUserContext={refresh} />
+                ) : (
+                  <Guest refreshUserContext={refresh} />
+                )
+              }
+            </UserContext.Consumer>
+          </div>
         </Toolbar>
       </AppBar>
     );

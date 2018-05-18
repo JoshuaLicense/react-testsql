@@ -1,14 +1,16 @@
 import React from "react";
 //import PropTypes from 'prop-types';
 
-import Button from "material-ui/Button";
+import Button from "@material-ui/core/Button";
 
-import TextField from "material-ui/TextField";
-import Dialog, {
-  DialogActions,
-  DialogTitle,
-  DialogContent
-} from "material-ui/Dialog";
+import TextField from "@material-ui/core/TextField";
+
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+
+import api from "../../utils/api";
 
 class Guest extends React.Component {
   state = {
@@ -22,7 +24,9 @@ class Guest extends React.Component {
   login = () => {
     const { username, password } = this.state;
 
-    this.props.loginHandler(username, password);
+    return api
+      .login(username, password)
+      .then(() => this.props.refreshUserContext());
   };
 
   handleChange = event => {

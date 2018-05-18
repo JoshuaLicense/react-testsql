@@ -1,62 +1,59 @@
 import React from "react";
 
-import Drawer from "material-ui/Drawer";
+import Drawer from "@material-ui/core/Drawer";
 
-import Typography from "material-ui/Typography";
+import Typography from "@material-ui/core/Typography";
 
-import List, {
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText
-} from "material-ui/List";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
 
-import Hidden from "material-ui/Hidden";
+import Hidden from "@material-ui/core/Hidden";
 
-import BottomNavigation, {
-  BottomNavigationAction
-} from "material-ui/BottomNavigation";
-import DownloadIcon from "material-ui-icons/FileDownload";
-import UploadIcon from "material-ui-icons/FileUpload";
-import RestoreIcon from "material-ui-icons/Restore";
+import DownloadIcon from "@material-ui/icons/FileDownload";
+import UploadIcon from "@material-ui/icons/FileUpload";
+import RestoreIcon from "@material-ui/icons/Restore";
 
-import { withStyles } from "material-ui/styles";
+import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 
-const drawerWidth = 240;
+import { withStyles } from "@material-ui/core/styles";
+import UserContext from "../Auth/Context";
 
 const styles = theme => ({
-  schemaButton: {
-    position: "absolute",
-    bottom: theme.spacing.unit,
-    right: theme.spacing.unit,
-    transition: theme.transitions.create("right", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
-  },
-  schemaButtonShift: {
-    right: theme.spacing.unit + drawerWidth,
-    transition: theme.transitions.create("transform", {
-      easing: theme.transitions.easing.easeInOut,
-      duration: theme.transitions.duration.standard
-    }),
-    transform: "rotate(180deg)"
-  },
-  heading: {
-    marginTop: theme.spacing.unit * 2
+  drawerDocked: {
+    height: "100%"
   },
   drawerPaper: {
-    width: drawerWidth,
+    height: "100%", // Overwrite the 100vh default!
+    width: "16rem",
     [theme.breakpoints.up("md")]: {
       position: "relative"
     }
   },
-  toolbar: theme.mixins.toolbar,
-  pinToBottom: {
-    marginTop: "auto"
+  container: {
+    display: "flex"
+  },
+  heading: {
+    marginTop: theme.spacing.unit * 2
+  },
+  drawerBottomActions: {
+    display: "flex",
+    justifyContent: "space-evenly",
+    marginTop: "auto",
+    marginBottom: theme.spacing.unit
+  },
+  uploadDatabaseFile: {
+    display: "none"
   }
 });
 
 class Schema extends React.Component {
+  state = {
+    schema: []
+  };
+
   handleUpload = e => {
     const files = e.target.files;
 
@@ -81,16 +78,18 @@ class Schema extends React.Component {
     e.target.value = "";
   };
 
+  toggleSidebar = () => this.props.sidebarHandler();
+
   render() {
     const {
       classes,
-      schema,
       open,
-      sidebarHandler,
       clickHandler,
       restoreHandler,
       downloadHandler
     } = this.props;
+
+    const { schema } = this.state;
 
     const tables = schema.map(({ name, count }, i) => (
       <ListItem key={i} onClick={() => clickHandler(name)} button>
@@ -101,78 +100,79 @@ class Schema extends React.Component {
       </ListItem>
     ));
 
-    const actions = (
-      <BottomNavigation value="1" className={classes.pinToBottom} showLabels>
-        <BottomNavigationAction
-          label={
-            <span>
-              Upload
-              <input
-                type="file"
-                style={{ display: "none" }}
-                onChange={e => this.handleUpload(e)}
-              />
-            </span>
-          }
-          icon={<UploadIcon />}
-          component="label"
-          style={{ boxSizing: "border-box" }}
+    const databaseActions = (
+      <div className={classes.drawerBottomActions}>
+        <input
+          accept=".db,.sqlite"
+          className={classes.uploadDatabaseFile}
+          id="uploadfile"
+          type="file"
         />
-        <BottomNavigationAction
-          label="Download"
-          icon={<DownloadIcon />}
-          onClick={() => downloadHandler()}
-        />
-        <BottomNavigationAction
-          label="Restore"
-          icon={<RestoreIcon />}
-          onClick={() => restoreHandler()}
-        />
-      </BottomNavigation>
+        <label htmlFor="uploadfile">
+          <IconButton
+            className={classes.button}
+            component="span"
+            aria-label="Upload Database"
+          >
+            <UploadIcon />
+          </IconButton>
+        </label>
+        <IconButton className={classes.button} aria-label="Download Database">
+          <DownloadIcon />
+        </IconButton>
+        <IconButton className={classes.button} aria-label="Restore Database">
+          <RestoreIcon />
+        </IconButton>
+      </div>
     );
 
     return (
-      <div>
+      <div className={classes.container}>
         <Hidden mdUp>
           <Drawer
-            classes={{ paper: classes.drawerPaper }}
+            classes={{
+              docked: classes.drawerDocked,
+              paper: classes.drawerPaper
+            }}
             anchor="left"
             open={open}
-            onClose={() => sidebarHandler(false)}
+            onClose={this.toggleSidebar}
           >
             <Typography
+              className={classes.heading}
+              component="h3"
               variant="body2"
               color="textSecondary"
-              component="h3"
-              className={classes.heading}
-              gutterBottom
               align="center"
+              gutterBottom
             >
               Database Schema
             </Typography>
             <List dense>{tables}</List>
-            {actions}
+            {databaseActions}
           </Drawer>
         </Hidden>
-        <Hidden smDown implementation="css">
+        <Hidden implementation="css" smDown>
           <Drawer
+            classes={{
+              docked: classes.drawerDocked,
+              paper: classes.drawerPaper
+            }}
             variant="permanent"
-            classes={{ paper: classes.drawerPaper }}
             open
           >
-            <div className={classes.toolbar} />
             <Typography
+              className={classes.heading}
+              component="h3"
               variant="body2"
               color="textSecondary"
-              component="h3"
-              className={classes.heading}
-              gutterBottom
               align="center"
+              gutterBottom
             >
               Database Schema
             </Typography>
             <List dense>{tables}</List>
-            {actions}
+            {databaseActions}
           </Drawer>
         </Hidden>
       </div>

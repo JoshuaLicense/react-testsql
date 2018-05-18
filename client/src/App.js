@@ -13,6 +13,9 @@ import DatabaseInput from "./components/Database/Input";
 import DatabaseOutput from "./components/Database/Output";
 
 import { buildQuestion } from "./components/Question/helpers";
+import UserProvider from "./components/Auth/Provider";
+
+import Layout from "./components/Layout";
 
 // import Alert from "./components/Alert";
 
@@ -22,7 +25,8 @@ import checkAnswer, { IncorrectAnswer } from "./components/Question/answer"; // 
 
 import api from "./utils/api";
 
-import { withStyles } from "material-ui/styles";
+import { withStyles } from "@material-ui/core/styles";
+import UserContext from "./components/Auth/Context";
 
 const styles = theme => ({
   root: {
@@ -335,70 +339,10 @@ class App extends Component {
   };
 
   render() {
-    const { classes } = this.props;
-
-    const {
-      feedback,
-      results,
-      schema,
-      openSidebar,
-      activeSet,
-      questionSetNames,
-      activeQuestion,
-      activeQuestionSet
-    } = this.state;
-
     return (
-      <div className={classes.root}>
-        <Header
-          sidebarToggleHandler={this.toggleSidebar}
-          loadDatabaseHandler={this.loadDatabase}
-        />
-        {schema && (
-          <Schema
-            schema={schema}
-            open={openSidebar}
-            sidebarHandler={this.toggleSidebar}
-            clickHandler={this.runTableQuery}
-            uploadHandler={this.uploadDatabase}
-            restoreHandler={this.restoreDatabase}
-            downloadHandler={this.downloadDatabase}
-          />
-        )}
-
-        <main className={classes.main}>
-          <div className={classes.toolbar} />
-          <section className={classes.mainSection}>
-            {activeQuestionSet && (
-              <Section title="Questions">
-                <Question
-                  activeSet={activeSet}
-                  questionSetNames={questionSetNames}
-                  activeQuestion={activeQuestion}
-                  activeQuestionSet={activeQuestionSet}
-                  changeQuestionHandler={this.changeQuestion}
-                  changeQuestionSetHandler={this.changeQuestionSet}
-                />
-              </Section>
-            )}
-
-            <Section title="Statement" gutters>
-              <DatabaseInput submitHandler={this.runQuery} />
-            </Section>
-
-            {results &&
-              results.map((result, i) => (
-                <Section title="Results" key={i} gutters>
-                  <DatabaseOutput
-                    columns={result.columns}
-                    values={result.values}
-                  />
-                </Section>
-              ))}
-          </section>
-        </main>
-        <Feedback {...feedback} changeHandler={this.changeFeedback} />
-      </div>
+      <UserProvider>
+        <Layout />
+      </UserProvider>
     );
   }
 }

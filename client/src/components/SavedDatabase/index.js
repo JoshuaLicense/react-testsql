@@ -3,30 +3,31 @@ import React from "react";
 
 import api from "../../utils/api";
 
-import IconButton from "material-ui/IconButton";
+import IconButton from "@material-ui/core/IconButton";
 
-import Divider from "material-ui/Divider";
+import Divider from "@material-ui/core/Divider";
 
-import Button from "material-ui/Button";
+import Button from "@material-ui/core/Button";
 
-import Input, { InputLabel } from "material-ui/Input";
-import { FormControl, FormHelperText } from "material-ui/Form";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
 
-import List, {
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction
-} from "material-ui/List";
+import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
-import Dialog, {
-  DialogTitle,
-  DialogActions,
-  DialogContent,
-  DialogContentText
-} from "material-ui/Dialog";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 
-import DatabaseIcon from "material-ui-icons/Storage";
-import DeleteIcon from "material-ui-icons/Delete";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+
+import DatabaseIcon from "@material-ui/icons/Storage";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 class DatabaseItem extends React.Component {
   handleLoadDatabase = () => {
