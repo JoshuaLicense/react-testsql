@@ -1,59 +1,48 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
-//import PropTypes from 'prop-types';
-
 import api from "../../utils/api";
 
-import IconButton from "material-ui/IconButton";
+import IconButton from "@material-ui/core/IconButton";
 
-import Divider from "material-ui/Divider";
+import Divider from "@material-ui/core/Divider";
 
-import Grid from "material-ui/Grid";
+import Grid from "@material-ui/core/Grid";
 
-import Button from "material-ui/Button";
+import Button from "@material-ui/core/Button";
 
-import Checkbox from "material-ui/Checkbox";
+import Checkbox from "@material-ui/core/Checkbox";
 
-import Input, { InputLabel } from "material-ui/Input";
-import {
-  FormControl,
-  FormHelperText,
-  FormControlLabel,
-  FormLabel,
-  FormGroup
-} from "material-ui/Form";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
 
-import ExpansionPanel, {
-  ExpansionPanelSummary,
-  ExpansionPanelDetails
-} from "material-ui/ExpansionPanel";
+import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
-import Switch from "material-ui/Switch";
+import Switch from "@material-ui/core/Switch";
 
-import List, {
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  ListItemSecondaryAction
-} from "material-ui/List";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 
-import Dialog, {
-  DialogTitle,
-  DialogActions,
-  DialogContent,
-  DialogContentText
-} from "material-ui/Dialog";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
 
-import GroupIcon from "material-ui-icons/GroupWork";
-import DeleteIcon from "material-ui-icons/Delete";
-import ManageIcon from "material-ui-icons/Settings";
-import LockIcon from "material-ui-icons/Lock";
+import GroupIcon from "@material-ui/icons/GroupWork";
+import DeleteIcon from "@material-ui/icons/Delete";
+import ManageIcon from "@material-ui/icons/Settings";
+import LockIcon from "@material-ui/icons/Lock";
 
-import ExpandMoreIcon from "material-ui-icons/ExpandMore";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
-import AddIcon from "material-ui-icons/Add";
-import { Typography, Paper } from "material-ui";
+import AddIcon from "@material-ui/icons/Add";
+
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
 
 class CreateGroup extends React.Component {
   state = {

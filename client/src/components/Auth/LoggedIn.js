@@ -25,7 +25,7 @@ class LoggedIn extends React.Component {
                 currentDatabase={currentDatabase}
                 loadDatabaseHandler={loadDatabase}
               />
-              <ManageGroup loadDatabaseHandler={loadDatabaseHandler} />
+              <ManageGroup loadDatabaseHandler={loadDatabase} />
             </React.Fragment>
           )}
         </DatabaseContext.Consumer>
