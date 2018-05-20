@@ -48,6 +48,9 @@ exports.joinGroup = (req, res, next) => {
       .exec((err, existingUserGroup) => {
         if (err) return next(err);
 
+        // Save the group to the session
+        req.session.group = group;
+
         // If this is an active group, then send the group information.
         // TODO: This is the part where the questions would be sent to the user.
         if (existingUserGroup) {

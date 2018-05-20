@@ -109,7 +109,13 @@ app.post(
 
 app.get("/user/info", (req, res) => {
   if (req.isAuthenticated()) {
-    return res.json(req.user);
+    const user = {
+      id: req.user.id,
+      username: req.user.username,
+      group: req.session.group || null
+    };
+
+    return res.json(user);
   }
 
   return res.sendStatus(403);
