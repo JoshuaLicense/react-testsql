@@ -1,21 +1,14 @@
 import React from "react";
 
 import Header from "../Header";
-import Schema from "../Schema";
 import Main from "./Main";
+import DatabaseContext from "../Database/Context";
 
 const containerStyle = {
   height: "100vh",
   overflow: "hidden",
   display: "flex",
   flexDirection: "column"
-};
-
-const innerContainerStyle = {
-  display: "flex",
-  flexDirection: "row",
-  zIndex: 0, // The header shadow will overlap.
-  height: "100%"
 };
 
 export default class Layout extends React.Component {
@@ -33,10 +26,22 @@ export default class Layout extends React.Component {
     return (
       <div style={containerStyle}>
         <Header sidebarToggleHandler={this.toggleSidebar} />
-        <div style={innerContainerStyle}>
-          <Schema open={openSidebar} sidebarHandler={this.toggleSidebar} />
-          <Main />
-        </div>
+
+        <DatabaseContext.Consumer>
+          {({ database, loadDatabase, updateDatabase }) =>
+            database ? (
+              <Main
+                currentDatabase={database}
+                loadDatabase={loadDatabase}
+                updateDatabase={updateDatabase}
+                sidebarToggleHandler={this.toggleSidebar}
+                openSidebar={openSidebar}
+              />
+            ) : (
+              <div>Loading...</div>
+            )
+          }
+        </DatabaseContext.Consumer>
       </div>
     );
   }

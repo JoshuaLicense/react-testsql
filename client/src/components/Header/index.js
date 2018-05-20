@@ -1,11 +1,8 @@
 import React from "react";
 
-import Auth from "../Auth";
-
 import LoggedIn from "../Auth/LoggedIn";
 import Guest from "../Auth/Guest";
 
-//import PropTypes from 'prop-types';
 import { withStyles } from "@material-ui/core/styles";
 
 import AppBar from "@material-ui/core/AppBar";
@@ -51,7 +48,7 @@ class Header extends React.Component {
   handleSidebarToggle = () => this.props.sidebarToggleHandler();
 
   render() {
-    const { classes, loadDatabaseHandler } = this.props;
+    const { classes } = this.props;
 
     return (
       <AppBar position="static">

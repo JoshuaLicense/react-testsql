@@ -19,7 +19,7 @@ class Feedback extends React.Component {
         open={!!message}
         autoHideDuration={6000}
         onClose={() => changeHandler(null)}
-        SnackbarContentProps={{
+        ContentProps={{
           "aria-describedby": "message-id"
         }}
         message={
