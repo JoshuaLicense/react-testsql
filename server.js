@@ -177,7 +177,7 @@ app.get(
 );
 
 app.get(
-  "/group/leave",
+  "/group/leave/:id",
   passportConfig.isAuthenticated,
   groupController.leaveGroup
 );

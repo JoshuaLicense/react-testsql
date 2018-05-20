@@ -16,6 +16,8 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 
+import SQL from "sql.js";
+
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 
@@ -34,6 +36,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 
 import GroupIcon from "@material-ui/icons/GroupWork";
 import DeleteIcon from "@material-ui/icons/Delete";
+import LeaveIcon from "@material-ui/icons/ExitToApp";
 import ManageIcon from "@material-ui/icons/Settings";
 import LockIcon from "@material-ui/icons/Lock";
 
@@ -178,9 +181,8 @@ class CreateGroup extends React.Component {
 }
 
 class GroupItem extends React.Component {
-  handleJoinGroup = () => {
-    this.props.joinGroupHandler(this.props.item._id);
-  };
+  handleJoinGroup = () => this.props.joinGroupHandler(this.props.item._id);
+  handleLeaveGroup = () => this.props.leaveGroupHandler(this.props.item._id);
 
   render() {
     const {
@@ -191,25 +193,28 @@ class GroupItem extends React.Component {
       isPrivate
     } = this.props.item;
 
-    const { canManage } = this.props;
+    const { canManage, canLeave } = this.props;
 
     const date = new Date(createdAt).toDateString();
 
     return (
       <ListItem onClick={this.handleJoinGroup} button>
-        {/*isPrivate && (
-          <ListItemIcon>
-            <LockIcon />
-          </ListItemIcon>
-        )*/}
         <ListItemText inset primary={title} secondary={createdBy} />
-        {canManage && (
-          <ListItemSecondaryAction>
-            <IconButton aria-label="Manage">
+        <ListItemSecondaryAction>
+          {canManage && (
+            <IconButton aria-label="Manage group">
               <ManageIcon />
             </IconButton>
-          </ListItemSecondaryAction>
-        )}
+          )}
+          {canLeave && (
+            <IconButton
+              onClick={this.handleLeaveGroup}
+              aria-label="Leave group"
+            >
+              <LeaveIcon />
+            </IconButton>
+          )}
+        </ListItemSecondaryAction>
       </ListItem>
     );
   }
@@ -222,19 +227,21 @@ class GroupList extends React.Component {
     error: null
   };
 
-  load = () => {
-    api
+  load = async () => {
+    await api
       .listActiveGroups()
       .then(activeList => this.setState({ activeList }))
       .catch(error => {
-        error.json().then(json => this.setState({ error: json }));
+        error.json().then(json => this.setState({ error: json.message }));
       });
 
-    api
+    return api
       .listGroups()
-      .then(list => this.setState({ list }))
+      .then(list => {
+        this.setState({ list });
+      })
       .catch(error => {
-        error.json().then(json => this.setState({ error: json }));
+        error.json().then(json => this.setState({ error: json.message }));
       });
   };
 
@@ -252,14 +259,28 @@ class GroupList extends React.Component {
 
     api
       .joinGroup(id)
+      .then(group => api.loadDatabase(group.database))
       .then(fileBuffer => {
         const typedArray = new Uint8Array(fileBuffer);
 
-        this.props.loadDatabaseHandler(typedArray);
+        const database = new SQL.Database(typedArray);
+
+        return this.props.loadDatabaseHandler(database);
       })
       .then(() => this.props.closeHandler())
       .catch(error => {
-        error.json().then(json => this.setState({ error: json }));
+        error.json().then(json => this.setState({ error: json.message }));
+      });
+  };
+
+  handleLeaveGroup = id => {
+    this.setState({ error: null });
+
+    api
+      .leaveGroup(id)
+      .then(() => this.load())
+      .catch(error => {
+        error.json().then(json => this.setState({ error: json.message }));
       });
   };
 
@@ -280,7 +301,7 @@ class GroupList extends React.Component {
         )}
         <DialogTitle id="dialog-title">
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            Your Groups
+            Your active groups
             <Button
               component={Link}
               to="/create-group"
@@ -298,8 +319,10 @@ class GroupList extends React.Component {
               <GroupItem
                 key={activeGroup.group._id}
                 joinGroupHandler={this.handleJoinGroup}
+                leaveGroupHandler={this.handleLeaveGroup}
                 item={activeGroup.group}
                 canManage
+                canLeave
               />
             ))}
           </List>

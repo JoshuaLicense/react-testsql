@@ -65,9 +65,7 @@ exports.register = (req, res, next) => {
 
     if (existingUser) {
       return res.status(400).json({
-        errors: {
-          duplicate: { msg: "This username already exists." }
-        }
+        error: { message: "This username already exists." }
       });
     }
 

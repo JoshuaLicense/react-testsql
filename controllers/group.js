@@ -9,12 +9,20 @@ const UserGroup = require("../models/UserGroup");
 const Database = require("../models/Database");
 
 exports.listGroups = (req, res, next) => {
-  Group.find((err, groups) => {
-    if (err) {
-      return next(err);
-    }
+  // Find all the groups that this user is part of so we can exclude them from the list.
+  UserGroup.find({ user: req.user.id }, (err, userGroups) => {
+    // Extract all the group id's
+    const userGroupsID = userGroups.map(usergroup => usergroup.group);
 
-    return res.json(groups);
+    // Construct the query specifying no groups in the users to be selected.
+    Group.find()
+      .where("_id")
+      .nin(userGroupsID)
+      .exec((err, groups) => {
+        if (err) return next(err);
+
+        return res.json(groups);
+      });
   });
 };
 
@@ -35,28 +43,28 @@ exports.joinGroup = (req, res, next) => {
     if (err) next(err);
 
     // Check that this user is not already in this group
-    UserGroup.findOne({ user: req.user.id }, (err, existingUserGroup) => {
-      if (err) return next(err);
+    UserGroup.findOne({ user: req.user.id })
+      .populate("group")
+      .exec((err, existingUserGroup) => {
+        if (err) return next(err);
 
-      if (existingUserGroup) {
-        return res.status(400).json({
-          errors: {
-            duplicate: { msg: "You are already a member of this group." }
-          }
+        // If this is an active group, then send the group information.
+        // TODO: This is the part where the questions would be sent to the user.
+        if (existingUserGroup) {
+          return res.send(group);
+        }
+
+        const obj = new UserGroup({
+          user: req.user.id,
+          group: group.id
         });
-      }
 
-      const obj = new UserGroup({
-        user: req.user.id,
-        group: group.id
+        obj.save(err => {
+          if (err) next(err);
+
+          return res.send(group);
+        });
       });
-
-      obj.save(err => {
-        if (err) next(err);
-      });
-
-      return res.sendStatus(200);
-    });
   });
 };
 
@@ -85,10 +93,23 @@ exports.createGroup = (req, res, next) => {
 exports.leaveGroup = (req, res, next) => {
   const { id } = req.params;
 
-  UserGroup.findOneAndRemove({ group: id, user: req.user.id }, err => {
+  Group.find({ _id: id, creator: req.user.id }, (err, ownedGroup) => {
     if (err) return next(err);
 
-    return res.sendStatus(200);
+    // Cannot leave your own groups!
+    if (ownedGroup) {
+      return res.status(403).json({
+        error: {
+          message: "You cannot leave a group that you are the owner of."
+        }
+      });
+    }
+
+    UserGroup.findOneAndRemove({ group: id, user: req.user.id }, err => {
+      if (err) return next(err);
+
+      return res.sendStatus(200);
+    });
   });
 };
 

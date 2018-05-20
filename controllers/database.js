@@ -35,9 +35,7 @@ exports.canSaveDatabase = (req, res, next) => {
     // Check if the user has reached their upload limit
     if (databases.length >= config.database.limit) {
       return res.status(403).json({
-        errors: {
-          length: { msg: "You have reached the limit of saved databases" }
-        }
+        error: { message: "You have reached the limit of saved databases" }
       });
     }
 
@@ -89,10 +87,8 @@ exports.deleteDatabase = (req, res, next) => {
 
     if (dependantGroup) {
       return res.status(400).json({
-        errors: {
-          dependant: {
-            msg: "Cannot delete a database that a group depends upon."
-          }
+        error: {
+          message: "Cannot delete a database that a group depends upon."
         }
       });
     }
