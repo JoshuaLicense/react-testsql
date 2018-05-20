@@ -1,7 +1,9 @@
 const handleError = res => {
   if (!res.ok) {
+    console.log("I'm throwing");
     throw res;
   }
+  console.log("I'm happy");
 
   return res;
 };
@@ -91,6 +93,27 @@ const listDatabases = () => {
     .then(res => res.json());
 };
 
+const createGroup = (title, databaseID) => {
+  const data = { title, databaseID };
+
+  return fetch("/group/create", {
+    method: "POST",
+    body: JSON.stringify(data),
+    credentials: "same-origin",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  })
+    .then(handleError)
+    .then(res => res.json());
+};
+
+const deleteGroup = id => {
+  return fetch(`/group/delete/${id}`)
+    .then(handleError)
+    .then(res => res.json());
+};
+
 const listActiveGroups = () => {
   return fetch("/group/list/active", {
     method: "GET",
@@ -124,19 +147,17 @@ const joinGroup = id => {
     })
   })
     .then(handleError)
-    .then(res => res.arrayBuffer());
+    .then(res => res.json());
 };
 
 const leaveGroup = id => {
-  return fetch(`/group/leave/`, {
+  return fetch(`/group/leave/${id}`, {
     method: "GET",
     credentials: "same-origin",
     headers: new Headers({
       "Content-Type": "application/json"
     })
-  })
-    .then(handleError)
-    .then(res => res.json());
+  }).then(handleError);
 };
 
 const api = {
@@ -147,6 +168,8 @@ const api = {
   loadDatabase,
   listDatabases,
   deleteDatabase,
+  createGroup,
+  deleteGroup,
   listGroups,
   listActiveGroups,
   joinGroup,

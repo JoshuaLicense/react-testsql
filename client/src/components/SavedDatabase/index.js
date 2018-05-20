@@ -138,7 +138,8 @@ class SaveDatabase extends React.Component {
 
 class DatabaseList extends React.Component {
   state = {
-    list: null
+    list: null,
+    error: null
   };
 
   load = () => {
@@ -161,7 +162,7 @@ class DatabaseList extends React.Component {
         return json;
       })
       .catch(error => {
-        error.json().then(json => this.setState({ error: json }));
+        error.json().then(json => this.setState({ error: json.message }));
       });
   };
 
@@ -173,11 +174,11 @@ class DatabaseList extends React.Component {
 
         const database = new SQL.Database(typedArray);
 
-        this.props.loadDatabaseHandler(database);
+        return this.props.loadDatabaseHandler(database);
       })
       .then(() => this.props.closeHandler())
       .catch(error => {
-        error.json().then(json => this.setState({ error: json }));
+        error.json().then(json => this.setState({ error: json.message }));
       });
   };
 
