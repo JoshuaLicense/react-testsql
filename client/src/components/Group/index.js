@@ -226,12 +226,16 @@ class GroupList extends React.Component {
     api
       .listActiveGroups()
       .then(activeList => this.setState({ activeList }))
-      .catch(e => console.log(e));
+      .catch(error => {
+        error.json().then(json => this.setState({ error: json }));
+      });
 
     api
       .listGroups()
       .then(list => this.setState({ list }))
-      .catch(e => console.log(e));
+      .catch(error => {
+        error.json().then(json => this.setState({ error: json }));
+      });
   };
 
   handleClose = () => {
@@ -266,7 +270,7 @@ class GroupList extends React.Component {
     const activeListCount = activeList && activeList.length;
 
     return (
-      <div>
+      <React.Fragment>
         {error && (
           <DialogTitle disableTypography>
             <Typography color="error" align="center">
@@ -327,7 +331,7 @@ class GroupList extends React.Component {
             Close
           </Button>
         </DialogActions>
-      </div>
+      </React.Fragment>
     );
   }
 }
