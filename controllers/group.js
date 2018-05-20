@@ -5,57 +5,101 @@ const config = require("../config/config");
 
 // Models
 const Group = require("../models/Group");
+const UserGroup = require("../models/UserGroup");
+const Database = require("../models/Database");
 
-exports.listGroup = (req, res, next) => {
-  res.json([
-    {
-      _id: "abcdefghijklmnop",
-      title: "Group #1",
-      createdBy: "Joshua License",
-      createdAt: "12/05/2017",
-      capacity: 5,
-      isPrivate: true
-    },
-    {
-      _id: "abcdefghijvklmnop",
-      title: "Group #3",
-      createdBy: "Charles Boisvert",
-      createdAt: "12/05/2005",
-      capacity: 8,
-      isPrivate: false
-    },
-    {
-      _id: "abcdefghijaklmnop",
-      title: "Group #2",
-      createdBy: "Joshua License",
-      createdAt: "12/05/2018",
-      capacity: 12,
-      isPrivate: false
+exports.listGroups = (req, res, next) => {
+  Group.find((err, groups) => {
+    if (err) {
+      return next(err);
     }
-  ]);
+
+    return res.json(groups);
+  });
 };
 
-exports.listMine = (req, res, next) => {
-  res.json([
-    {
-      _id: "abcdefghijklmnop",
-      title: "Group #1",
-      createdBy: "Joshua License",
-      createdAt: "12/05/2017",
-      capacity: 5,
-      isPrivate: true
-    }
-  ]);
+exports.listActive = (req, res, next) => {
+  UserGroup.find({ user: req.user.id })
+    .populate("Group")
+    .exec((err, usergroups) => {
+      if (err) {
+        return next(err);
+      }
+
+      return res.json(usergroups);
+    });
 };
 
 exports.joinGroup = (req, res, next) => {
-  res.status(400).json("NOT IMPLEMENTED");
+  const { id } = req.params;
+
+  Group.findById(id, (err, group) => {
+    if (err) next(err);
+
+    // Check that this user is not already in this group
+    UserGroup.findOne({ user: req.user.id }, (err, existingUserGroup) => {
+      if (err) return next(err);
+
+      if (existingUserGroup) {
+        return res.status(400).json({
+          errors: {
+            duplicate: { msg: "You are already a member of this group." }
+          }
+        });
+      }
+
+      const obj = new UserGroup({
+        user: req.user.id,
+        group: group.id
+      });
+
+      obj.save(err => {
+        if (err) next(err);
+      });
+
+      return res.sendStatus(200);
+    });
+  });
 };
 
 exports.createGroup = (req, res, next) => {
-  res.status(400).send("NOT IMPLEMENTED");
+  const { title, databaseID } = req.body;
+
+  // Make sure the database chosen actually exists
+  Database.findById(databaseID, (err, database) => {
+    if (err) next(err);
+
+    // Create a new group instance
+    const obj = new Group({
+      title: title,
+      creator: req.user.id,
+      database: database.id
+    });
+
+    obj.save(err => {
+      if (err) return next(err);
+
+      return res.sendStatus(200);
+    });
+  });
 };
 
 exports.leaveGroup = (req, res, next) => {
-  res.status(400).json("NOT IMPLEMENTED");
+  const { id } = req.params;
+
+  UserGroup.findOneAndRemove({ group: id, user: req.user.id }, err => {
+    if (err) return next(err);
+
+    return res.sendStatus(200);
+  });
+};
+
+exports.deleteGroup = (req, res, next) => {
+  const { id } = req.params;
+
+  Group.findOneAndRemove({ _id: id, creator: req.user.id }, err => {
+    if (err) return next(err);
+
+    return res.sendStatus(200);
+  });
 };

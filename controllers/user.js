@@ -61,12 +61,14 @@ exports.register = (req, res, next) => {
   }
 
   User.findOne({ username: req.body.username }, (err, existingUser) => {
-    if (err) {
-      return next(err);
-    }
+    if (err) return next(err);
 
     if (existingUser) {
-      return res.status(400).json({ error: "That username is already taken." });
+      return res.status(400).json({
+        errors: {
+          duplicate: { msg: "This username already exists." }
+        }
+      });
     }
 
     const user = new User({

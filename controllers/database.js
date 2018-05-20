@@ -50,14 +50,11 @@ exports.saveDatabase = (req, res, next) => {
   const database = new Database({
     title: req.params.title,
     path: req.file.filename,
-
     creator: req.user.id
   });
 
   database.save(err => {
-    if (err) {
-      return next(err);
-    }
+    if (err) return next(err);
   });
 
   return res.json(database);
@@ -87,15 +84,29 @@ exports.loadDatabase = (req, res, next) => {
 exports.deleteDatabase = (req, res, next) => {
   const { id } = req.params;
 
-  Database.findOneAndRemove(
-    { _id: id, creator: req.user.id },
-    (err, database) => {
-      if (err) return next(err);
+  Group.findOne({ database: id }, (err, dependantGroup) => {
+    if (err) return next(err);
 
-      // Remove the file from the server too.
-      fs.unlink(`./saves/${database.path}`);
-
-      return res.sendStatus(200);
+    if (dependantGroup) {
+      return res.status(400).json({
+        errors: {
+          dependant: {
+            msg: "Cannot delete a database that a group depends upon."
+          }
+        }
+      });
     }
-  );
+
+    Database.findOneAndRemove(
+      { _id: id, creator: req.user.id },
+      (err, database) => {
+        if (err) return next(err);
+
+        // Remove the file from the server too.
+        fs.unlink(`./saves/${database.path}`);
+
+        return res.sendStatus(200);
+      }
+    );
+  });
 };

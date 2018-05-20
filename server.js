@@ -122,6 +122,9 @@ app.get(
   passportConfig.isAuthenticated,
   databaseController.listDatabase
 );
+
+// Title is in the "get" as express doesn't deal with FormData,
+// which is what the saved database binary will be sent as.
 app.post(
   "/database/save/:title?",
   passportConfig.isAuthenticated,
@@ -150,15 +153,15 @@ app.get(
 );
 
 app.get(
-  "/group/list",
+  "/group/list/all",
   passportConfig.isAuthenticated,
-  groupController.listGroup
+  groupController.listGroups
 );
 
 app.get(
-  "/group/mine",
+  "/group/list/active",
   passportConfig.isAuthenticated,
-  groupController.listMine
+  groupController.listActive
 );
 
 app.post(
