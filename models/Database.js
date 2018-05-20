@@ -10,9 +10,14 @@ const databaseSchema = new mongoose.Schema(
     },
 
     path: String,
-    creator: { type: Schema.Types.ObjectId, ref: "User" }
+    creator: {
+      type: Schema.Types.ObjectId,
+      ref: "User"
+    }
   },
-  { timestamps: true }
+  {
+    timestamps: true
+  }
 );
 
 const Database = mongoose.model("Database", databaseSchema);
