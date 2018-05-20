@@ -217,15 +217,15 @@ class GroupItem extends React.Component {
 
 class GroupList extends React.Component {
   state = {
-    myList: null,
+    activeList: null,
     list: null,
     error: null
   };
 
   load = () => {
     api
-      .listMyGroups()
-      .then(myList => this.setState({ myList }))
+      .listActiveGroups()
+      .then(activeList => this.setState({ activeList }))
       .catch(e => console.log(e));
 
     api
@@ -260,10 +260,10 @@ class GroupList extends React.Component {
   };
 
   render() {
-    const { list, myList, error } = this.state;
+    const { list, activeList, error } = this.state;
 
     const listCount = list && list.length;
-    const myListCount = myList && myList.length;
+    const activeListCount = activeList && activeList.length;
 
     return (
       <div>
@@ -288,13 +288,13 @@ class GroupList extends React.Component {
             </Button>
           </div>
         </DialogTitle>
-        {myListCount > 0 ? (
-          <List dense={myListCount >= 5}>
-            {myList.map(group => (
+        {activeListCount > 0 ? (
+          <List dense={activeListCount >= 5}>
+            {activeList.map(activeGroup => (
               <GroupItem
-                key={group._id}
+                key={activeGroup.group._id}
                 joinGroupHandler={this.handleJoinGroup}
-                item={group}
+                item={activeGroup.group}
                 canManage
               />
             ))}
@@ -348,8 +348,10 @@ class GroupManager extends React.Component {
   render() {
     const { open } = this.state;
 
+    const { loadDatabaseHandler } = this.props;
+
     return (
-      <span>
+      <React.Fragment>
         <IconButton color="inherit" aria-label="Group List" onClick={this.open}>
           <GroupIcon />
         </IconButton>
@@ -361,7 +363,7 @@ class GroupManager extends React.Component {
               path="/"
               render={() => (
                 <GroupList
-                  loadDatabaseHandler={this.props.loadDatabaseHandler}
+                  loadDatabaseHandler={loadDatabaseHandler}
                   closeHandler={this.close}
                 />
               )}
@@ -369,7 +371,7 @@ class GroupManager extends React.Component {
             <Route path="/create-group" render={() => <CreateGroup />} />
           </Dialog>
         </Router>
-      </span>
+      </React.Fragment>
     );
   }
 }

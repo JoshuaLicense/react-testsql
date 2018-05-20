@@ -20,11 +20,9 @@ exports.listGroups = (req, res, next) => {
 
 exports.listActive = (req, res, next) => {
   UserGroup.find({ user: req.user.id })
-    .populate("Group")
+    .populate("group")
     .exec((err, usergroups) => {
-      if (err) {
-        return next(err);
-      }
+      if (err) return next(err);
 
       return res.json(usergroups);
     });

@@ -31,6 +31,8 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DatabaseIcon from "@material-ui/icons/Storage";
 import DeleteIcon from "@material-ui/icons/Delete";
 
+import Typography from "@material-ui/core/Typography";
+
 class DatabaseItem extends React.Component {
   handleLoadDatabase = () => {
     this.props.loadDatabaseHandler(this.props.item._id);
@@ -151,11 +153,16 @@ class DatabaseList extends React.Component {
   handleSaveDatabase = title => {
     const database = this.props.currentDatabase.export();
 
-    return api.saveDatabase(title, database).then(json => {
-      this.load();
+    return api
+      .saveDatabase(title, database)
+      .then(json => {
+        this.load();
 
-      return json;
-    });
+        return json;
+      })
+      .catch(error => {
+        error.json().then(json => this.setState({ error: json }));
+      });
   };
 
   handleLoadDatabase = id => {
@@ -168,7 +175,10 @@ class DatabaseList extends React.Component {
 
         this.props.loadDatabaseHandler(database);
       })
-      .then(() => this.props.closeHandler());
+      .then(() => this.props.closeHandler())
+      .catch(error => {
+        error.json().then(json => this.setState({ error: json }));
+      });
   };
 
   handleDeleteDatabase = id => {
@@ -176,18 +186,21 @@ class DatabaseList extends React.Component {
   };
 
   render() {
-    const { list } = this.state;
+    const { list, error } = this.state;
 
     const { open, closeHandler, currentDatabase } = this.props;
 
     const count = list && list.length;
 
     return (
-      <Dialog
-        onClose={closeHandler}
-        open={open}
-        aria-labelledby="simple-dialog-title"
-      >
+      <React.Fragment>
+        {error && (
+          <DialogTitle disableTypography>
+            <Typography color="error" align="center">
+              {error}
+            </Typography>
+          </DialogTitle>
+        )}
         <SaveDatabase
           currentDatabase={currentDatabase}
           saveDatabaseHandler={this.handleSaveDatabase}
@@ -216,7 +229,7 @@ class DatabaseList extends React.Component {
             Cancel
           </Button>
         </DialogActions>
-      </Dialog>
+      </React.Fragment>
     );
   }
 }
@@ -248,12 +261,14 @@ class DatabaseManager extends React.Component {
         >
           <DatabaseIcon />
         </IconButton>
-        <DatabaseList
-          open={open}
-          currentDatabase={currentDatabase}
-          loadDatabaseHandler={loadDatabaseHandler}
-          closeHandler={this.close}
-        />
+        <Dialog onClose={this.close} open={open} fullWidth>
+          <DatabaseList
+            open={open}
+            currentDatabase={currentDatabase}
+            loadDatabaseHandler={loadDatabaseHandler}
+            closeHandler={this.close}
+          />
+        </Dialog>
       </React.Fragment>
     );
   }
