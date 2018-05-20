@@ -20,10 +20,13 @@ class LoggedIn extends React.Component {
       <React.Fragment>
         <DatabaseContext.Consumer>
           {({ database: currentDatabase, loadDatabase }) => (
-            <ManageDatabase
-              currentDatabase={currentDatabase}
-              loadDatabaseHandler={loadDatabase}
-            />
+            <React.Fragment>
+              <ManageDatabase
+                currentDatabase={currentDatabase}
+                loadDatabaseHandler={loadDatabase}
+              />
+              <ManageGroup loadDatabaseHandler={loadDatabase} />
+            </React.Fragment>
           )}
         </DatabaseContext.Consumer>
         {/*<ManageSession />*/}
