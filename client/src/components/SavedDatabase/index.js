@@ -251,12 +251,17 @@ class DatabaseManager extends React.Component {
   render() {
     const { open } = this.state;
 
-    const { loadDatabaseHandler, currentDatabase } = this.props;
+    const { loadDatabaseHandler, currentDatabase, disabled } = this.props;
 
     return (
       <React.Fragment>
-        <IconButton color="inherit" aria-label="Saved Database Actions">
-          <DatabaseIcon onClick={this.open} />
+        <IconButton
+          onClick={this.open}
+          color="inherit"
+          aria-label="Saved Database Actions"
+          disabled={disabled}
+        >
+          <DatabaseIcon />
         </IconButton>
         <Dialog onClose={this.close} open={open} fullWidth>
           <DatabaseList
