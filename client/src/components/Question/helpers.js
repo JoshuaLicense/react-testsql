@@ -5,6 +5,55 @@ const COLUMN_NOT_NULL = 3;
 const DEFAULT = 4; // eslint-disable-line no-unused-vars
 const PRIMARY_KEY = 5; // eslint-disable-line no-unused-vars
 
+const buildQuestion = (db, config) => {
+  const { func } = config;
+
+  // Try running the question callable
+  try {
+    const { question, answer } = func(db);
+
+    return { ...config, question, answer };
+  } catch (Error) {
+    // Mark as error'd question
+    return {
+      ...config,
+      question: `Error: ${Error.message}`,
+      answer: null,
+      error: true
+    };
+  }
+};
+
+const getQuestions = async (database, forceRebuild = false) =>
+  new Promise((resolve, reject) => {
+    // Check the localStorage for any cached question sets
+    const cachedQuestions = localStorage.getItem("__testSQL_Questions__");
+
+    if (cachedQuestions && !forceRebuild) {
+      const decodedQuestions = JSON.parse(cachedQuestions);
+
+      return resolve(decodedQuestions);
+    }
+
+    return import("../Question/questions.js").then(
+      ({ default: _questions }) => {
+        const questions = _questions.map(question =>
+          buildQuestion(database, question)
+        );
+
+        // Cache the built questions.
+        localStorage.setItem(
+          "__testSQL_Questions__",
+          JSON.stringify(questions)
+        );
+
+        return resolve(questions);
+      }
+    );
+  });
+
+export default getQuestions;
+
 export const getTables = (db, x = false) => {
   const [{ values: tables }] = db.exec(
     `SELECT "tbl_name" FROM "sqlite_master" WHERE "type" = 'table' AND "tbl_name" != "ts-questions" ORDER BY RANDOM() ${
@@ -100,4 +149,50 @@ export const getRows = (db, table, column, x = 1) => {
   }
 
   return [].concat(...values);
+};
+
+export const getRandomOperator = () => {
+  const operators = [
+    {
+      code: "=",
+      text: "equal"
+    },
+    {
+      code: ">=",
+      text: "greater or equal"
+    },
+    {
+      code: ">",
+      text: "greater than"
+    },
+    {
+      code: "<=",
+      text: "less or equal"
+    },
+    {
+      code: "<",
+      text: "less than"
+    }
+  ];
+
+  return operators[Math.floor(Math.random() * operators.length)];
+};
+
+export const getRandomConjunction = () => {
+  const conjunctions = [
+    {
+      code: "&&",
+      text: "and"
+    },
+    {
+      code: "||",
+      text: "or"
+    }
+  ];
+
+  return conjunctions[Math.floor(Math.random() * conjunctions.length)];
+};
+
+export const getRandomElement = options => {
+  return options[Math.floor(Math.random() * options.length)];
 };

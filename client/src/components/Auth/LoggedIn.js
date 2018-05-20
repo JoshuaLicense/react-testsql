@@ -1,13 +1,14 @@
 import React from "react";
 //import PropTypes from 'prop-types';
 
-import IconButton from "material-ui/IconButton";
+import IconButton from "@material-ui/core/IconButton";
 
-import LogoutIcon from "material-ui-icons/PowerSettingsNew";
+import LogoutIcon from "@material-ui/icons/PowerSettingsNew";
 
 import ManageGroup from "../Group";
 import ManageDatabase from "../SavedDatabase";
 import api from "../../utils/api";
+import DatabaseContext from "../Database/Context";
 
 class LoggedIn extends React.Component {
   handleLogout = () => {
@@ -15,12 +16,19 @@ class LoggedIn extends React.Component {
   };
 
   render() {
-    const { loadDatabaseHandler } = this.props;
-
     return (
       <React.Fragment>
-        <ManageDatabase loadDatabaseHandler={loadDatabaseHandler} />
-        <ManageGroup loadDatabaseHandler={loadDatabaseHandler} />
+        <DatabaseContext.Consumer>
+          {({ database: currentDatabase, loadDatabase }) => (
+            <React.Fragment>
+              <ManageDatabase
+                currentDatabase={currentDatabase}
+                loadDatabaseHandler={loadDatabase}
+              />
+              <ManageGroup loadDatabaseHandler={loadDatabaseHandler} />
+            </React.Fragment>
+          )}
+        </DatabaseContext.Consumer>
         <IconButton
           color="inherit"
           aria-label="Logout"

@@ -1,15 +1,9 @@
-import defaultDatabase from "../default.sqlite";
-
 const handleError = res => {
   if (!res.ok) {
     throw res;
   }
 
   return res;
-};
-
-const getDefaultDatabase = () => {
-  return fetch(defaultDatabase).then(res => res.arrayBuffer());
 };
 
 const login = (username, password) => {
@@ -146,7 +140,6 @@ const leaveGroup = id => {
 };
 
 const api = {
-  getDefaultDatabase,
   login,
   getCurrentUser,
   logout,

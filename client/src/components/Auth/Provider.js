@@ -4,23 +4,6 @@ import api from "../../utils/api";
 import UserContext from "./Context";
 
 export default class Provider extends React.Component {
-  login = (username, password) => {
-    return api
-      .login(username, password)
-      .then(data => {
-        this.setState(state => ({ user: data }));
-      })
-      .catch(err => {
-        this.setState(state => ({ user: null }));
-      });
-  };
-
-  logout = () => {
-    return api.logout().then(data => {
-      this.setState(state => ({ user: null }));
-    });
-  };
-
   refresh = () => {
     return api
       .getCurrentUser()

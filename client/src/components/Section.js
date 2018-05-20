@@ -1,24 +1,24 @@
 import React from "react";
 
-import { withStyles } from "material-ui/styles";
+import { withStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 
-import Paper from "material-ui/Paper";
-import Typography from "material-ui/Typography";
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
 
 const styles = theme => ({
   heading: {
     fontWeight: 500
   },
-  seperator: { 
+  seperator: {
     margin: theme.spacing.unit * 2
   },
   paper: {
-    overflow: "auto",
+    overflow: "auto"
   },
   gutters: {
-    padding: theme.spacing.unit * 2,
-  },
+    padding: theme.spacing.unit * 2
+  }
 });
 
 const Section = props => {
@@ -26,10 +26,18 @@ const Section = props => {
 
   return (
     <div className={classes.seperator} {...other}>
-      <Typography variant="body2" color="textSecondary" component="h3" gutterBottom>
+      <Typography
+        variant="body2"
+        color="textSecondary"
+        component="h3"
+        gutterBottom
+      >
         {title}
       </Typography>
-      <Paper className={classNames((gutters && classes.gutters), classes.paper)} elevation={2}>
+      <Paper
+        className={classNames(gutters && classes.gutters, classes.paper)}
+        elevation={2}
+      >
         {children}
       </Paper>
     </div>

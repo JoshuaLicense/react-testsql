@@ -1,20 +1,26 @@
 import React from "react";
 
-import PropTypes from "prop-types"; // eslint-disable-line no-unused-vars
-import { withStyles } from "material-ui/styles";
-import Stepper, { Step, StepButton, StepLabel } from "material-ui/Stepper";
-import Typography from "material-ui/Typography";
+import Markdown from "markdown-to-jsx";
 
-import PreviousIcon from "material-ui-icons/KeyboardArrowLeft";
-import NextIcon from "material-ui-icons/KeyboardArrowRight";
+import { withStyles } from "@material-ui/core/styles";
 
-import Divider from "material-ui/Divider";
+import Stepper from "@material-ui/core/Stepper";
+import Step from "@material-ui/core/Step";
+import StepButton from "@material-ui/core/StepButton";
+import StepLabel from "@material-ui/core/StepLabel";
 
-import Button from "material-ui/Button";
+import Typography from "@material-ui/core/Typography";
 
-import { MenuItem } from "material-ui/Menu";
+import PreviousIcon from "@material-ui/icons/KeyboardArrowLeft";
+import NextIcon from "@material-ui/icons/KeyboardArrowRight";
 
-import Select from "material-ui/Select";
+import Divider from "@material-ui/core/Divider";
+
+import Button from "@material-ui/core/Button";
+
+import MenuItem from "@material-ui/core/MenuItem";
+
+import Select from "@material-ui/core/Select";
 
 const styles = theme => ({
   innerPadding: {
@@ -33,63 +39,151 @@ const styles = theme => ({
   },
   previousButton: {
     marginRight: theme.spacing.unit
+  },
+  bottomActions: {
+    display: "flex",
+    justifyContent: "space-between",
+    marginTop: theme.spacing.unit * 2
   }
 });
 
 class Question extends React.Component {
+  state = {
+    allSetNames: [],
+    activeSet: null,
+    activeQuestionSet: null,
+    activeQuestionIndex: null
+  };
+
+  componentDidMount = () => {
+    const { allQuestions } = this.props;
+
+    const allSetNames = [
+      ...new Set(allQuestions.map(question => question.set))
+    ];
+
+    const activeSet = allSetNames[0];
+
+    // Only get the questions in this set.
+    const activeQuestionSet = [
+      ...allQuestions.filter(question => question.set === activeSet)
+    ];
+
+    this.handleQuestionChange(0, activeQuestionSet[0])();
+
+    this.setState(state => ({
+      allSetNames,
+      activeSet,
+      activeQuestionSet
+    }));
+  };
+
+  /**
+   * Required to update the "active question set".
+   * The props passed is the full question set.
+   */
+  componentDidUpdate = prevProps => {
+    // Only update if the current active queston isn't identical (is now completed).
+    if (!Object.is(prevProps.activeQuestion, this.props.activeQuestion)) {
+      const { allQuestions, activeQuestion } = this.props;
+
+      // Only get the questions in this set.
+      const activeQuestionSet = [
+        ...allQuestions.filter(
+          question => question.set === this.state.activeSet
+        )
+      ];
+
+      this.setState({
+        activeQuestionSet,
+        activeQuestionIndex: activeQuestionSet.indexOf(activeQuestion)
+      });
+    }
+  };
+
+  setQuestions = allQuestions => {};
+
   handleNext = () => {
-    const total = this.props.activeQuestionSet.length;
+    // Allows the looping of questions so get a remainder of the total.
+    const next =
+      (this.state.activeQuestionIndex + 1) %
+      this.state.activeQuestionSet.length;
 
-    // Allows the looping of questions
-    const next = (this.props.activeQuestion + 1) % total;
+    // Get the question from the active set.
+    const question = this.state.activeQuestionSet[next];
 
-    this.handleQuestionChange(next);
+    // Run the change question function, the function returns a callable, so immediately invoke.
+    this.handleQuestionChange(next, question)();
   };
 
   handlePrev = () => {
-    const total = this.props.activeQuestionSet.length;
+    const prevIndex = this.state.activeQuestionIndex - 1;
 
-    // Allows the looping of questions (if it was allowed)
+    // Check for underflow
     const prev =
-      this.props.activeQuestion - 1 >= 0
-        ? this.props.activeQuestion - 1
-        : total - 1;
+      prevIndex < 0 ? this.state.activeQuestionSet.length - 1 : prevIndex;
 
-    this.handleQuestionChange(prev);
+    // Get the question from the active set.
+    const question = this.state.activeQuestionSet[prev];
+
+    // Run the change question function, the function returns a callable, so immediately invoke.
+    this.handleQuestionChange(prev, question)();
   };
 
-  handleQuestionChange = number => {
-    this.props.changeQuestionHandler(number);
+  handleQuestionChange = (index, question) => () => {
+    this.props.changeQuestionHandler(question);
+
+    this.setState(state => ({ activeQuestionIndex: index }));
   };
 
   handleSetChange = event => {
     const set = event.target.value;
 
-    this.props.changeQuestionSetHandler(set);
+    const { allQuestions } = this.props;
+
+    // Extract only the questions in this set.
+    const activeQuestionSet = [
+      ...allQuestions.filter(question => question.set === set)
+    ];
+
+    if (activeQuestionSet.length === 0) return;
+
+    // Set the active question to the first in the set.
+    this.handleQuestionChange(0, activeQuestionSet[0])();
+
+    const activeQuestionIndex = 0;
+    const activeSet = set;
+
+    this.setState(state => ({
+      activeSet,
+      activeQuestionSet,
+      activeQuestionIndex
+    }));
   };
 
   render() {
+    const { classes, activeQuestion } = this.props;
+
     const {
-      classes,
-      questionSetNames,
-      activeSet,
       activeQuestionSet,
-      activeQuestion
-    } = this.props;
+      allSetNames,
+      activeSet,
+      activeQuestionIndex
+    } = this.state;
 
     return (
-      <div>
-        <Stepper
-          nonLinear
-          activeStep={activeQuestion}
-          className={classes.innerPadding}
-        >
-          {activeQuestionSet.map((question, index) => {
-            return (
+      <React.Fragment>
+        {activeQuestionSet && (
+          <Stepper
+            activeStep={activeQuestionIndex}
+            className={classes.innerPadding}
+            nonLinear
+          >
+            {activeQuestionSet.map((question, index) => (
               <Step key={index}>
                 <StepButton
                   className={classes.stepperButton}
-                  onClick={() => this.handleQuestionChange(index)}
+                  onClick={this.handleQuestionChange(index, question)}
                   completed={!!question.completed}
                 >
                   <StepLabel
@@ -98,34 +192,34 @@ class Question extends React.Component {
                   />
                 </StepButton>
               </Step>
-            );
-          })}
-        </Stepper>
+            ))}
+          </Stepper>
+        )}
         <Divider />
         <div className={classes.innerPadding}>
-          <Typography
-            variant="subheading"
-            component="span"
-            color={
-              activeQuestionSet[activeQuestion].error ? "error" : "inherit"
-            }
-            gutterBottom
-          >
-            {activeQuestionSet[activeQuestion].question}
-          </Typography>
-          <div style={{ display: "flex", marginTop: "16px" }}>
-            <div style={{ marginRight: "auto" }}>
+          {activeQuestion && (
+            <Typography
+              variant="subheading"
+              component="span"
+              color={activeQuestion.error ? "error" : "inherit"}
+              gutterBottom
+            >
+              <Markdown>{activeQuestion.question}</Markdown>
+            </Typography>
+          )}
+          <div className={classes.bottomActions}>
+            {activeSet && (
               <Select value={activeSet} onChange={this.handleSetChange}>
-                {questionSetNames.map(name => (
+                {allSetNames.map(name => (
                   <MenuItem key={name} value={name}>
                     {name}
                   </MenuItem>
                 ))}
               </Select>
-            </div>
+            )}
             <div>
               <Button
-                style={{ marginRight: "8px" }}
+                className={classes.previousButton}
                 variant="raised"
                 size="small"
                 onClick={this.handlePrev}
@@ -143,7 +237,7 @@ class Question extends React.Component {
             </div>
           </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

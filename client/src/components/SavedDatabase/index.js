@@ -3,30 +3,33 @@ import React from "react";
 
 import api from "../../utils/api";
 
-import IconButton from "material-ui/IconButton";
+import SQL from "sql.js";
 
-import Divider from "material-ui/Divider";
+import IconButton from "@material-ui/core/IconButton";
 
-import Button from "material-ui/Button";
+import Divider from "@material-ui/core/Divider";
 
-import Input, { InputLabel } from "material-ui/Input";
-import { FormControl, FormHelperText } from "material-ui/Form";
+import Button from "@material-ui/core/Button";
 
-import List, {
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction
-} from "material-ui/List";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
 
-import Dialog, {
-  DialogTitle,
-  DialogActions,
-  DialogContent,
-  DialogContentText
-} from "material-ui/Dialog";
+import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
-import DatabaseIcon from "material-ui-icons/Storage";
-import DeleteIcon from "material-ui-icons/Delete";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+
+import DatabaseIcon from "@material-ui/icons/Storage";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 class DatabaseItem extends React.Component {
   handleLoadDatabase = () => {
@@ -81,9 +84,9 @@ class SaveDatabase extends React.Component {
   render() {
     const { title, errors } = this.state;
 
-    const { currentCount } = this.props;
+    const { currentSavedDatabaseCount } = this.props;
 
-    const disabled = currentCount >= 5;
+    const disabled = currentSavedDatabaseCount >= 5;
 
     const button = disabled ? (
       <Button variant="raised" color="secondary" disabled>
@@ -95,12 +98,12 @@ class SaveDatabase extends React.Component {
         color="primary"
         onClick={this.handleSaveDatabase}
       >
-        Save ({currentCount}/5)
+        Save ({currentSavedDatabaseCount}/5)
       </Button>
     );
 
     return (
-      <div>
+      <React.Fragment>
         <DialogTitle style={{ paddingBottom: 0 }}>
           Save the current database
         </DialogTitle>
@@ -126,7 +129,7 @@ class SaveDatabase extends React.Component {
           </FormControl>
         </DialogContent>
         <DialogActions>{button}</DialogActions>
-      </div>
+      </React.Fragment>
     );
   }
 }
@@ -146,17 +149,7 @@ class DatabaseList extends React.Component {
   componentDidMount = () => this.load();
 
   handleSaveDatabase = title => {
-    const currentDatabase = localStorage.getItem("__testSQL_Database__");
-
-    function toBinArray(str) {
-      var l = str.length,
-        arr = new Uint8Array(l);
-      for (var i = 0; i < l; i++) arr[i] = str.charCodeAt(i);
-      return arr;
-    }
-
-    // localStorage is saved as a binary string, covert it back to an array
-    const database = toBinArray(currentDatabase);
+    const database = this.props.currentDatabase.export();
 
     return api.saveDatabase(title, database).then(json => {
       this.load();
@@ -171,7 +164,9 @@ class DatabaseList extends React.Component {
       .then(fileBuffer => {
         const typedArray = new Uint8Array(fileBuffer);
 
-        this.props.loadDatabaseHandler(typedArray);
+        const database = new SQL.Database(typedArray);
+
+        this.props.loadDatabaseHandler(database);
       })
       .then(() => this.props.closeHandler());
   };
@@ -183,17 +178,20 @@ class DatabaseList extends React.Component {
   render() {
     const { list } = this.state;
 
+    const { open, closeHandler, currentDatabase } = this.props;
+
     const count = list && list.length;
 
     return (
       <Dialog
-        onClose={this.props.closeHandler}
-        open={this.props.open}
+        onClose={closeHandler}
+        open={open}
         aria-labelledby="simple-dialog-title"
       >
         <SaveDatabase
-          currentCount={count}
+          currentDatabase={currentDatabase}
           saveDatabaseHandler={this.handleSaveDatabase}
+          currentSavedDatabaseCount={count}
         />
         <Divider />
         <DialogTitle id="simple-dialog-title">All Saved Databases</DialogTitle>
@@ -214,7 +212,7 @@ class DatabaseList extends React.Component {
           </DialogContent>
         )}
         <DialogActions>
-          <Button onClick={this.props.closeHandler} color="primary">
+          <Button onClick={closeHandler} color="primary">
             Cancel
           </Button>
         </DialogActions>
@@ -239,21 +237,24 @@ class DatabaseManager extends React.Component {
   render() {
     const { open } = this.state;
 
+    const { loadDatabaseHandler, currentDatabase } = this.props;
+
     return (
-      <span>
+      <React.Fragment>
         <IconButton
+          onClick={this.open}
           color="inherit"
           aria-label="Saved Database Actions"
-          onClick={this.open}
         >
           <DatabaseIcon />
         </IconButton>
         <DatabaseList
           open={open}
-          loadDatabaseHandler={this.props.loadDatabaseHandler}
+          currentDatabase={currentDatabase}
+          loadDatabaseHandler={loadDatabaseHandler}
           closeHandler={this.close}
         />
-      </span>
+      </React.Fragment>
     );
   }
 }
