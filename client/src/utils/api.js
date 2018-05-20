@@ -91,8 +91,8 @@ const listDatabases = () => {
     .then(res => res.json());
 };
 
-const listMyGroups = () => {
-  return fetch("/group/mine/", {
+const listActiveGroups = () => {
+  return fetch("/group/list/active", {
     method: "GET",
     credentials: "same-origin",
     headers: new Headers({
@@ -104,7 +104,7 @@ const listMyGroups = () => {
 };
 
 const listGroups = () => {
-  return fetch("/group/list", {
+  return fetch("/group/list/all", {
     method: "GET",
     credentials: "same-origin",
     headers: new Headers({
@@ -148,7 +148,7 @@ const api = {
   listDatabases,
   deleteDatabase,
   listGroups,
-  listMyGroups,
+  listActiveGroups,
   joinGroup,
   leaveGroup
 };
