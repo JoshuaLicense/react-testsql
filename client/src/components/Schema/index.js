@@ -236,7 +236,16 @@ class SchemaList extends React.Component {
         <div className={classes.drawerBottomActions}>
           <UserContext.Consumer>
             {({ user }) =>
-              user && user.groups ? (
+              user && user.group ? (
+                <IconButton
+                  className={classes.button}
+                  component="span"
+                  aria-label="Upload Database"
+                  disabled
+                >
+                  <UploadIcon />
+                </IconButton>
+              ) : (
                 <React.Fragment>
                   <input
                     accept=".db,.sqlite"
@@ -255,15 +264,6 @@ class SchemaList extends React.Component {
                     </IconButton>
                   </label>
                 </React.Fragment>
-              ) : (
-                <IconButton
-                  className={classes.button}
-                  component="span"
-                  aria-label="Upload Database"
-                  disabled
-                >
-                  <UploadIcon />
-                </IconButton>
               )
             }
           </UserContext.Consumer>

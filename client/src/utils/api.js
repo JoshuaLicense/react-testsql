@@ -1,9 +1,7 @@
 const handleError = res => {
   if (!res.ok) {
-    console.log("I'm throwing");
     throw res;
   }
-  console.log("I'm happy");
 
   return res;
 };
@@ -150,6 +148,16 @@ const joinGroup = id => {
     .then(res => res.json());
 };
 
+const leaveCurrentGroup = () => {
+  return fetch(`/group/leave/current`, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  }).then(handleError);
+};
+
 const leaveGroup = id => {
   return fetch(`/group/leave/${id}`, {
     method: "GET",
@@ -173,6 +181,7 @@ const api = {
   listGroups,
   listActiveGroups,
   joinGroup,
+  leaveCurrentGroup,
   leaveGroup
 };
 
