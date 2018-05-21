@@ -183,6 +183,12 @@ app.get(
 );
 
 app.get(
+  "/group/leave/current",
+  passportConfig.isAuthenticated,
+  groupController.leaveCurrentGroup
+);
+
+app.get(
   "/group/leave/:id",
   passportConfig.isAuthenticated,
   groupController.leaveGroup

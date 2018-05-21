@@ -5,27 +5,21 @@ import api from "../../utils/api";
 
 import IconButton from "@material-ui/core/IconButton";
 
-import Divider from "@material-ui/core/Divider";
-
 import Grid from "@material-ui/core/Grid";
 
 import Button from "@material-ui/core/Button";
 
-import Checkbox from "@material-ui/core/Checkbox";
-
 import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
 
 import SQL from "sql.js";
 
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 
-import Switch from "@material-ui/core/Switch";
-
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 
 import Dialog from "@material-ui/core/Dialog";
@@ -38,19 +32,14 @@ import GroupIcon from "@material-ui/icons/GroupWork";
 import DeleteIcon from "@material-ui/icons/Delete";
 import LeaveIcon from "@material-ui/icons/ExitToApp";
 import ManageIcon from "@material-ui/icons/Settings";
-import LockIcon from "@material-ui/icons/Lock";
 
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import CurrentIcon from "@material-ui/icons/StarBorder";
 
-import AddIcon from "@material-ui/icons/Add";
-
-import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 
 class CreateGroup extends React.Component {
   state = {
     name: "",
-    isPrivate: false,
     errors: null
   };
 
@@ -63,7 +52,7 @@ class CreateGroup extends React.Component {
   };
 
   render() {
-    const { name, isPrivate, errors } = this.state;
+    const { name, errors } = this.state;
 
     return (
       <div>
@@ -137,34 +126,6 @@ class CreateGroup extends React.Component {
               </FormControl>
             </Grid>
           </Grid>
-          {/*<Grid container spacing={8}>
-            <Grid item xs={3} />
-            <Grid item xs={9}>
-              <FormControl
-                error={Boolean(errors)}
-                aria-describedby="group-database-error-text"
-                fullWidth
-              >
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={isPrivate}
-                      onChange={this.handleChecked}
-                      id="isPrivate"
-                      value="true"
-                    />
-                  }
-                  label="Private?"
-                />
-                {errors &&
-                  errors.visibility && (
-                    <FormHelperText id="group-database-error-text">
-                      {errors.visibility.msg}
-                    </FormHelperText>
-                  )}
-              </FormControl>
-            </Grid>
-          </Grid>*/}
         </DialogContent>
         <DialogActions>
           <Button
@@ -180,39 +141,48 @@ class CreateGroup extends React.Component {
   }
 }
 
+const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
+
 class GroupItem extends React.Component {
-  handleJoinGroup = () => this.props.joinGroupHandler(this.props.item._id);
-  handleLeaveGroup = () => this.props.leaveGroupHandler(this.props.item._id);
+  handleJoinGroup = () => this.props.joinGroupHandler(this.props.id);
+  handleLeaveCurrentGroup = () =>
+    this.props.leaveCurrentGroupHandler(this.props.id);
+  handleLeaveGroup = () => this.props.leaveGroupHandler(this.props.id);
 
   render() {
-    const {
-      title,
-      createdAt,
-      capacity,
-      createdBy,
-      isPrivate
-    } = this.props.item;
-
-    const { canManage, canLeave } = this.props;
-
-    const date = new Date(createdAt).toDateString();
+    const { title, canManage, canLeave, isCurrent } = this.props;
 
     return (
       <ListItem onClick={this.handleJoinGroup} button>
-        <ListItemText inset primary={title} secondary={createdBy} />
+        {isCurrent && (
+          <ListItemIcon>
+            <CurrentIcon />
+          </ListItemIcon>
+        )}
+        <ListItemText inset primary={title} />
         <ListItemSecondaryAction>
           {canManage && (
             <IconButton aria-label="Manage group">
               <ManageIcon />
             </IconButton>
           )}
-          {canLeave && (
+          {isCurrent ? (
             <IconButton
-              onClick={this.handleLeaveGroup}
-              aria-label="Leave group"
+              color="secondary"
+              onClick={this.handleLeaveCurrentGroup}
+              aria-label="Leave current group"
             >
               <LeaveIcon />
             </IconButton>
+          ) : (
+            canLeave && (
+              <IconButton
+                onClick={this.handleLeaveGroup}
+                aria-label="Leave group"
+              >
+                <DeleteIcon />
+              </IconButton>
+            )
           )}
         </ListItemSecondaryAction>
       </ListItem>
@@ -267,6 +237,20 @@ class GroupList extends React.Component {
 
         return this.props.loadDatabaseHandler(database);
       })
+      .then(() => this.props.refreshUserContext())
+      .then(() => this.props.closeHandler())
+      .catch(error => {
+        error.json().then(json => this.setState({ error: json.message }));
+      });
+  };
+
+  handleCurrentLeaveGroup = id => {
+    this.setState({ error: null });
+
+    api
+      .leaveCurrentGroup()
+      .then(() => this.load())
+      .then(() => this.props.refreshUserContext())
       .then(() => this.props.closeHandler())
       .catch(error => {
         error.json().then(json => this.setState({ error: json.message }));
@@ -287,6 +271,8 @@ class GroupList extends React.Component {
   render() {
     const { list, activeList, error } = this.state;
 
+    const { currentGroup } = this.props;
+
     const listCount = list && list.length;
     const activeListCount = activeList && activeList.length;
 
@@ -300,7 +286,7 @@ class GroupList extends React.Component {
           </DialogTitle>
         )}
         <DialogTitle id="dialog-title">
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={flexSpaceBetween}>
             Your active groups
             <Button
               component={Link}
@@ -315,12 +301,17 @@ class GroupList extends React.Component {
         </DialogTitle>
         {activeListCount > 0 ? (
           <List dense={activeListCount >= 5}>
-            {activeList.map(activeGroup => (
+            {activeList.map(activeUserGroup => (
               <GroupItem
-                key={activeGroup.group._id}
+                key={activeUserGroup.group._id}
+                id={activeUserGroup.group._id}
+                title={activeUserGroup.group.title}
                 joinGroupHandler={this.handleJoinGroup}
+                leaveCurrentGroupHandler={this.handleCurrentLeaveGroup}
                 leaveGroupHandler={this.handleLeaveGroup}
-                item={activeGroup.group}
+                isCurrent={
+                  currentGroup && activeUserGroup.group._id === currentGroup._id
+                }
                 canManage
                 canLeave
               />
@@ -339,8 +330,9 @@ class GroupList extends React.Component {
             {list.map(group => (
               <GroupItem
                 key={group._id}
+                id={group._id}
+                title={group.title}
                 joinGroupHandler={this.handleJoinGroup}
-                item={group}
               />
             ))}
           </List>
@@ -375,11 +367,19 @@ class GroupManager extends React.Component {
   render() {
     const { open } = this.state;
 
-    const { loadDatabaseHandler } = this.props;
+    const {
+      currentGroup,
+      loadDatabaseHandler,
+      refreshUserContext
+    } = this.props;
 
     return (
       <React.Fragment>
-        <IconButton color="inherit" aria-label="Group List" onClick={this.open}>
+        <IconButton
+          color={currentGroup ? "secondary" : "inherit"}
+          aria-label="Group List"
+          onClick={this.open}
+        >
           <GroupIcon />
         </IconButton>
 
@@ -390,6 +390,8 @@ class GroupManager extends React.Component {
               path="/"
               render={() => (
                 <GroupList
+                  currentGroup={currentGroup}
+                  refreshUserContext={refreshUserContext}
                   loadDatabaseHandler={loadDatabaseHandler}
                   closeHandler={this.close}
                 />

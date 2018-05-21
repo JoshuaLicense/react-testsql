@@ -93,6 +93,13 @@ exports.createGroup = (req, res, next) => {
   });
 };
 
+exports.leaveCurrentGroup = (req, res, next) => {
+  // Just set/remove any current session.
+  req.session.group = null;
+
+  return res.sendStatus(200);
+};
+
 exports.leaveGroup = (req, res, next) => {
   const { id } = req.params;
 
