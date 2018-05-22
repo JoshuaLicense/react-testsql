@@ -7,6 +7,7 @@ const config = require("../config/config");
 
 // Models
 const Database = require("../models/Database");
+const Group = require("../models/Group");
 
 const { check, validationResult } = require("express-validator/check");
 
