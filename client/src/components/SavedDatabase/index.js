@@ -9,212 +9,25 @@ import IconButton from "@material-ui/core/IconButton";
 
 import Divider from "@material-ui/core/Divider";
 
-import Button from "@material-ui/core/Button";
-
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-
-import FormControl from "@material-ui/core/FormControl";
-import FormHelperText from "@material-ui/core/FormHelperText";
-
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogActions from "@material-ui/core/DialogActions";
 
 import DatabaseIcon from "@material-ui/icons/Storage";
-import DeleteIcon from "@material-ui/icons/Delete";
 
-import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 
-class DatabaseItem extends React.Component {
-  handleLoadDatabase = () => {
-    this.props.loadDatabaseHandler(this.props.item._id);
-  };
+import DatabaseList from "./DatabaseList";
+import SaveDatabase from "./SaveDatabase";
 
-  handleDeleteDatabase = () => {
-    this.props.deleteDatabaseHandler(this.props.item._id);
-  };
-
-  render() {
-    const { title, createdAt } = this.props.item;
-
-    const date = new Date(createdAt).toDateString();
-
-    return (
-      <ListItem onClick={this.handleLoadDatabase} button>
-        <ListItemText primary={title} secondary={date} />
-        <ListItemSecondaryAction onClick={this.handleDeleteDatabase}>
-          <IconButton aria-label="Delete">
-            <DeleteIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
-      </ListItem>
-    );
-  }
-}
-
-class SaveDatabase extends React.Component {
-  state = {
-    title: "",
-    errors: {}
-  };
-
-  handleSaveDatabase = e => {
-    this.props
-      .saveDatabaseHandler(this.state.title)
-      .then(json => {
-        this.setState({ title: "", errors: {} });
-      })
-      .catch(error => {
-        error.json().then(({ errors }) => {
-          this.setState({ errors });
-        });
-      });
-  };
-
-  handleChange = e => {
-    this.setState({ title: e.target.value });
-  };
-
-  render() {
-    const { title, errors } = this.state;
-
-    const { currentSavedDatabaseCount } = this.props;
-
-    const disabled = currentSavedDatabaseCount >= 5;
-
-    const button = disabled ? (
-      <Button variant="raised" color="secondary" disabled>
-        Database limit reached (5/5)
-      </Button>
-    ) : (
-      <Button
-        variant="raised"
-        color="primary"
-        onClick={this.handleSaveDatabase}
-      >
-        Save ({currentSavedDatabaseCount}/5)
-      </Button>
-    );
-
-    return (
-      <React.Fragment>
-        <DialogTitle style={{ paddingBottom: 0 }}>
-          Save the current database
-        </DialogTitle>
-        <DialogContent style={{ paddingBottom: 4 }}>
-          <FormControl
-            error={Boolean(errors.title)}
-            aria-describedby="name-error-text"
-            fullWidth
-          >
-            <InputLabel htmlFor="name">Name</InputLabel>
-            <Input
-              id="name"
-              value={title}
-              onChange={this.handleChange}
-              margin="dense"
-              disabled={disabled}
-              autoFocus
-              fullWidth
-            />
-            <FormHelperText id="name-error-text">
-              {errors.title && errors.title.msg}
-            </FormHelperText>
-          </FormControl>
-        </DialogContent>
-        <DialogActions>{button}</DialogActions>
-      </React.Fragment>
-    );
-  }
-}
-
-class DatabaseList extends React.Component {
+export default class DatabaseManager extends React.Component {
   state = {
     list: null,
-    error: null
-  };
-
-  componentDidMount = () => this.props.refreshSavedDatabaseList();
-
-  handleLoadDatabase = id => {
-    api
-      .loadDatabase(id)
-      .then(fileBuffer => {
-        const typedArray = new Uint8Array(fileBuffer);
-
-        const database = new SQL.Database(typedArray);
-
-        return this.props.loadDatabaseHandler(database);
-      })
-      .then(() => this.props.closeHandler())
-      .catch(error => {
-        error.json().then(json => this.setState({ error: json.message }));
-      });
-  };
-
-  handleDeleteDatabase = id => {
-    api.deleteDatabase(id).then(res => this.props.refreshSavedDatabaseList());
-  };
-
-  render() {
-    const { list, error } = this.state;
-
-    const { open, closeHandler, currentDatabase } = this.props;
-
-    const count = list && list.length;
-
-    return (
-      <React.Fragment>
-        {error && (
-          <DialogTitle disableTypography>
-            <Typography color="error" align="center">
-              {error}
-            </Typography>
-          </DialogTitle>
-        )}
-        <DialogTitle id="simple-dialog-title">All Saved Databases</DialogTitle>
-        {count > 0 ? (
-          <List>
-            {list.map(database => (
-              <DatabaseItem
-                key={database._id}
-                loadDatabaseHandler={this.handleLoadDatabase}
-                deleteDatabaseHandler={this.handleDeleteDatabase}
-                item={database}
-              />
-            ))}
-          </List>
-        ) : (
-          <DialogContent>
-            <DialogContentText>No saved databases yet!</DialogContentText>
-          </DialogContent>
-        )}
-        <DialogActions>
-          <Button onClick={closeHandler} color="primary">
-            Cancel
-          </Button>
-        </DialogActions>
-      </React.Fragment>
-    );
-  }
-}
-
-class DatabaseManager extends React.Component {
-  state = {
     open: false
   };
 
-  refreshSavedDatabaseList = () => {
+  refreshSavedDatabaseList = () =>
     api.listDatabases().then(list => this.setState({ list }));
-  };
 
   handleSaveDatabase = title => {
     const database = this.props.currentDatabase.export();
@@ -226,6 +39,25 @@ class DatabaseManager extends React.Component {
     });
   };
 
+  handleLoadDatabase = id => {
+    return api
+      .loadDatabase(id)
+      .then(fileBuffer => {
+        const typedArray = new Uint8Array(fileBuffer);
+
+        const database = new SQL.Database(typedArray);
+
+        return this.props.loadDatabaseHandler(database);
+      })
+      .then(() => this.close())
+      .catch(error => {
+        error.json().then(json => this.setState({ error: json.message }));
+      });
+  };
+
+  handleDeleteDatabase = id =>
+    api.deleteDatabase(id).then(() => this.refreshSavedDatabaseList());
+
   open = () => {
     this.setState({ open: true });
   };
@@ -235,9 +67,9 @@ class DatabaseManager extends React.Component {
   };
 
   render() {
-    const { open } = this.state;
+    const { open, list } = this.state;
 
-    const { loadDatabaseHandler, currentDatabase, disabled } = this.props;
+    const { currentDatabase, disabled } = this.props;
 
     return (
       <React.Fragment>
@@ -252,19 +84,28 @@ class DatabaseManager extends React.Component {
         <Dialog onClose={this.close} open={open} fullWidth>
           <SaveDatabase
             currentDatabase={currentDatabase}
-            saveDatabaseHandler={this.handleSaveDatabase}
+            currentSavedDatabaseCount={list && list.length}
+            refreshHandler={this.refreshSavedDatabaseList}
+            clickHandler={this.handleSaveDatabase}
           />
           <Divider />
+          <DialogTitle id="simple-dialog-title">
+            All Saved Databases
+          </DialogTitle>
           <DatabaseList
-            open={open}
-            currentDatabase={currentDatabase}
-            loadDatabaseHandler={loadDatabaseHandler}
+            list={list}
+            refreshHandler={this.refreshSavedDatabaseList}
+            clickHandler={this.handleLoadDatabase}
+            deleteHandler={this.handleDeleteDatabase}
             closeHandler={this.close}
           />
+          <DialogActions>
+            <Button onClick={this.close} color="primary">
+              Cancel
+            </Button>
+          </DialogActions>
         </Dialog>
       </React.Fragment>
     );
   }
 }
-
-export default DatabaseManager;
