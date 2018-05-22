@@ -15,7 +15,9 @@ export default class Provider extends React.Component {
 
     saveDatabase(newDatabase);
 
-    return this.setState(state => ({ database: newDatabase }));
+    this.setState(state => ({ database: newDatabase }));
+
+    return Promise.resolve();
   };
 
   updateDatabase = database => {
@@ -28,7 +30,9 @@ export default class Provider extends React.Component {
 
     saveDatabase(newDatabase);
 
-    return this.setState(state => ({ database: newDatabase }));
+    this.setState(state => ({ database: newDatabase }));
+
+    return Promise.resolve();
   };
 
   state = {
