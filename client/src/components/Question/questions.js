@@ -5,6 +5,7 @@ import {
   // eslint-disable-next-line
   getForeignColumns,
   getRandomConjunction,
+  getRandomIntInclusive,
   getRandomElement
 } from "./helpers";
 
@@ -96,8 +97,24 @@ const whereConjunction = {
     const { code: operator_code, text: operator_text } = getRandomConjunction();
 
     return {
-      question: `Display all the **${table}** where **${column_1}** is **${row_1}** ${operator_text} **${column_2}** is **${row_2}**`,
-      answer: `SELECT * FROM ${table} WHERE ${column_1} = "${row_1}" ${operator_code} ${column_2} = ${row_2}`
+      question: `Display the **${table}** where **${column_1}** is **${row_1}** ${operator_text} **${column_2}** is **${row_2}**`,
+      answer: `SELECT * FROM ${table} WHERE ${column_1} = "${row_1}" ${operator_code} ${column_2} = "${row_2}"`
+    };
+  }
+};
+
+const whereIn = {
+  set: "Easy",
+  func: db => {
+    const tables = getTables(db);
+
+    const [{ table, column: column_1 }] = getColumns(db, tables);
+
+    const [row_1, row_2] = getRows(db, table, column_1, 2);
+
+    return {
+      question: `Display all the **${table}** where **${column_1}** is **${row_1}** or **${row_2}**, using the \`IN()\` operator`,
+      answer: `SELECT * FROM ${table} WHERE ${column_1} IN("${row_1}", "${row_2}")`
     };
   }
 };
@@ -139,6 +156,27 @@ const orderByMultiple = {
   }
 };
 
+const limitAndOrder = {
+  set: "Intermediate",
+  func: db => {
+    // Get a random limit number between 5-10
+    const randomInt = getRandomIntInclusive(5, 10);
+
+    const tables = getTables(db);
+
+    const [
+      { table, column: column_1 },
+      { column: column_2 },
+      { column: column_3 }
+    ] = getColumns(db, tables, { x: 3 });
+
+    return {
+      question: `Find the top ${randomInt} **${table}** with the highest **${column_1}**, showing the **${column_1}**, **${column_2}**, and **${column_3}** of each ${table}.`,
+      answer: `SELECT ${column_1}, ${column_2}, ${column_3} FROM ${table} ORDER BY ${column_1} DESC LIMIT ${randomInt}`
+    };
+  }
+};
+
 const selectNull = {
   set: "Intermediate",
   func: db => {
@@ -164,8 +202,10 @@ export default [
   selectSpecific,
   selectUnique,
   basicWhere,
+  whereIn,
   whereConjunction,
   orderBy,
   orderByMultiple,
-  selectNull
+  selectNull,
+  limitAndOrder
 ];

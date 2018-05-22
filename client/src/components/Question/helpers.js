@@ -196,3 +196,10 @@ export const getRandomConjunction = () => {
 export const getRandomElement = options => {
   return options[Math.floor(Math.random() * options.length)];
 };
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+export const getRandomIntInclusive = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
