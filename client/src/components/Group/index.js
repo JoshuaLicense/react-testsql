@@ -37,27 +37,40 @@ import CurrentIcon from "@material-ui/icons/StarBorder";
 
 import Typography from "@material-ui/core/Typography";
 
+import Select from "@material-ui/core/Select";
+
+import MenuItem from "@material-ui/core/MenuItem";
+import Menu from "@material-ui/core/Menu";
+
+const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
+
 class CreateGroup extends React.Component {
   state = {
+    errors: null,
+    databaseList: null,
+
     name: "",
-    errors: null
+    selectedDatabase: ""
   };
 
-  handleChange = e => {
-    this.setState({ [e.target.id]: e.target.value });
+  componentDidMount = () =>
+    api.listDatabases().then(list => this.setState({ databaseList: list }));
+
+  handleChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleChecked = e => {
-    this.setState({ [e.target.id]: e.target.checked });
+  handleClose = () => {
+    this.setState({ anchorEl: null });
   };
 
   render() {
-    const { name, errors } = this.state;
+    const { name, errors, databaseList, selectedDatabase } = this.state;
 
     return (
       <div>
         <DialogTitle id="dialog-title">
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={flexSpaceBetween}>
             Creating a new group
             <Button
               component={Link}
@@ -107,22 +120,25 @@ class CreateGroup extends React.Component {
               <Typography align="right">Group Database</Typography>
             </Grid>
             <Grid item xs={9}>
-              <FormControl
-                error={Boolean(errors)}
-                aria-describedby="group-database-help-text"
-                fullWidth
-              >
-                <input type="file" id="groupDatabase" />
-                <FormHelperText id="group-database-help-text">
-                  The database that will users of the group will get questions
-                  generated from.
-                </FormHelperText>
-                {errors &&
-                  errors.database && (
-                    <FormHelperText id="group-database-error-text">
-                      {errors.database.msg}
-                    </FormHelperText>
-                  )}
+              <FormControl style={{ width: "100%" }}>
+                <Select
+                  value={selectedDatabase}
+                  onChange={this.handleChange}
+                  inputProps={{
+                    name: "selectedDatabase",
+                    id: "selectedDatabase"
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {databaseList &&
+                    databaseList.map(database => (
+                      <MenuItem key={database._id} value={database._id}>
+                        {database.title}
+                      </MenuItem>
+                    ))}
+                </Select>
               </FormControl>
             </Grid>
           </Grid>
@@ -140,8 +156,6 @@ class CreateGroup extends React.Component {
     );
   }
 }
-
-const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
 class GroupItem extends React.Component {
   handleJoinGroup = () => this.props.joinGroupHandler(this.props.id);
@@ -320,7 +334,7 @@ class GroupList extends React.Component {
         ) : (
           <DialogContent>
             <DialogContentText>
-              You are not the owner of any groups!
+              You do not have any active groups!
             </DialogContentText>
           </DialogContent>
         )}
