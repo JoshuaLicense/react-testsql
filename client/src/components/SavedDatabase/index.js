@@ -142,29 +142,7 @@ class DatabaseList extends React.Component {
     error: null
   };
 
-  load = () => {
-    api
-      .listDatabases()
-      .then(list => this.setState({ list }))
-      .catch(e => console.log(e));
-  };
-
-  componentDidMount = () => this.load();
-
-  handleSaveDatabase = title => {
-    const database = this.props.currentDatabase.export();
-
-    return api
-      .saveDatabase(title, database)
-      .then(json => {
-        this.load();
-
-        return json;
-      })
-      .catch(error => {
-        error.json().then(json => this.setState({ error: json.message }));
-      });
-  };
+  componentDidMount = () => this.props.refreshSavedDatabaseList();
 
   handleLoadDatabase = id => {
     api
@@ -183,7 +161,7 @@ class DatabaseList extends React.Component {
   };
 
   handleDeleteDatabase = id => {
-    api.deleteDatabase(id).then(res => this.load());
+    api.deleteDatabase(id).then(res => this.props.refreshSavedDatabaseList());
   };
 
   render() {
@@ -202,12 +180,6 @@ class DatabaseList extends React.Component {
             </Typography>
           </DialogTitle>
         )}
-        <SaveDatabase
-          currentDatabase={currentDatabase}
-          saveDatabaseHandler={this.handleSaveDatabase}
-          currentSavedDatabaseCount={count}
-        />
-        <Divider />
         <DialogTitle id="simple-dialog-title">All Saved Databases</DialogTitle>
         {count > 0 ? (
           <List>
@@ -240,6 +212,20 @@ class DatabaseManager extends React.Component {
     open: false
   };
 
+  refreshSavedDatabaseList = () => {
+    api.listDatabases().then(list => this.setState({ list }));
+  };
+
+  handleSaveDatabase = title => {
+    const database = this.props.currentDatabase.export();
+
+    return api.saveDatabase(title, database).then(json => {
+      this.refreshSavedDatabaseList();
+
+      return json;
+    });
+  };
+
   open = () => {
     this.setState({ open: true });
   };
@@ -264,6 +250,11 @@ class DatabaseManager extends React.Component {
           <DatabaseIcon />
         </IconButton>
         <Dialog onClose={this.close} open={open} fullWidth>
+          <SaveDatabase
+            currentDatabase={currentDatabase}
+            saveDatabaseHandler={this.handleSaveDatabase}
+          />
+          <Divider />
           <DatabaseList
             open={open}
             currentDatabase={currentDatabase}
