@@ -56,6 +56,17 @@ class CreateGroup extends React.Component {
   componentDidMount = () =>
     api.listDatabases().then(list => this.setState({ databaseList: list }));
 
+  handleSubmit = () => {
+    const { name, selectedDatabase } = this.state;
+
+    return api
+      .createGroup(name, selectedDatabase)
+      .then(() => this.props.closeHandler())
+      .catch(error => {
+        error.json().then(json => this.setState({ error: json.message }));
+      });
+  };
+
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
@@ -144,11 +155,7 @@ class CreateGroup extends React.Component {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={this.props.closeHandler}
-            color="primary"
-            variant="raised"
-          >
+          <Button onClick={this.handleSubmit} color="primary" variant="raised">
             Create
           </Button>
         </DialogActions>
