@@ -82,29 +82,35 @@ export default class Main extends React.Component {
 
     try {
       if (checkAnswer(currentDatabase, sql, activeQuestion)) {
-        this.changeFeedback({ message: "Correct Answer" });
-
-        // Create a new question object with completed=true
-        const completedActiveQuestion = { ...activeQuestion, completed: true };
-
-        // Find the active question index in allQuestions to allow
-        // to alter the main array with a new completed status.
-        const index = allQuestions.indexOf(activeQuestion);
-
-        // Create a copy of the original question set.
-        const updatedAllQuestions = allQuestions;
-
-        // Directly update the active question element.
-        updatedAllQuestions[index] = completedActiveQuestion;
-
-        this.setState({
-          allQuestions: updatedAllQuestions,
-          activeQuestion: completedActiveQuestion
-        });
+        return this.completeCurrentQuestion();
       }
     } catch (Error) {
       return this.changeFeedback({ message: Error.message, error: true });
     }
+  };
+
+  completeCurrentQuestion = () => {
+    const { activeQuestion, allQuestions } = this.state;
+
+    this.changeFeedback({ message: "Correct Answer" });
+
+    // Create a new question object with completed=true
+    const completedActiveQuestion = { ...activeQuestion, completed: true };
+
+    // Find the active question index in allQuestions to allow
+    // to alter the main array with a new completed status.
+    const index = allQuestions.indexOf(activeQuestion);
+
+    // Create a copy of the original question set.
+    const updatedAllQuestions = allQuestions;
+
+    // Directly update the active question element.
+    updatedAllQuestions[index] = completedActiveQuestion;
+
+    this.setState({
+      allQuestions: updatedAllQuestions,
+      activeQuestion: completedActiveQuestion
+    });
   };
 
   displaySchema = name => {
