@@ -101,8 +101,6 @@ class Question extends React.Component {
     }
   };
 
-  setQuestions = allQuestions => {};
-
   handleNext = () => {
     // Allows the looping of questions so get a remainder of the total.
     const next =
