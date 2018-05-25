@@ -43,7 +43,7 @@ exports.joinGroup = (req, res, next) => {
     if (err) next(err);
 
     // Check that this user is not already in this group
-    UserGroup.findOne({ user: req.user.id })
+    UserGroup.findOne({ user: req.user.id, group: id })
       .populate("group")
       .exec((err, existingUserGroup) => {
         if (err) return next(err);
