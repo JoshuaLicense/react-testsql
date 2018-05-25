@@ -259,7 +259,6 @@ class GroupList extends React.Component {
         return this.props.loadDatabaseHandler(database);
       })
       .then(() => this.props.refreshUserContext())
-      .then(() => this.props.closeHandler())
       .catch(error => {
         error.json().then(json => this.setState({ error: json.message }));
       });
@@ -272,7 +271,6 @@ class GroupList extends React.Component {
       .leaveCurrentGroup()
       .then(() => this.load())
       .then(() => this.props.refreshUserContext())
-      .then(() => this.props.closeHandler())
       .catch(error => {
         error.json().then(json => this.setState({ error: json.message }));
       });
