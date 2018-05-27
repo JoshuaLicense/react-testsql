@@ -8,6 +8,16 @@ const Group = require("../models/Group");
 const UserGroup = require("../models/UserGroup");
 const Database = require("../models/Database");
 
+exports.getGroup = (req, res, next) => {
+  const { id } = req.params;
+
+  Group.findById(id, (err, group) => {
+    if (err) next(err);
+
+    return res.json(group);
+  });
+};
+
 exports.listGroups = (req, res, next) => {
   // Find all the groups that this user is part of so we can exclude them from the list.
   UserGroup.find({ user: req.user.id }, (err, userGroups) => {
