@@ -94,7 +94,7 @@ app.post(
 );
 
 app.post(
-  "/user/login",
+  "/api/user/login",
   [
     check("username")
       .exists()
@@ -107,7 +107,7 @@ app.post(
   userController.login
 );
 
-app.get("/user/info", (req, res) => {
+app.get("/api/user/info", (req, res) => {
   if (req.isAuthenticated()) {
     const user = {
       id: req.user.id,
@@ -121,10 +121,10 @@ app.get("/user/info", (req, res) => {
   return res.sendStatus(403);
 });
 
-app.get("/user/logout", userController.logout);
+app.get("/api/user/logout", userController.logout);
 
 app.get(
-  "/database/list",
+  "/api/database/list",
   passportConfig.isAuthenticated,
   databaseController.listDatabase
 );
@@ -132,7 +132,7 @@ app.get(
 // Title is in the "get" as express doesn't deal with FormData,
 // which is what the saved database binary will be sent as.
 app.post(
-  "/database/save/:title?",
+  "/api/database/save/:title?",
   passportConfig.isAuthenticated,
   [
     check("title")
@@ -147,49 +147,55 @@ app.post(
 );
 
 app.get(
-  "/database/load/:id",
+  "/api/database/load/:id",
   passportConfig.isAuthenticated,
   databaseController.loadDatabase
 );
 
 app.get(
-  "/database/delete/:id",
+  "/api/database/delete/:id",
   passportConfig.isAuthenticated,
   databaseController.deleteDatabase
 );
 
 app.get(
-  "/group/list/all",
+  "/api/group/:id",
+  passportConfig.isAuthenticated,
+  groupController.getGroup
+);
+
+app.get(
+  "/api/group/list/all",
   passportConfig.isAuthenticated,
   groupController.listGroups
 );
 
 app.get(
-  "/group/list/active",
+  "/api/group/list/active",
   passportConfig.isAuthenticated,
   groupController.listActive
 );
 
 app.post(
-  "/group/create",
+  "/api/group/create",
   passportConfig.isAuthenticated,
   groupController.createGroup
 );
 
 app.get(
-  "/group/join/:id",
+  "/api/group/join/:id",
   passportConfig.isAuthenticated,
   groupController.joinGroup
 );
 
 app.get(
-  "/group/leave/current",
+  "/api/group/leave/current",
   passportConfig.isAuthenticated,
   groupController.leaveCurrentGroup
 );
 
 app.get(
-  "/group/leave/:id",
+  "/api/group/leave/:id",
   passportConfig.isAuthenticated,
   groupController.leaveGroup
 );

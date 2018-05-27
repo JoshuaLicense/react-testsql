@@ -1,5 +1,4 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 import api from "../../utils/api";
 
@@ -42,7 +41,97 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Redirect,
+  withRouter
+} from "react-router-dom";
+
 const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
+
+class ManageGroup extends React.Component {
+  state = {
+    title: null,
+    errors: null,
+    redirect: null
+  };
+
+  componentDidMount() {
+    const { id } = this.props.match.params;
+
+    return api.getGroup(id).then(({ title }) => this.setState({ title }));
+  }
+
+  render() {
+    const { title, errors, redirect } = this.state;
+
+    if (!title) {
+      return <div>Loading group information...</div>;
+    }
+
+    if (redirect) {
+      return <Redirect to="/" />;
+    }
+
+    return (
+      <div>
+        <DialogTitle
+          id="dialog-title"
+          style={flexSpaceBetween}
+          disableTypography
+        >
+          <Typography variant="title">Managing {title}</Typography>
+          <Button
+            component={Link}
+            color="secondary"
+            variant="raised"
+            size="small"
+            to="/"
+          >
+            &laquo; Back
+          </Button>
+        </DialogTitle>
+        <DialogContent>
+          <Grid container spacing={24}>
+            <Grid item xs={3}>
+              <Typography align="right">Title</Typography>
+            </Grid>
+            <Grid item xs={9}>
+              <FormControl
+                error={Boolean(errors)}
+                aria-describedby="title-error-text"
+                fullWidth
+              >
+                <Input
+                  id="title"
+                  name="title"
+                  value={title}
+                  onChange={this.handleChange}
+                  margin="dense"
+                  autoFocus
+                  fullWidth
+                />
+                {errors &&
+                  errors.title && (
+                    <FormHelperText id="title-error-text">
+                      {errors.title.msg}
+                    </FormHelperText>
+                  )}
+              </FormControl>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.handleSubmit} color="primary" variant="raised">
+            Create
+          </Button>
+        </DialogActions>
+      </div>
+    );
+  }
+}
 
 class CreateGroup extends React.Component {
   state = {
@@ -50,7 +139,8 @@ class CreateGroup extends React.Component {
     databaseList: null,
 
     name: "",
-    selectedDatabase: ""
+    selectedDatabase: "",
+    redirect: false
   };
 
   componentDidMount = () =>
@@ -61,7 +151,7 @@ class CreateGroup extends React.Component {
 
     return api
       .createGroup(name, selectedDatabase)
-      .then(() => this.props.closeHandler())
+      .then(() => this.setState({ redirect: true }))
       .catch(error => {
         error.json().then(json => this.setState({ error: json.message }));
       });
@@ -76,23 +166,35 @@ class CreateGroup extends React.Component {
   };
 
   render() {
-    const { name, errors, databaseList, selectedDatabase } = this.state;
+    const {
+      name,
+      errors,
+      databaseList,
+      selectedDatabase,
+      redirect
+    } = this.state;
+
+    if (redirect) {
+      return <Redirect to="/" />;
+    }
 
     return (
       <div>
-        <DialogTitle id="dialog-title">
-          <div style={flexSpaceBetween}>
-            Creating a new group
-            <Button
-              component={Link}
-              color="secondary"
-              variant="raised"
-              size="small"
-              to="/"
-            >
-              &laquo; Back
-            </Button>
-          </div>
+        <DialogTitle
+          id="dialog-title"
+          style={flexSpaceBetween}
+          disableTypography
+        >
+          <Typography variant="title">Creating a new group</Typography>
+          <Button
+            component={Link}
+            color="secondary"
+            variant="raised"
+            size="small"
+            to="/"
+          >
+            &laquo; Back
+          </Button>
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -113,6 +215,7 @@ class CreateGroup extends React.Component {
               >
                 <Input
                   id="name"
+                  name="name"
                   value={name}
                   onChange={this.handleChange}
                   margin="dense"
@@ -171,7 +274,7 @@ class GroupItem extends React.Component {
   handleLeaveGroup = () => this.props.leaveGroupHandler(this.props.id);
 
   render() {
-    const { title, canManage, canLeave, isCurrent } = this.props;
+    const { id, title, canManage, canLeave, isCurrent } = this.props;
 
     return (
       <ListItem onClick={this.handleJoinGroup} button>
@@ -183,7 +286,11 @@ class GroupItem extends React.Component {
         <ListItemText inset primary={title} />
         <ListItemSecondaryAction>
           {canManage && (
-            <IconButton aria-label="Manage group">
+            <IconButton
+              component={Link}
+              to={`/group/manage/${id}`}
+              aria-label="Manage group"
+            >
               <ManageIcon />
             </IconButton>
           )}
@@ -259,6 +366,7 @@ class GroupList extends React.Component {
         return this.props.loadDatabaseHandler(database);
       })
       .then(() => this.props.refreshUserContext())
+      .then(() => this.load())
       .catch(error => {
         error.json().then(json => this.setState({ error: json.message }));
       });
@@ -309,7 +417,7 @@ class GroupList extends React.Component {
             Your active groups
             <Button
               component={Link}
-              to="/create-group"
+              to="/group/create"
               color="primary"
               variant="raised"
               size="small"
@@ -416,7 +524,8 @@ class GroupManager extends React.Component {
                 />
               )}
             />
-            <Route path="/create-group" render={() => <CreateGroup />} />
+            <Route path="/group/create" render={() => <CreateGroup />} />
+            <Route path="/group/manage/:id" component={ManageGroup} />
           </Dialog>
         </Router>
       </React.Fragment>
