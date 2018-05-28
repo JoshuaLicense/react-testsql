@@ -6,6 +6,21 @@ const handleError = res => {
   return res;
 };
 
+const saveProgress = (sql, allQuestions) => {
+  const data = { sql, allQuestions };
+
+  return fetch("/api/group/save-progress", {
+    method: "POST",
+    body: JSON.stringify(data),
+    credentials: "same-origin",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  })
+    .then(handleError)
+    .then(response => response.json());
+};
+
 const login = (username, password) => {
   const data = { username, password };
 

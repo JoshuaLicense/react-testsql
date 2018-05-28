@@ -159,6 +159,12 @@ app.get(
 );
 
 app.get(
+  "/api/group/save-progress",
+  passportConfig.isAuthenticated,
+  groupController.saveProgress
+);
+
+app.get(
   "/api/group/:id",
   passportConfig.isAuthenticated,
   groupController.getGroup

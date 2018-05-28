@@ -55,7 +55,7 @@ export default class Main extends React.Component {
 
   changeQuestion = question => this.setState({ activeQuestion: question });
 
-  runQuery = sql => {
+  runQuery = async sql => {
     const { currentDatabase, updateDatabase } = this.props;
 
     const { activeQuestion, allQuestions } = this.state;
@@ -82,14 +82,16 @@ export default class Main extends React.Component {
 
     try {
       if (checkAnswer(currentDatabase, sql, activeQuestion)) {
-        return this.completeCurrentQuestion();
+        await this.completeCurrentQuestion(sql);
+
+        return api.saveProgress(sql, allQuestions);
       }
     } catch (Error) {
       return this.changeFeedback({ message: Error.message, error: true });
     }
   };
 
-  completeCurrentQuestion = () => {
+  completeCurrentQuestion = sql => {
     const { activeQuestion, allQuestions } = this.state;
 
     this.changeFeedback({ message: "Correct Answer" });

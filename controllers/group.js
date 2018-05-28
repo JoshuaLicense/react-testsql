@@ -6,6 +6,7 @@ const config = require("../config/config");
 // Models
 const Group = require("../models/Group");
 const UserGroup = require("../models/UserGroup");
+const UserGroupGroup = require("../models/UserGroupProgress");
 const Database = require("../models/Database");
 
 exports.getGroup = (req, res, next) => {
@@ -16,6 +17,15 @@ exports.getGroup = (req, res, next) => {
 
     return res.json(group);
   });
+};
+
+exports.saveProgress = (req, res, next) => {
+  UserGroup.find(
+    { group: req.session.group._id, user: req.user.id },
+    (err, usergroup) => {
+      if (err) return next(err);
+    }
+  );
 };
 
 exports.listGroups = (req, res, next) => {
