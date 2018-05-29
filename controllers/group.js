@@ -6,7 +6,6 @@ const config = require("../config/config");
 // Models
 const Group = require("../models/Group");
 const UserGroup = require("../models/UserGroup");
-const UserGroupGroup = require("../models/UserGroupProgress");
 const Database = require("../models/Database");
 
 exports.getGroup = (req, res, next) => {
@@ -24,6 +23,13 @@ exports.saveProgress = (req, res, next) => {
     { group: req.session.group._id, user: req.user.id },
     (err, usergroup) => {
       if (err) return next(err);
+
+      usergroup.set({ questions: req.params.questions });
+      usergroup.save((err, updatedUserGroup) => {
+        if (err) return next(err);
+
+        res.send(updatedUserGroup);
+      });
     }
   );
 };

@@ -13,6 +13,10 @@ const userGroupSchema = new mongoose.Schema(
       type: Schema.Types.ObjectId,
       ref: "Group",
       required: true
+    },
+    questions: {
+      type: Schema.Types.String,
+      required: true
     }
   },
   {
