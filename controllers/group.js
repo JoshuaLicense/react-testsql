@@ -25,6 +25,7 @@ exports.saveProgress = (req, res, next) => {
       if (err) return next(err);
 
       usergroup.set({ questions: req.params.questions });
+
       usergroup.save((err, updatedUserGroup) => {
         if (err) return next(err);
 
@@ -65,24 +66,25 @@ exports.listActive = (req, res, next) => {
 exports.joinGroup = (req, res, next) => {
   const { id } = req.params;
 
-  Group.findById(id, (err, group) => {
-    if (err) next(err);
+  // Check that this user is not already in this group
+  UserGroup.findOne({ user: req.user.id, group: id })
+    .populate("group")
+    .exec((err, existingUserGroup) => {
+      if (err) return next(err);
 
-    // Check that this user is not already in this group
-    UserGroup.findOne({ user: req.user.id, group: id })
-      .populate("group")
-      .exec((err, existingUserGroup) => {
-        if (err) return next(err);
+      if (existingUserGroup) {
+        // Construct a group object with the users question set.
+        const userGroupObject = {
+          ...existingUserGroup.group.toJSON(),
+          questions: existingUserGroup.questions
+        };
 
         // Save the group to the session
-        req.session.group = group;
+        req.session.group = userGroupObject;
 
-        // If this is an active group, then send the group information.
-        // TODO: This is the part where the questions would be sent to the user.
-        if (existingUserGroup) {
-          return res.send(group);
-        }
-
+        return res.json(userGroupObject);
+      } else {
+        // If a user group doesn't already exist, create one.
         const obj = new UserGroup({
           user: req.user.id,
           group: group.id
@@ -91,10 +93,13 @@ exports.joinGroup = (req, res, next) => {
         obj.save(err => {
           if (err) next(err);
 
-          return res.send(group);
+          // Save the group to the session
+          req.session.group = existingUserGroup.group;
+
+          return res.json(existingUserGroup);
         });
-      });
-  });
+      }
+    });
 };
 
 exports.createGroup = (req, res, next) => {
