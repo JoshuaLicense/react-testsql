@@ -158,7 +158,7 @@ app.get(
   databaseController.deleteDatabase
 );
 
-app.get(
+app.post(
   "/api/group/save-progress",
   passportConfig.isAuthenticated,
   groupController.saveProgress
