@@ -14,6 +14,8 @@ import checkAnswer, { IncorrectAnswer } from "../Question/answer"; // eslint-dis
 
 import getQuestions from "../Question/helpers";
 
+import api from "../../utils/api";
+
 const containerStyle = {
   display: "flex",
   flexDirection: "row",
