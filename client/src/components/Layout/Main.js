@@ -39,7 +39,17 @@ export default class Main extends React.Component {
   };
 
   componentDidMount = async () => {
-    const allQuestions = await getQuestions(this.props.currentDatabase);
+    let allQuestions;
+    // Load the group questions that have come from the server,
+    //if the user is in a group and has saved question progress.
+    if (this.props.user.group && this.props.user.group.questions) {
+      allQuestions = JSON.parse(this.props.user.group.questions);
+    } else {
+      allQuestions = await getQuestions(this.props.currentDatabase);
+
+      // If the user has no saved questions, then send all the generated questions up to the server.
+      api.saveProgress(allQuestions);
+    }
 
     this.setState({ allQuestions, activeQuestion: allQuestions[0] });
   };

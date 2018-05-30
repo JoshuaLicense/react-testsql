@@ -158,6 +158,43 @@ app.get(
   databaseController.deleteDatabase
 );
 
+app.get(
+  "/api/group/:groupId/remove/:userId",
+  passportConfig.isAuthenticated,
+  canManageGroup,
+  groupController.removeUser
+);
+
+app.post(
+  "/api/group/update/:groupId",
+  [
+    check("title")
+      .not()
+      .isEmpty()
+      .withMessage("Must specify a database title.")
+      .isLength({ max: 32 })
+      .withMessage("Database title must be within 32 characters.")
+      .trim()
+      .escape()
+  ],
+  passportConfig.isAuthenticated,
+  canManageGroup,
+  groupController.updateGroup
+);
+
+const canManageGroup = (req, res, next) => {
+  Group.findById(req.params.groupId, (err, group) => {
+    // TODO: expand this to allow others to manage this group
+    if (group.creator === req.user._id) {
+      return next();
+    }
+
+    return res.status(401).json({
+      error: "You do not have permissions to manage this group"
+    });
+  });
+};
+
 app.post(
   "/api/group/save-progress",
   passportConfig.isAuthenticated,
