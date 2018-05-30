@@ -18,6 +18,33 @@ exports.getGroup = (req, res, next) => {
   });
 };
 
+exports.removeUser = (req, res, next) => {
+  const { groupId, userId } = req.params;
+
+  UserGroup.findOneAndRemove({ group: groupId, user: userId }, err => {
+    if (err) return next(err);
+
+    return res.sendStatus(200);
+  });
+};
+
+exports.updateGroup = (req, res, next) => {
+  const { title } = req.body;
+  const { id } = req.params;
+
+  Group.findById(id, (err, group) => {
+    if (err) return next(err);
+
+    group.set("title", title);
+
+    group.save((err, updatedGroup) => {
+      if (err) return next(err);
+
+      res.json(group);
+    });
+  });
+};
+
 exports.saveProgress = (req, res, next) => {
   UserGroup.find(
     { group: req.session.group._id, user: req.user.id },

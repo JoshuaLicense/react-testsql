@@ -6,12 +6,10 @@ const handleError = res => {
   return res;
 };
 
-const saveProgress = (sql, allQuestions) => {
-  const data = { sql, allQuestions };
-
+const saveProgress = allQuestions => {
   return fetch("/api/group/save-progress", {
     method: "POST",
-    body: JSON.stringify(data),
+    body: JSON.stringify(allQuestions),
     credentials: "same-origin",
     headers: new Headers({
       "Content-Type": "application/json"
