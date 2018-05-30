@@ -158,6 +158,19 @@ app.get(
   databaseController.deleteDatabase
 );
 
+const canManageGroup = (req, res, next) => {
+  Group.findById(req.params.groupId, (err, group) => {
+    // TODO: expand this to allow others to manage this group
+    if (group.creator === req.user._id) {
+      return next();
+    }
+
+    return res.status(401).json({
+      error: "You do not have permissions to manage this group"
+    });
+  });
+};
+
 app.get(
   "/api/group/:groupId/remove/:userId",
   passportConfig.isAuthenticated,
@@ -181,19 +194,6 @@ app.post(
   canManageGroup,
   groupController.updateGroup
 );
-
-const canManageGroup = (req, res, next) => {
-  Group.findById(req.params.groupId, (err, group) => {
-    // TODO: expand this to allow others to manage this group
-    if (group.creator === req.user._id) {
-      return next();
-    }
-
-    return res.status(401).json({
-      error: "You do not have permissions to manage this group"
-    });
-  });
-};
 
 app.post(
   "/api/group/save-progress",
