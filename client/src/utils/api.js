@@ -9,7 +9,7 @@ const handleError = res => {
 const saveProgress = allQuestions => {
   return fetch("/api/group/save-progress", {
     method: "POST",
-    body: JSON.stringify(allQuestions),
+    body: JSON.stringify({ questions: allQuestions }),
     credentials: "same-origin",
     headers: new Headers({
       "Content-Type": "application/json"
@@ -198,6 +198,7 @@ const leaveGroup = id => {
 };
 
 const api = {
+  saveProgress,
   login,
   getCurrentUser,
   logout,

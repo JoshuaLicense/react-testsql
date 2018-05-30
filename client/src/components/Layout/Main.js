@@ -42,8 +42,14 @@ export default class Main extends React.Component {
     let allQuestions;
     // Load the group questions that have come from the server,
     //if the user is in a group and has saved question progress.
-    if (this.props.user.group && this.props.user.group.questions) {
-      allQuestions = JSON.parse(this.props.user.group.questions);
+
+    if (
+      this.props.user &&
+      this.props.user.group &&
+      this.props.user.group.questions &&
+      this.props.user.group.questions.length
+    ) {
+      allQuestions = this.props.user.group.questions;
     } else {
       allQuestions = await getQuestions(this.props.currentDatabase);
 

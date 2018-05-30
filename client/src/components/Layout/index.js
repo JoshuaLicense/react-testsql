@@ -29,24 +29,28 @@ export default class Layout extends React.Component {
         <Header sidebarToggleHandler={this.toggleSidebar} />
 
         <UserContext.Consumer>
-          {({ user }) => (
-            <DatabaseContext.Consumer>
-              {({ database, loadDatabase, updateDatabase }) =>
-                database ? (
-                  <Main
-                    user={user}
-                    currentDatabase={database}
-                    loadDatabase={loadDatabase}
-                    updateDatabase={updateDatabase}
-                    sidebarToggleHandler={this.toggleSidebar}
-                    openSidebar={openSidebar}
-                  />
-                ) : (
-                  <div>Loading...</div>
-                )
-              }
-            </DatabaseContext.Consumer>
-          )}
+          {({ user, isLoaded }) =>
+            isLoaded ? (
+              <DatabaseContext.Consumer>
+                {({ database, loadDatabase, updateDatabase }) =>
+                  database ? (
+                    <Main
+                      user={user}
+                      currentDatabase={database}
+                      loadDatabase={loadDatabase}
+                      updateDatabase={updateDatabase}
+                      sidebarToggleHandler={this.toggleSidebar}
+                      openSidebar={openSidebar}
+                    />
+                  ) : (
+                    <div>Loading...</div>
+                  )
+                }
+              </DatabaseContext.Consumer>
+            ) : (
+              <div>Loading...</div>
+            )
+          }
         </UserContext.Consumer>
       </div>
     );

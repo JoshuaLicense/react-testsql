@@ -46,15 +46,23 @@ exports.updateGroup = (req, res, next) => {
 };
 
 exports.saveProgress = (req, res, next) => {
-  UserGroup.find(
+  UserGroup.findOne(
     { group: req.session.group._id, user: req.user.id },
     (err, usergroup) => {
       if (err) return next(err);
 
-      usergroup.set({ questions: req.params.questions });
+      usergroup.set({ questions: req.body.questions });
 
       usergroup.save((err, updatedUserGroup) => {
         if (err) return next(err);
+
+        // Update the session
+        const newGroup = {
+          ...req.session.group,
+          questions: req.body.questions
+        };
+
+        req.session.group = newGroup;
 
         res.send(updatedUserGroup);
       });

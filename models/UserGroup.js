@@ -14,10 +14,13 @@ const userGroupSchema = new mongoose.Schema(
       ref: "Group",
       required: true
     },
-    questions: {
-      type: Schema.Types.String,
-      required: true
-    }
+    questions: [
+      {
+        question: String,
+        answer: String,
+        set: String
+      }
+    ]
   },
   {
     timestamps: true

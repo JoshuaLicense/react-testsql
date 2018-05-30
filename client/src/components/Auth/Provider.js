@@ -8,15 +8,16 @@ export default class Provider extends React.Component {
     return api
       .getCurrentUser()
       .then(data => {
-        this.setState(state => ({ user: data }));
+        this.setState(state => ({ user: data, isLoaded: true }));
       })
       .catch(err => {
-        this.setState(state => ({ user: null }));
+        this.setState(state => ({ user: null, isLoaded: true }));
       });
   };
 
   state = {
     user: null,
+    isLoaded: false,
     login: this.login,
     refresh: this.refresh,
     logout: this.logout
