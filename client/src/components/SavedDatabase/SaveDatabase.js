@@ -11,6 +11,7 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
+import { Typography } from "@material-ui/core";
 
 export default class SaveDatabase extends React.Component {
   state = {
@@ -42,7 +43,11 @@ export default class SaveDatabase extends React.Component {
 
     return (
       <React.Fragment>
-        <DialogTitle>Save the current database</DialogTitle>
+        <DialogTitle disableTypography>
+          <Typography variant="body2" color="textSecondary">
+            Save the current database
+          </Typography>
+        </DialogTitle>
         <DialogContent>
           <FormControl
             error={Boolean(errors.title)}

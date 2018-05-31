@@ -11,15 +11,25 @@ const Database = require("../models/Database");
 exports.getGroup = (req, res, next) => {
   const { id } = req.params;
 
-  Group.findById(id, (err, group) => {
+  Group.findById(id, "title", (err, group) => {
     if (err) next(err);
 
-    UserGroup.find({ group: group._id })
-      .populate("user")
-      .exec((err, usergroups) => {
-        const allUsers = usergroups;
+    UserGroup.find({ group: id })
+      .select("user")
+      .populate("user", "id username")
+      .exec((err, allUsersInGroup) => {
+        // Query returns { user: [{ user : { ... }}]}
+        // Below removes the top level "user", resulting in just an array of users.
+        // [{ username: ..., ... }, { username: ..., ... }]
+        const allUsers = allUsersInGroup.map(
+          userGroupObject => userGroupObject.user
+        );
 
-        const populatedGroup = { ...group, users: allUsers };
+        const populatedGroup = {
+          id: group._id,
+          title: group.title,
+          users: allUsers
+        };
 
         return res.json(populatedGroup);
       });
