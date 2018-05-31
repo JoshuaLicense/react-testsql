@@ -53,7 +53,7 @@ const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
 class ManageGroup extends React.Component {
   state = {
-    title: null,
+    group: null,
     errors: null,
     redirect: null
   };
@@ -61,19 +61,21 @@ class ManageGroup extends React.Component {
   componentDidMount() {
     const { id } = this.props.match.params;
 
-    return api.getGroup(id).then(({ title }) => this.setState({ title }));
+    return api.getGroup(id).then(group => this.setState({ group }));
   }
 
   render() {
-    const { title, errors, redirect } = this.state;
-
-    if (!title) {
-      return <div>Loading group information...</div>;
-    }
+    const { group, errors, redirect } = this.state;
 
     if (redirect) {
       return <Redirect to="/" />;
     }
+
+    if (!group) {
+      return <div>Loading group information...</div>;
+    }
+
+    const { title, users } = group;
 
     return (
       <div>
@@ -123,9 +125,10 @@ class ManageGroup extends React.Component {
             </Grid>
           </Grid>
         </DialogContent>
+        <DialogContent>{users.map(user => user.username)}</DialogContent>
         <DialogActions>
           <Button onClick={this.handleSubmit} color="primary" variant="raised">
-            Create
+            Update
           </Button>
         </DialogActions>
       </div>

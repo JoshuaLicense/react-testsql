@@ -14,7 +14,15 @@ exports.getGroup = (req, res, next) => {
   Group.findById(id, (err, group) => {
     if (err) next(err);
 
-    return res.json(group);
+    UserGroup.find({ group: group._id })
+      .populate("user")
+      .exec((err, usergroups) => {
+        const allUsers = usergroups;
+
+        const populatedGroup = { ...group, users: allUsers };
+
+        return res.json(populatedGroup);
+      });
   });
 };
 
