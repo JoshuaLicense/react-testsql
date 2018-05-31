@@ -11,6 +11,8 @@ import Divider from "@material-ui/core/Divider";
 
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 
 import DatabaseIcon from "@material-ui/icons/Storage";
@@ -82,6 +84,13 @@ export default class DatabaseManager extends React.Component {
           <DatabaseIcon />
         </IconButton>
         <Dialog onClose={this.close} open={open} fullWidth>
+          <DialogTitle>Saved Databases</DialogTitle>
+          <DialogContent style={{ paddingBottom: 0 }}>
+            <DialogContentText>
+              Allows you to save your current database in a more permanent
+              location, the server.
+            </DialogContentText>
+          </DialogContent>
           <SaveDatabase
             currentDatabase={currentDatabase}
             currentSavedDatabaseCount={list && list.length}
@@ -89,9 +98,6 @@ export default class DatabaseManager extends React.Component {
             clickHandler={this.handleSaveDatabase}
           />
           <Divider />
-          <DialogTitle id="simple-dialog-title">
-            All Saved Databases
-          </DialogTitle>
           <DatabaseList
             list={list}
             refreshHandler={this.refreshSavedDatabaseList}

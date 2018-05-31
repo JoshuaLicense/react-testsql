@@ -20,6 +20,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListSubheader from "@material-ui/core/ListSubheader";
 
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -30,7 +31,9 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import GroupIcon from "@material-ui/icons/GroupWork";
 import DeleteIcon from "@material-ui/icons/Delete";
 import LeaveIcon from "@material-ui/icons/ExitToApp";
+import RemoveUserIcon from "@material-ui/icons/RemoveCircle";
 import ManageIcon from "@material-ui/icons/Settings";
+import UpdateIcon from "@material-ui/icons/Edit";
 
 import CurrentIcon from "@material-ui/icons/StarBorder";
 
@@ -48,6 +51,7 @@ import {
   Redirect,
   withRouter
 } from "react-router-dom";
+import { Divider } from "@material-ui/core";
 
 const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
@@ -84,7 +88,9 @@ class ManageGroup extends React.Component {
           style={flexSpaceBetween}
           disableTypography
         >
-          <Typography variant="title">Managing {title}</Typography>
+          <Typography variant="subheading" color="textSecondary">
+            Managing: {title}
+          </Typography>
           <Button
             component={Link}
             color="secondary"
@@ -124,11 +130,35 @@ class ManageGroup extends React.Component {
               </FormControl>
             </Grid>
           </Grid>
+
+          <DialogActions>
+            <Button
+              onClick={this.handleSubmit}
+              color="primary"
+              variant="raised"
+            >
+              Update
+              <UpdateIcon />
+            </Button>
+            <Button
+              onClick={this.handleSubmit}
+              color="secondary"
+              variant="raised"
+            >
+              Delete
+              <DeleteIcon />
+            </Button>
+          </DialogActions>
         </DialogContent>
-        <DialogContent>{users.map(user => user.username)}</DialogContent>
+        <Divider />
+        <List subheader={<ListSubheader>All group users</ListSubheader>}>
+          {users.map(user => (
+            <GroupUser key={user.id} id={user.id} username={user.username} />
+          ))}
+        </List>
         <DialogActions>
-          <Button onClick={this.handleSubmit} color="primary" variant="raised">
-            Update
+          <Button onClick={this.props.closeHandler} color="primary">
+            Close
           </Button>
         </DialogActions>
       </div>
@@ -321,6 +351,29 @@ class GroupItem extends React.Component {
   }
 }
 
+class GroupUser extends React.Component {
+  handleKickUser = () => this.props.kickUserHandler(this.props.id);
+
+  render() {
+    const { id, username } = this.props;
+
+    return (
+      <ListItem button>
+        <ListItemText inset primary={username} />
+        <ListItemSecondaryAction>
+          <IconButton
+            color="secondary"
+            onClick={this.handleKickUser}
+            aria-label="Remove User from the group"
+          >
+            <RemoveUserIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
+    );
+  }
+}
+
 class GroupList extends React.Component {
   state = {
     activeList: null,
@@ -417,7 +470,7 @@ class GroupList extends React.Component {
         )}
         <DialogTitle id="dialog-title">
           <div style={flexSpaceBetween}>
-            Your active groups
+            Groups
             <Button
               component={Link}
               to="/group/create"
@@ -429,8 +482,17 @@ class GroupList extends React.Component {
             </Button>
           </div>
         </DialogTitle>
-        {activeListCount > 0 ? (
-          <List dense={activeListCount >= 5}>
+        <DialogContent>
+          <DialogContentText>
+            Groups allow you to customize the experience and track the progress
+            of every user that joins your group.
+          </DialogContentText>
+        </DialogContent>
+        {activeListCount && (
+          <List
+            dense={activeListCount >= 5}
+            subheader={<ListSubheader>Your active groups</ListSubheader>}
+          >
             {activeList.map(activeUserGroup => (
               <GroupItem
                 key={activeUserGroup.group._id}
@@ -447,16 +509,12 @@ class GroupList extends React.Component {
               />
             ))}
           </List>
-        ) : (
-          <DialogContent>
-            <DialogContentText>
-              You do not have any active groups!
-            </DialogContentText>
-          </DialogContent>
         )}
-        <DialogTitle id="dialog-title">All Available Groups</DialogTitle>
         {listCount > 0 ? (
-          <List dense={listCount >= 5}>
+          <List
+            dense={listCount >= 5}
+            subheader={<ListSubheader>All available groups</ListSubheader>}
+          >
             {list.map(group => (
               <GroupItem
                 key={group._id}

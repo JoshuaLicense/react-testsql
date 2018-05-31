@@ -6,6 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 
 import List from "@material-ui/core/List";
+import ListSubheader from "@material-ui/core/ListSubheader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
@@ -78,7 +79,10 @@ export default class DatabaseList extends React.Component {
           </DialogTitle>
         )}
         {count > 0 ? (
-          <List dense={Boolean(dense)}>
+          <List
+            dense={Boolean(dense)}
+            subheader={<ListSubheader>Your saved databases</ListSubheader>}
+          >
             {list.map(database => (
               <DatabaseItem
                 key={database._id}
