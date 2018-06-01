@@ -63,6 +63,12 @@ exports.loadDatabase = (req, res, next) => {
   const { id } = req.params;
 
   Database.findById(id, (err, database) => {
+    if (err) return next(err);
+
+    if (!database) {
+      return res.sendStatus(404);
+    }
+
     const filename = database.path;
 
     const options = {

@@ -117,6 +117,17 @@ const createGroup = (title, databaseID) => {
   }).then(handleError);
 };
 
+const updateGroup = (groupId, title) => {
+  return fetch(`/api/group/update/${groupId}`, {
+    method: "POST",
+    body: JSON.stringify({ title }),
+    credentials: "same-origin",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  }).then(handleError);
+};
+
 const deleteGroup = id => {
   return fetch(`/api/group/delete/${id}`, {
     method: "GET",
@@ -139,6 +150,16 @@ const getGroup = id => {
   })
     .then(handleError)
     .then(res => res.json());
+};
+
+const removeUserFromGroup = (groupId, userId) => {
+  return fetch(`/api/group/${groupId}/remove/${userId}`, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  }).then(handleError);
 };
 
 const listActiveGroups = () => {
@@ -211,6 +232,8 @@ const api = {
   deleteGroup,
   listGroups,
   listActiveGroups,
+  removeUserFromGroup,
+  updateGroup,
   joinGroup,
   leaveCurrentGroup,
   leaveGroup
