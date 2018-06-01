@@ -42,14 +42,12 @@ import Typography from "@material-ui/core/Typography";
 import Select from "@material-ui/core/Select";
 
 import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
 
 import {
   BrowserRouter as Router,
   Route,
   Link,
-  Redirect,
-  withRouter
+  Redirect
 } from "react-router-dom";
 import { Divider } from "@material-ui/core";
 
@@ -377,7 +375,7 @@ class GroupUser extends React.Component {
   render() {
     const { user } = this.props;
 
-    const { id, username, totalQuestions, questionsCompleted } = user;
+    const { username, totalQuestions, questionsCompleted } = user;
 
     return (
       <ListItem button>
