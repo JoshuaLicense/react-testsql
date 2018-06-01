@@ -44,6 +44,9 @@ exports.login = (req, res, next) => {
  * Log out.
  */
 exports.logout = (req, res) => {
+  // Destroy the session
+  req.session.destroy();
+
   req.logout();
 
   return res.json({ msg: "Good" });
