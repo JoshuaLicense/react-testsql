@@ -27,6 +27,8 @@ const userController = require("./controllers/user");
 const databaseController = require("./controllers/database");
 const groupController = require("./controllers/group");
 
+const Group = require("./models/Group");
+
 // Config
 const config = require("./config/config");
 
@@ -159,16 +161,18 @@ app.get(
 );
 
 const canManageGroup = (req, res, next) => {
-  Group.findById(req.params.groupId, (err, group) => {
-    // TODO: expand this to allow others to manage this group
-    if (group.creator === req.user._id) {
-      return next();
-    }
+  Group.findById(req.params.groupId)
+    .lean()
+    .exec((err, group) => {
+      // TODO: expand this to allow others to manage this group
+      if (group.creator.equals(req.user.id)) {
+        return next();
+      }
 
-    return res.status(401).json({
-      error: "You do not have permissions to manage this group"
+      return res.status(401).json({
+        error: "You do not have permissions to manage this group"
+      });
     });
-  });
 };
 
 app.get(

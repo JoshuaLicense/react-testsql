@@ -58,18 +58,37 @@ const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 class ManageGroup extends React.Component {
   state = {
     group: null,
+    controlledTitle: null,
     errors: null,
     redirect: null
   };
 
-  componentDidMount() {
+  componentDidMount = () => this.loadGroup();
+
+  handleUpdateGroup = () => {
+    const { id } = this.props.match.params;
+    const { controlledTitle } = this.state;
+
+    return api.updateGroup(id, controlledTitle).then(() => this.loadGroup());
+  };
+
+  handleRemoveUser = userId =>
+    api
+      .removeUserFromGroup(this.props.match.params.id, userId)
+      .then(() => this.loadGroup());
+
+  handleChange = e => this.setState({ controlledTitle: e.currentTarget.value });
+
+  loadGroup = () => {
     const { id } = this.props.match.params;
 
-    return api.getGroup(id).then(group => this.setState({ group }));
-  }
+    return api
+      .getGroup(id)
+      .then(group => this.setState({ group, controlledTitle: group.title }));
+  };
 
   render() {
-    const { group, errors, redirect } = this.state;
+    const { controlledTitle, group, errors, redirect } = this.state;
 
     if (redirect) {
       return <Redirect to="/" />;
@@ -115,7 +134,7 @@ class ManageGroup extends React.Component {
                 <Input
                   id="title"
                   name="title"
-                  value={title}
+                  value={controlledTitle}
                   onChange={this.handleChange}
                   margin="dense"
                   autoFocus
@@ -133,18 +152,15 @@ class ManageGroup extends React.Component {
 
           <DialogActions>
             <Button
-              onClick={this.handleSubmit}
+              onClick={this.handleUpdateGroup}
+              size="small"
               color="primary"
               variant="raised"
             >
               Update
               <UpdateIcon />
             </Button>
-            <Button
-              onClick={this.handleSubmit}
-              color="secondary"
-              variant="raised"
-            >
+            <Button size="small" color="secondary" variant="raised">
               Delete
               <DeleteIcon />
             </Button>
@@ -153,7 +169,11 @@ class ManageGroup extends React.Component {
         <Divider />
         <List subheader={<ListSubheader>All group users</ListSubheader>}>
           {users.map(user => (
-            <GroupUser key={user.id} id={user.id} username={user.username} />
+            <GroupUser
+              key={user._id}
+              user={user}
+              removeHandler={this.handleRemoveUser}
+            />
           ))}
         </List>
         <DialogActions>
@@ -352,18 +372,21 @@ class GroupItem extends React.Component {
 }
 
 class GroupUser extends React.Component {
-  handleKickUser = () => this.props.kickUserHandler(this.props.id);
+  handleRemoveUser = () => this.props.removeHandler(this.props.id);
 
   render() {
-    const { id, username } = this.props;
+    const { user } = this.props;
+
+    const { id, username, totalQuestions, questionsCompleted } = user;
 
     return (
       <ListItem button>
+        <Typography color="textSecondary">{`${questionsCompleted}/${totalQuestions}`}</Typography>
         <ListItemText inset primary={username} />
         <ListItemSecondaryAction>
           <IconButton
             color="secondary"
-            onClick={this.handleKickUser}
+            onClick={this.handleRemoveUser}
             aria-label="Remove User from the group"
           >
             <RemoveUserIcon />
@@ -488,7 +511,7 @@ class GroupList extends React.Component {
             of every user that joins your group.
           </DialogContentText>
         </DialogContent>
-        {activeListCount && (
+        {activeListCount > 0 && (
           <List
             dense={activeListCount >= 5}
             subheader={<ListSubheader>Your active groups</ListSubheader>}
