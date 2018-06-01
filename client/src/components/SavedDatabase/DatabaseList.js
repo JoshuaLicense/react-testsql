@@ -3,15 +3,12 @@ import React from "react";
 
 import IconButton from "@material-ui/core/IconButton";
 
-import Button from "@material-ui/core/Button";
-
 import List from "@material-ui/core/List";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 
-import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
@@ -59,13 +56,7 @@ export default class DatabaseList extends React.Component {
   render() {
     const { error } = this.state;
 
-    const {
-      list,
-      clickHandler,
-      deleteHandler,
-      closeHandler,
-      dense
-    } = this.props;
+    const { list, clickHandler, deleteHandler, dense } = this.props;
 
     const count = list && list.length;
 
