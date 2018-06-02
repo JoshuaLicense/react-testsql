@@ -7,6 +7,7 @@ const config = require("../config/config");
 
 // Models
 const Database = require("../models/Database");
+const Group = require("../models/Group");
 
 const { check, validationResult } = require("express-validator/check");
 
@@ -35,9 +36,7 @@ exports.canSaveDatabase = (req, res, next) => {
     // Check if the user has reached their upload limit
     if (databases.length >= config.database.limit) {
       return res.status(403).json({
-        errors: {
-          length: { msg: "You have reached the limit of saved databases" }
-        }
+        error: { message: "You have reached the limit of saved databases" }
       });
     }
 
@@ -50,14 +49,11 @@ exports.saveDatabase = (req, res, next) => {
   const database = new Database({
     title: req.params.title,
     path: req.file.filename,
-
     creator: req.user.id
   });
 
   database.save(err => {
-    if (err) {
-      return next(err);
-    }
+    if (err) return next(err);
   });
 
   return res.json(database);
@@ -67,6 +63,12 @@ exports.loadDatabase = (req, res, next) => {
   const { id } = req.params;
 
   Database.findById(id, (err, database) => {
+    if (err) return next(err);
+
+    if (!database) {
+      return res.sendStatus(404);
+    }
+
     const filename = database.path;
 
     const options = {
@@ -87,15 +89,27 @@ exports.loadDatabase = (req, res, next) => {
 exports.deleteDatabase = (req, res, next) => {
   const { id } = req.params;
 
-  Database.findOneAndRemove(
-    { _id: id, creator: req.user.id },
-    (err, database) => {
-      if (err) return next(err);
+  Group.findOne({ database: id }, (err, dependantGroup) => {
+    if (err) return next(err);
 
-      // Remove the file from the server too.
-      fs.unlink(`./saves/${database.path}`);
-
-      return res.sendStatus(200);
+    if (dependantGroup) {
+      return res.status(400).json({
+        error: {
+          message: "Cannot delete a database that a group depends upon."
+        }
+      });
     }
-  );
+
+    Database.findOneAndRemove(
+      { _id: id, creator: req.user.id },
+      (err, database) => {
+        if (err) return next(err);
+
+        // Remove the file from the server too.
+        fs.unlink(`./saves/${database.path}`);
+
+        return res.sendStatus(200);
+      }
+    );
+  });
 };

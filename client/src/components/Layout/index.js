@@ -3,6 +3,7 @@ import React from "react";
 import Header from "../Header";
 import Main from "./Main";
 import DatabaseContext from "../Database/Context";
+import UserContext from "../Auth/Context";
 
 const containerStyle = {
   height: "100vh",
@@ -27,21 +28,30 @@ export default class Layout extends React.Component {
       <div style={containerStyle}>
         <Header sidebarToggleHandler={this.toggleSidebar} />
 
-        <DatabaseContext.Consumer>
-          {({ database, loadDatabase, updateDatabase }) =>
-            database ? (
-              <Main
-                currentDatabase={database}
-                loadDatabase={loadDatabase}
-                updateDatabase={updateDatabase}
-                sidebarToggleHandler={this.toggleSidebar}
-                openSidebar={openSidebar}
-              />
+        <UserContext.Consumer>
+          {({ user, isLoaded }) =>
+            isLoaded ? (
+              <DatabaseContext.Consumer>
+                {({ database, loadDatabase, updateDatabase }) =>
+                  database ? (
+                    <Main
+                      user={user}
+                      currentDatabase={database}
+                      loadDatabase={loadDatabase}
+                      updateDatabase={updateDatabase}
+                      sidebarToggleHandler={this.toggleSidebar}
+                      openSidebar={openSidebar}
+                    />
+                  ) : (
+                    <div>Loading...</div>
+                  )
+                }
+              </DatabaseContext.Consumer>
             ) : (
               <div>Loading...</div>
             )
           }
-        </DatabaseContext.Consumer>
+        </UserContext.Consumer>
       </div>
     );
   }

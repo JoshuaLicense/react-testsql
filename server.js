@@ -25,7 +25,9 @@ dotenv.load({ path: ".env" });
 // Controllers
 const userController = require("./controllers/user");
 const databaseController = require("./controllers/database");
-const sessionController = require("./controllers/session");
+const groupController = require("./controllers/group");
+
+const Group = require("./models/Group");
 
 // Config
 const config = require("./config/config");
@@ -94,7 +96,7 @@ app.post(
 );
 
 app.post(
-  "/user/login",
+  "/api/user/login",
   [
     check("username")
       .exists()
@@ -107,23 +109,32 @@ app.post(
   userController.login
 );
 
-app.get("/user/info", (req, res) => {
+app.get("/api/user/info", (req, res) => {
   if (req.isAuthenticated()) {
-    return res.json(req.user);
+    const user = {
+      id: req.user.id,
+      username: req.user.username,
+      group: req.session.group || null
+    };
+
+    return res.json(user);
   }
 
   return res.sendStatus(403);
 });
 
-app.get("/user/logout", userController.logout);
+app.get("/api/user/logout", userController.logout);
 
 app.get(
-  "/database/list",
+  "/api/database/list",
   passportConfig.isAuthenticated,
   databaseController.listDatabase
 );
+
+// Title is in the "get" as express doesn't deal with FormData,
+// which is what the saved database binary will be sent as.
 app.post(
-  "/database/save/:title?",
+  "/api/database/save/:title?",
   passportConfig.isAuthenticated,
   [
     check("title")
@@ -138,31 +149,102 @@ app.post(
 );
 
 app.get(
-  "/database/load/:id",
+  "/api/database/load/:id",
   passportConfig.isAuthenticated,
   databaseController.loadDatabase
 );
 
 app.get(
-  "/database/delete/:id",
+  "/api/database/delete/:id",
   passportConfig.isAuthenticated,
   databaseController.deleteDatabase
 );
 
+const canManageGroup = (req, res, next) => {
+  Group.findById(req.params.groupId)
+    .lean()
+    .exec((err, group) => {
+      // TODO: expand this to allow others to manage this group
+      if (group.creator.equals(req.user.id)) {
+        return next();
+      }
+
+      return res.status(401).json({
+        error: "You do not have permissions to manage this group"
+      });
+    });
+};
+
 app.get(
-  "/session/list",
+  "/api/group/:groupId/remove/:userId",
   passportConfig.isAuthenticated,
-  sessionController.listSession
+  canManageGroup,
+  groupController.removeUser
 );
+
 app.post(
-  "/session/create",
+  "/api/group/update/:groupId",
+  [
+    check("title")
+      .not()
+      .isEmpty()
+      .withMessage("Must specify a database title.")
+      .isLength({ max: 32 })
+      .withMessage("Database title must be within 32 characters.")
+      .trim()
+      .escape()
+  ],
   passportConfig.isAuthenticated,
-  sessionController.createSession
+  canManageGroup,
+  groupController.updateGroup
 );
-app.get(
-  "/session/join/:id",
+
+app.post(
+  "/api/group/save-progress",
   passportConfig.isAuthenticated,
-  sessionController.joinSession
+  groupController.saveProgress
+);
+
+app.get(
+  "/api/group/:id",
+  passportConfig.isAuthenticated,
+  groupController.getGroup
+);
+
+app.get(
+  "/api/group/list/all",
+  passportConfig.isAuthenticated,
+  groupController.listGroups
+);
+
+app.get(
+  "/api/group/list/active",
+  passportConfig.isAuthenticated,
+  groupController.listActive
+);
+
+app.post(
+  "/api/group/create",
+  passportConfig.isAuthenticated,
+  groupController.createGroup
+);
+
+app.get(
+  "/api/group/join/:id",
+  passportConfig.isAuthenticated,
+  groupController.joinGroup
+);
+
+app.get(
+  "/api/group/leave/current",
+  passportConfig.isAuthenticated,
+  groupController.leaveCurrentGroup
+);
+
+app.get(
+  "/api/group/leave/:id",
+  passportConfig.isAuthenticated,
+  groupController.leaveGroup
 );
 
 // OAuth authentication routes. (Sign in)

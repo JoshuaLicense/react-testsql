@@ -14,6 +14,8 @@ import checkAnswer, { IncorrectAnswer } from "../Question/answer"; // eslint-dis
 
 import getQuestions from "../Question/helpers";
 
+import api from "../../utils/api";
+
 const containerStyle = {
   display: "flex",
   flexDirection: "row",
@@ -37,7 +39,23 @@ export default class Main extends React.Component {
   };
 
   componentDidMount = async () => {
-    const allQuestions = await getQuestions(this.props.currentDatabase);
+    let allQuestions;
+    // Load the group questions that have come from the server,
+    //if the user is in a group and has saved question progress.
+
+    if (
+      this.props.user &&
+      this.props.user.group &&
+      this.props.user.group.questions &&
+      this.props.user.group.questions.length
+    ) {
+      allQuestions = this.props.user.group.questions;
+    } else {
+      allQuestions = await getQuestions(this.props.currentDatabase);
+
+      // If the user has no saved questions, then send all the generated questions up to the server.
+      api.saveProgress(allQuestions);
+    }
 
     this.setState({ allQuestions, activeQuestion: allQuestions[0] });
   };
@@ -55,7 +73,7 @@ export default class Main extends React.Component {
 
   changeQuestion = question => this.setState({ activeQuestion: question });
 
-  runQuery = sql => {
+  runQuery = async sql => {
     const { currentDatabase, updateDatabase } = this.props;
 
     const { activeQuestion, allQuestions } = this.state;
@@ -82,29 +100,37 @@ export default class Main extends React.Component {
 
     try {
       if (checkAnswer(currentDatabase, sql, activeQuestion)) {
-        this.changeFeedback({ message: "Correct Answer" });
+        await this.completeCurrentQuestion(sql);
 
-        // Create a new question object with completed=true
-        const completedActiveQuestion = { ...activeQuestion, completed: true };
-
-        // Find the active question index in allQuestions to allow
-        // to alter the main array with a new completed status.
-        const index = allQuestions.indexOf(activeQuestion);
-
-        // Create a copy of the original question set.
-        const updatedAllQuestions = allQuestions;
-
-        // Directly update the active question element.
-        updatedAllQuestions[index] = completedActiveQuestion;
-
-        this.setState({
-          allQuestions: updatedAllQuestions,
-          activeQuestion: completedActiveQuestion
-        });
+        return api.saveProgress(sql, allQuestions);
       }
     } catch (Error) {
       return this.changeFeedback({ message: Error.message, error: true });
     }
+  };
+
+  completeCurrentQuestion = sql => {
+    const { activeQuestion, allQuestions } = this.state;
+
+    this.changeFeedback({ message: "Correct Answer" });
+
+    // Create a new question object with completed=true
+    const completedActiveQuestion = { ...activeQuestion, completed: true };
+
+    // Find the active question index in allQuestions to allow
+    // to alter the main array with a new completed status.
+    const index = allQuestions.indexOf(activeQuestion);
+
+    // Create a copy of the original question set.
+    const updatedAllQuestions = allQuestions;
+
+    // Directly update the active question element.
+    updatedAllQuestions[index] = completedActiveQuestion;
+
+    this.setState({
+      allQuestions: updatedAllQuestions,
+      activeQuestion: completedActiveQuestion
+    });
   };
 
   displaySchema = name => {

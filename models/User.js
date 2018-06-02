@@ -14,8 +14,6 @@ const userSchema = new Schema(
     passwordResetToken: String,
     passwordResetExpires: Date,
 
-    session: { type: Schema.Types.ObjectId, ref: "Session" },
-
     facebook: String,
     twitter: String,
     google: String,
@@ -33,7 +31,9 @@ const userSchema = new Schema(
       picture: String
     }
   },
-  { timestamps: true }
+  {
+    timestamps: true
+  }
 );
 
 /**

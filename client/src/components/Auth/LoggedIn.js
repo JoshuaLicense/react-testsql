@@ -5,10 +5,11 @@ import IconButton from "@material-ui/core/IconButton";
 
 import LogoutIcon from "@material-ui/icons/PowerSettingsNew";
 
-//import ManageSession from "../Session";
+import ManageGroup from "../Group";
 import ManageDatabase from "../SavedDatabase";
 import api from "../../utils/api";
 import DatabaseContext from "../Database/Context";
+import UserContext from "./Context";
 
 class LoggedIn extends React.Component {
   handleLogout = () => {
@@ -18,16 +19,26 @@ class LoggedIn extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <DatabaseContext.Consumer>
-          {({ database: currentDatabase, loadDatabase }) => (
-            <ManageDatabase
-              currentDatabase={currentDatabase}
-              loadDatabaseHandler={loadDatabase}
-            />
+        <UserContext.Consumer>
+          {({ user }) => (
+            <DatabaseContext.Consumer>
+              {({ database: currentDatabase, loadDatabase }) => (
+                <React.Fragment>
+                  <ManageDatabase
+                    currentDatabase={currentDatabase}
+                    loadDatabaseHandler={loadDatabase}
+                    disabled={Boolean(user.group)}
+                  />
+                  <ManageGroup
+                    loadDatabaseHandler={loadDatabase}
+                    currentGroup={user && user.group}
+                    refreshUserContext={this.props.refreshUserContext}
+                  />
+                </React.Fragment>
+              )}
+            </DatabaseContext.Consumer>
           )}
-        </DatabaseContext.Consumer>
-        {/*<ManageSession />*/}
-
+        </UserContext.Consumer>
         <IconButton
           color="inherit"
           aria-label="Logout"

@@ -16,6 +16,8 @@ import UploadIcon from "@material-ui/icons/FileUpload";
 
 import IconButton from "@material-ui/core/IconButton";
 
+import UserContext from "../Auth/Context";
+
 import { withStyles } from "@material-ui/core/styles";
 
 import SQL from "sql.js";
@@ -232,22 +234,39 @@ class SchemaList extends React.Component {
           ))}
         </List>
         <div className={classes.drawerBottomActions}>
-          <input
-            accept=".db,.sqlite"
-            onChange={uploadDatabaseHandler}
-            className={classes.uploadDatabaseFile}
-            id="uploadfile"
-            type="file"
-          />
-          <label htmlFor="uploadfile">
-            <IconButton
-              className={classes.button}
-              component="span"
-              aria-label="Upload Database"
-            >
-              <UploadIcon />
-            </IconButton>
-          </label>
+          <UserContext.Consumer>
+            {({ user }) =>
+              user && user.group ? (
+                <IconButton
+                  className={classes.button}
+                  component="span"
+                  aria-label="Upload Database"
+                  disabled
+                >
+                  <UploadIcon />
+                </IconButton>
+              ) : (
+                <React.Fragment>
+                  <input
+                    accept=".db,.sqlite"
+                    onChange={uploadDatabaseHandler}
+                    className={classes.uploadDatabaseFile}
+                    id="uploadfile"
+                    type="file"
+                  />
+                  <label htmlFor="uploadfile">
+                    <IconButton
+                      className={classes.button}
+                      component="span"
+                      aria-label="Upload Database"
+                    >
+                      <UploadIcon />
+                    </IconButton>
+                  </label>
+                </React.Fragment>
+              )
+            }
+          </UserContext.Consumer>
           <IconButton
             className={classes.button}
             onClick={downloadDatabaseHandler}

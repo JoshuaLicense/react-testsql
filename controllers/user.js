@@ -44,6 +44,9 @@ exports.login = (req, res, next) => {
  * Log out.
  */
 exports.logout = (req, res) => {
+  // Destroy the session
+  req.session.destroy();
+
   req.logout();
 
   return res.json({ msg: "Good" });
@@ -61,12 +64,12 @@ exports.register = (req, res, next) => {
   }
 
   User.findOne({ username: req.body.username }, (err, existingUser) => {
-    if (err) {
-      return next(err);
-    }
+    if (err) return next(err);
 
     if (existingUser) {
-      return res.status(400).json({ error: "That username is already taken." });
+      return res.status(400).json({
+        error: { message: "This username already exists." }
+      });
     }
 
     const user = new User({

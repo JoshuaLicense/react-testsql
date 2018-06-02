@@ -2,17 +2,19 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const databaseSchema = new mongoose.Schema(
+const groupSchema = new mongoose.Schema(
   {
     title: {
       type: String,
       required: true
     },
-
-    path: String,
     creator: {
       type: Schema.Types.ObjectId,
       ref: "User"
+    },
+    database: {
+      type: Schema.Types.ObjectId,
+      ref: "Database"
     }
   },
   {
@@ -20,6 +22,6 @@ const databaseSchema = new mongoose.Schema(
   }
 );
 
-const Database = mongoose.model("Database", databaseSchema);
+const Group = mongoose.model("Group", groupSchema);
 
-module.exports = Database;
+module.exports = Group;
