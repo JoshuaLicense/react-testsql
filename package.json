@@ -26,12 +26,11 @@
     "start": "concurrently \"yarn server\" \"yarn client\"",
     "server": "nodemon server.js",
     "client": "node start-client.js",
+    "install-all": "yarn install && cd client && yarn install",
+    "test": "cd client && yarn test",
     "heroku-postbuild": "cd client && yarn install --production && yarn build"
   },
-  "cacheDirectories": [
-    "node_modules",
-    "client/node_modules"
-  ],
+  "cacheDirectories": ["node_modules", "client/node_modules"],
   "devDependencies": {
     "concurrently": "3.1.0",
     "eslint": "^4.9.0",
