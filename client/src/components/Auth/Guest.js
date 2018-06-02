@@ -10,46 +10,45 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 
-import api from "../../utils/api";
+import { login } from "./API";
 
 class Guest extends React.Component {
   state = {
-    currentTab: 0,
     open: false,
 
     username: "",
     password: ""
   };
 
-  login = () => {
+  handleLogin = () => {
     const { username, password } = this.state;
 
-    return api
-      .login(username, password)
-      .then(() => this.props.refreshUserContext());
+    return login(username, password).then(() =>
+      this.props.refreshUserContext()
+    );
   };
 
   handleChange = event => {
     this.setState({ [event.target.id]: event.target.value });
   };
 
-  open = () => {
+  handleOpen = () => {
     this.setState({ open: true });
   };
 
-  close = () => {
+  handleClose = () => {
     this.setState({ open: false });
   };
 
   render() {
     return (
       <div>
-        <Button color="inherit" onClick={this.open}>
+        <Button color="inherit" onClick={this.handleOpen}>
           Login
         </Button>
         <Dialog
           open={this.state.open}
-          onClose={this.close}
+          onClose={this.handleClose}
           aria-labelledby="form-dialog-title"
         >
           <DialogTitle id="form-dialog-title">Login</DialogTitle>
@@ -75,10 +74,10 @@ class Guest extends React.Component {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.close} color="primary">
+            <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.login} color="primary" variant="raised">
+            <Button onClick={this.handleLogin} color="primary" variant="raised">
               Login
             </Button>
           </DialogActions>

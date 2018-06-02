@@ -1,7 +1,7 @@
 import React from "react";
 //import PropTypes from 'prop-types';
 
-import api from "../../utils/api";
+import * as api from "./API";
 
 import SQL from "sql.js";
 

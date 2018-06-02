@@ -1,12 +1,12 @@
 import React from "react";
-import api from "../../utils/api";
 
 import UserContext from "./Context";
 
+import { getCurrentUser } from "./API";
+
 export default class Provider extends React.Component {
   refresh = () => {
-    return api
-      .getCurrentUser()
+    return getCurrentUser()
       .then(data => {
         this.setState(state => ({ user: data, isLoaded: true }));
       })

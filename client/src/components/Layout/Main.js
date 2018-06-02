@@ -14,7 +14,7 @@ import checkAnswer, { IncorrectAnswer } from "../Question/answer"; // eslint-dis
 
 import getQuestions from "../Question/helpers";
 
-import api from "../../utils/api";
+import { saveProgress } from "../Group/API";
 
 const containerStyle = {
   display: "flex",
@@ -54,7 +54,7 @@ export default class Main extends React.Component {
       allQuestions = await getQuestions(this.props.currentDatabase);
 
       // If the user has no saved questions, then send all the generated questions up to the server.
-      api.saveProgress(allQuestions);
+      saveProgress(allQuestions);
     }
 
     this.setState({ allQuestions, activeQuestion: allQuestions[0] });
@@ -102,7 +102,7 @@ export default class Main extends React.Component {
       if (checkAnswer(currentDatabase, sql, activeQuestion)) {
         await this.completeCurrentQuestion(sql);
 
-        return api.saveProgress(sql, allQuestions);
+        return saveProgress(sql, allQuestions);
       }
     } catch (Error) {
       return this.changeFeedback({ message: Error.message, error: true });

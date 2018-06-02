@@ -7,13 +7,15 @@ import LogoutIcon from "@material-ui/icons/PowerSettingsNew";
 
 import ManageGroup from "../Group";
 import ManageDatabase from "../SavedDatabase";
-import api from "../../utils/api";
+
 import DatabaseContext from "../Database/Context";
 import UserContext from "./Context";
 
+import { logout } from "./API";
+
 class LoggedIn extends React.Component {
   handleLogout = () => {
-    return api.logout().then(() => this.props.refreshUserContext());
+    return logout().then(() => this.props.refreshUserContext());
   };
 
   render() {
