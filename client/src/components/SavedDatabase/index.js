@@ -22,6 +22,8 @@ import Button from "@material-ui/core/Button";
 import DatabaseList from "./DatabaseList";
 import SaveDatabase from "./SaveDatabase";
 
+import Tooltip from "@material-ui/core/Tooltip";
+
 export default class DatabaseManager extends React.Component {
   state = {
     list: null,
@@ -75,14 +77,16 @@ export default class DatabaseManager extends React.Component {
 
     return (
       <React.Fragment>
-        <IconButton
-          onClick={this.open}
-          color="inherit"
-          aria-label="Saved Database Actions"
-          disabled={disabled}
-        >
-          <DatabaseIcon />
-        </IconButton>
+        <Tooltip title="Saved Databases">
+          <IconButton
+            onClick={this.open}
+            color="inherit"
+            aria-label="Saved Database Actions"
+            disabled={disabled}
+          >
+            <DatabaseIcon />
+          </IconButton>
+        </Tooltip>
         <Dialog onClose={this.close} open={open} fullWidth>
           <DialogTitle>Saved Databases</DialogTitle>
           <DialogContent style={{ paddingBottom: 0 }}>

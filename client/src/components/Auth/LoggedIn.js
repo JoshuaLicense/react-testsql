@@ -13,6 +13,8 @@ import UserContext from "./Context";
 
 import { logout } from "./API";
 
+import Tooltip from "@material-ui/core/Tooltip";
+
 class LoggedIn extends React.Component {
   handleLogout = () => {
     return logout().then(() => this.props.refreshUserContext());
@@ -41,13 +43,16 @@ class LoggedIn extends React.Component {
             </DatabaseContext.Consumer>
           )}
         </UserContext.Consumer>
-        <IconButton
-          color="inherit"
-          aria-label="Logout"
-          onClick={this.handleLogout}
-        >
-          <LogoutIcon />
-        </IconButton>
+
+        <Tooltip title="Logout">
+          <IconButton
+            color="inherit"
+            aria-label="Logout"
+            onClick={this.handleLogout}
+          >
+            <LogoutIcon />
+          </IconButton>
+        </Tooltip>
       </React.Fragment>
     );
   }

@@ -22,6 +22,8 @@ import { withStyles } from "@material-ui/core/styles";
 
 import SQL from "sql.js";
 
+import Tooltip from "@material-ui/core/Tooltip";
+
 const styles = theme => ({
   drawerDocked: {
     height: "100%"
@@ -254,26 +256,31 @@ class SchemaList extends React.Component {
                     id="uploadfile"
                     type="file"
                   />
-                  <label htmlFor="uploadfile">
-                    <IconButton
-                      className={classes.button}
-                      component="span"
-                      aria-label="Upload Database"
-                    >
-                      <UploadIcon />
-                    </IconButton>
-                  </label>
+
+                  <Tooltip title="Upload Database">
+                    <label htmlFor="uploadfile">
+                      <IconButton
+                        className={classes.button}
+                        component="span"
+                        aria-label="Upload Database"
+                      >
+                        <UploadIcon />
+                      </IconButton>
+                    </label>
+                  </Tooltip>
                 </React.Fragment>
               )
             }
           </UserContext.Consumer>
-          <IconButton
-            className={classes.button}
-            onClick={downloadDatabaseHandler}
-            aria-label="Download Database"
-          >
-            <DownloadIcon />
-          </IconButton>
+          <Tooltip title="Download Database">
+            <IconButton
+              className={classes.button}
+              onClick={downloadDatabaseHandler}
+              aria-label="Download Database"
+            >
+              <DownloadIcon />
+            </IconButton>
+          </Tooltip>
         </div>
       </React.Fragment>
     );

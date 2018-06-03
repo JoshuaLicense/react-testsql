@@ -11,6 +11,8 @@ import GroupList from "./GroupList";
 import CreateGroup from "./CreateGroup";
 import ManageGroup from "./ManageGroup";
 
+import Tooltip from "@material-ui/core/Tooltip";
+
 class GroupManager extends React.Component {
   state = {
     open: false
@@ -35,13 +37,15 @@ class GroupManager extends React.Component {
 
     return (
       <React.Fragment>
-        <IconButton
-          color={currentGroup ? "secondary" : "inherit"}
-          aria-label="Group List"
-          onClick={this.open}
-        >
-          <GroupIcon />
-        </IconButton>
+        <Tooltip title="Groups">
+          <IconButton
+            color={currentGroup ? "secondary" : "inherit"}
+            aria-label="Group List"
+            onClick={this.open}
+          >
+            <GroupIcon />
+          </IconButton>
+        </Tooltip>
 
         <Router>
           <Dialog fullWidth onClose={this.close} open={open}>
