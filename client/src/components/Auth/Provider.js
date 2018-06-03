@@ -18,9 +18,7 @@ export default class Provider extends React.Component {
   state = {
     user: null,
     isLoaded: false,
-    login: this.login,
-    refresh: this.refresh,
-    logout: this.logout
+    refresh: this.refresh
   };
 
   componentDidMount() {
