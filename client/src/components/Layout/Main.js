@@ -43,18 +43,20 @@ export default class Main extends React.Component {
     // Load the group questions that have come from the server,
     //if the user is in a group and has saved question progress.
 
-    if (
-      this.props.user &&
-      this.props.user.group &&
-      this.props.user.group.questions &&
-      this.props.user.group.questions.length
-    ) {
+    const { user } = this.props;
+
+    const userGroup = user.group;
+
+    if (userGroup && userGroup.questions && userGroup.questions.length > 0) {
       allQuestions = this.props.user.group.questions;
     } else {
       allQuestions = await getQuestions(this.props.currentDatabase);
 
       // If the user has no saved questions, then send all the generated questions up to the server.
-      saveProgress(allQuestions);
+      // If the user is in a group. Save the progress.
+      if (user.group) {
+        saveProgress(allQuestions);
+      }
     }
 
     this.setState({ allQuestions, activeQuestion: allQuestions[0] });
