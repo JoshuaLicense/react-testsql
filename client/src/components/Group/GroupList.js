@@ -208,7 +208,7 @@ class GroupItem extends React.Component {
     const { id, title, canManage, canLeave, isCurrent } = this.props;
 
     return (
-      <ListItem onClick={this.handleJoinGroup} button>
+      <ListItem onClick={this.handleJoinGroup} disabled={isCurrent} button>
         {isCurrent && (
           <ListItemIcon>
             <CurrentIcon />
