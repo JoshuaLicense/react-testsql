@@ -109,6 +109,7 @@ exports.listGroups = (req, res, next) => {
     Group.find()
       .where("_id")
       .nin(userGroupsID)
+      .lean()
       .exec((err, groups) => {
         if (err) return next(err);
 
@@ -119,11 +120,19 @@ exports.listGroups = (req, res, next) => {
 
 exports.listActive = (req, res, next) => {
   UserGroup.find({ user: req.user.id })
-    .populate("group")
+    .select("group")
+    .populate("group", "id title")
+    .lean()
     .exec((err, usergroups) => {
       if (err) return next(err);
 
-      return res.json(usergroups);
+      const userGroupObjects = usergroups.map(usergroup => ({
+        ...usergroup.group,
+        canManage: usergroup.group.creator.equals(req.user.id),
+        canDelete: usergroup.group.creator.equals(req.user.id)
+      }));
+
+      return res.json(userGroupObjects);
     });
 };
 

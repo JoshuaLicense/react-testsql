@@ -154,19 +154,17 @@ class GroupList extends React.Component {
             dense={activeListCount >= 5}
             subheader={<ListSubheader>Your active groups</ListSubheader>}
           >
-            {activeList.map(activeUserGroup => (
+            {activeList.map(group => (
               <GroupItem
-                key={activeUserGroup.group._id}
-                id={activeUserGroup.group._id}
-                title={activeUserGroup.group.title}
+                key={group._id}
+                id={group._id}
+                title={group.title}
                 joinGroupHandler={this.handleJoinGroup}
                 leaveCurrentGroupHandler={this.handleCurrentLeaveGroup}
                 leaveGroupHandler={this.handleLeaveGroup}
-                isCurrent={
-                  currentGroup && activeUserGroup.group._id === currentGroup._id
-                }
-                canManage
-                canLeave
+                isCurrent={currentGroup && group._id === currentGroup._id}
+                canManage={group.canManage}
+                canLeave={group.canLeave}
               />
             ))}
           </List>
