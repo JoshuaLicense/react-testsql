@@ -152,6 +152,9 @@ class CreateGroup extends React.Component {
           </Grid>
         </DialogContent>
         <DialogActions>
+          <Button onClick={this.props.closeHandler} color="primary">
+            Close
+          </Button>
           <Button onClick={this.handleSubmit} color="primary" variant="raised">
             Create
           </Button>

@@ -18,11 +18,11 @@ class GroupManager extends React.Component {
     open: false
   };
 
-  open = () => {
+  handleOpen = () => {
     this.setState({ open: true });
   };
 
-  close = () => {
+  handleClose = () => {
     this.setState({ open: false });
   };
 
@@ -41,14 +41,14 @@ class GroupManager extends React.Component {
           <IconButton
             color={currentGroup ? "secondary" : "inherit"}
             aria-label="Group List"
-            onClick={this.open}
+            onClick={this.handleOpen}
           >
             <GroupIcon />
           </IconButton>
         </Tooltip>
 
         <Router>
-          <Dialog fullWidth onClose={this.close} open={open}>
+          <Dialog fullWidth onClose={this.handleClose} open={open}>
             <Route
               exact
               path="/"
@@ -57,12 +57,22 @@ class GroupManager extends React.Component {
                   currentGroup={currentGroup}
                   refreshUserContext={refreshUserContext}
                   loadDatabaseHandler={loadDatabaseHandler}
-                  closeHandler={this.close}
+                  closeHandler={this.handleClose}
                 />
               )}
             />
-            <Route path="/group/create" component={CreateGroup} />
-            <Route path="/group/manage/:id" component={ManageGroup} />
+            <Route
+              path="/group/create"
+              render={props => (
+                <CreateGroup {...props} closeHandler={this.handleClose} />
+              )}
+            />
+            <Route
+              path="/group/manage/:id"
+              render={props => (
+                <ManageGroup {...props} closeHandler={this.handleClose} />
+              )}
+            />
           </Dialog>
         </Router>
       </React.Fragment>
