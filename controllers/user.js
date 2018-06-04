@@ -52,6 +52,20 @@ exports.logout = (req, res) => {
   return res.json({ msg: "Good" });
 };
 
+exports.info = (req, res) => {
+  if (req.isAuthenticated()) {
+    const user = {
+      id: req.user.id,
+      username: req.user.username,
+      group: req.session.group || null
+    };
+
+    return res.json(user);
+  }
+
+  return res.sendStatus(403);
+};
+
 /**
  * POST /signup
  * Create a new local account.

@@ -121,7 +121,7 @@ exports.listGroups = (req, res, next) => {
 exports.listActive = (req, res, next) => {
   UserGroup.find({ user: req.user.id })
     .select("group")
-    .populate("group", "id title")
+    .populate("group", "id title creator")
     .lean()
     .exec((err, usergroups) => {
       if (err) return next(err);
@@ -140,43 +140,47 @@ exports.joinGroup = (req, res, next) => {
   const { id } = req.params;
 
   // Check that this user is not already in this group
-  Group.findById(id, (err, group) => {
-    if (err) return next(err);
+  Group.findById(id)
+    .select("id title database")
+    .lean()
+    .exec((err, group) => {
+      if (err) return next(err);
 
-    UserGroup.findOne({ user: req.user.id, group: id }).exec(
-      (err, existingUserGroup) => {
-        if (err) return next(err);
+      UserGroup.findOne({ user: req.user.id, group: id })
+        .select("questions")
+        .lean()
+        .exec((err, existingUserGroup) => {
+          if (err) return next(err);
 
-        if (existingUserGroup) {
-          // Construct a group object with the users question set.
-          const userGroupObject = {
-            ...group.toJSON(),
-            questions: existingUserGroup.questions
-          };
-
-          // Save the group to the session
-          req.session.group = userGroupObject;
-
-          return res.json(userGroupObject);
-        } else {
-          // If a user group doesn't already exist, create one.
-          const obj = new UserGroup({
-            user: req.user.id,
-            group: group.id
-          });
-
-          obj.save(err => {
-            if (err) next(err);
+          if (existingUserGroup) {
+            // Construct a group object with the users question set.
+            const userGroupObject = {
+              ...group,
+              questions: existingUserGroup.questions
+            };
 
             // Save the group to the session
-            req.session.group = group;
+            req.session.group = userGroupObject;
 
-            return res.json(group);
-          });
-        }
-      }
-    );
-  });
+            return res.json(userGroupObject);
+          } else {
+            // If a user group doesn't already exist, create one.
+            const obj = new UserGroup({
+              user: req.user.id,
+              group: group.id
+            });
+
+            obj.save(err => {
+              if (err) next(err);
+
+              // Save the group to the session
+              req.session.group = group;
+
+              return res.json(group);
+            });
+          }
+        });
+    });
 };
 
 exports.createGroup = (req, res, next) => {

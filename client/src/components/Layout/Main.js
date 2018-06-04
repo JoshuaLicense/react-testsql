@@ -45,7 +45,7 @@ export default class Main extends React.Component {
 
     const { user } = this.props;
 
-    const userGroup = user.group;
+    const userGroup = user && user.group;
 
     if (userGroup && userGroup.questions && userGroup.questions.length > 0) {
       allQuestions = this.props.user.group.questions;
@@ -54,7 +54,7 @@ export default class Main extends React.Component {
 
       // If the user has no saved questions, then send all the generated questions up to the server.
       // If the user is in a group. Save the progress.
-      if (user.group) {
+      if (userGroup) {
         saveProgress(allQuestions);
       }
     }

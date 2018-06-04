@@ -109,19 +109,7 @@ app.post(
   userController.login
 );
 
-app.get("/api/user/info", (req, res) => {
-  if (req.isAuthenticated()) {
-    const user = {
-      id: req.user.id,
-      username: req.user.username,
-      group: req.session.group || null
-    };
-
-    return res.json(user);
-  }
-
-  return res.sendStatus(403);
-});
+app.get("/api/user/info", userController.info);
 
 app.get("/api/user/logout", userController.logout);
 
