@@ -11,7 +11,7 @@ const Database = require("../models/Database");
 exports.getGroup = (req, res, next) => {
   const { id } = req.params;
 
-  Group.findById(id, "title", (err, group) => {
+  Group.findById(id, "title creator", { lean: true }, (err, group) => {
     if (err) next(err);
 
     UserGroup.find({ group: id })
@@ -25,6 +25,7 @@ exports.getGroup = (req, res, next) => {
         const allUsers = allUsersInGroup.map(userGroupObject => {
           return {
             ...userGroupObject.user,
+            canRemove: !group.creator.equals(userGroupObject.user._id),
             totalQuestions: userGroupObject.questions.length,
             questionsCompleted: userGroupObject.questions.filter(question =>
               Boolean(question.completed)
@@ -129,7 +130,7 @@ exports.listActive = (req, res, next) => {
       const userGroupObjects = usergroups.map(usergroup => ({
         ...usergroup.group,
         canManage: usergroup.group.creator.equals(req.user.id),
-        canDelete: usergroup.group.creator.equals(req.user.id)
+        canLeave: !usergroup.group.creator.equals(req.user.id)
       }));
 
       return res.json(userGroupObjects);
@@ -141,7 +142,7 @@ exports.joinGroup = (req, res, next) => {
 
   // Check that this user is not already in this group
   Group.findById(id)
-    .select("id title database")
+    .select("_id title database")
     .lean()
     .exec((err, group) => {
       if (err) return next(err);
@@ -167,11 +168,11 @@ exports.joinGroup = (req, res, next) => {
             // If a user group doesn't already exist, create one.
             const obj = new UserGroup({
               user: req.user.id,
-              group: group.id
+              group: group._id
             });
 
             obj.save(err => {
-              if (err) next(err);
+              if (err) return next(err);
 
               // Save the group to the session
               req.session.group = group;

@@ -167,26 +167,28 @@ class ManageGroup extends React.Component {
 }
 
 class GroupUser extends React.Component {
-  handleRemoveUser = () => this.props.removeHandler(this.props.id);
+  handleRemoveUser = () => this.props.removeHandler(this.props.user._id);
 
   render() {
     const { user } = this.props;
 
-    const { username, totalQuestions, questionsCompleted } = user;
+    const { username, totalQuestions, questionsCompleted, canRemove } = user;
 
     return (
       <ListItem button>
         <Typography color="textSecondary">{`${questionsCompleted}/${totalQuestions}`}</Typography>
         <ListItemText inset primary={username} />
-        <ListItemSecondaryAction>
-          <IconButton
-            color="secondary"
-            onClick={this.handleRemoveUser}
-            aria-label="Remove User from the group"
-          >
-            <RemoveUserIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
+        {canRemove && (
+          <ListItemSecondaryAction>
+            <IconButton
+              color="secondary"
+              onClick={this.handleRemoveUser}
+              aria-label="Remove User from the group"
+            >
+              <RemoveUserIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
+        )}
       </ListItem>
     );
   }
