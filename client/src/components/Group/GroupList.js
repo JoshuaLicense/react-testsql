@@ -4,8 +4,6 @@ import IconButton from "@material-ui/core/IconButton";
 
 import Button from "@material-ui/core/Button";
 
-import SQL from "sql.js";
-
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -80,9 +78,7 @@ class GroupList extends React.Component {
       .then(fileBuffer => {
         const typedArray = new Uint8Array(fileBuffer);
 
-        const database = new SQL.Database(typedArray);
-
-        return this.props.loadDatabaseHandler(database);
+        return this.props.loadDatabaseHandler(typedArray);
       })
       .then(() => this.props.refreshUserContext())
       .then(() => this.load())

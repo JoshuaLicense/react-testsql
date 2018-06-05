@@ -1,5 +1,3 @@
-import SQL from "sql.js";
-
 import defaultDatabase from "../../default.sqlite";
 
 const getDatabase = async () =>
@@ -19,7 +17,7 @@ const getDatabase = async () =>
         });
     }
 
-    return resolve(new SQL.Database(typedArray));
+    return resolve(typedArray);
   });
 
 export const saveDatabase = database => {

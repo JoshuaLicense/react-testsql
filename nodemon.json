@@ -1,0 +1,8 @@
+{
+  "restartable": "rs",
+  "ignore": [
+    ".git",
+    "client/node_modules",
+    "node_modules/**/node_modules"
+  ]
+}

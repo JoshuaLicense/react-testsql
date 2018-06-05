@@ -1,11 +1,16 @@
 import React from "react";
 
+import SQL from "sql.js";
+
 import getDatabase, { saveDatabase } from "./helpers";
 
 import DatabaseContext from "./Context";
 
 export default class Provider extends React.Component {
-  loadDatabase = database => {
+  loadDatabase = typedArray => {
+    // Create a new SQL object
+    const database = new SQL.Database(typedArray);
+
     // Create a new object with a new lastModified date.
     // This ensures that when the database object is passed as props,
     // the old reference isn't updated and therefore the component is unable to detect change
@@ -20,7 +25,8 @@ export default class Provider extends React.Component {
     return Promise.resolve();
   };
 
-  updateDatabase = database => {
+  updateDatabase = typedArray => {
+    const database = new SQL.Database(typedArray);
     // Create a new object with a new lastModified date.
     // This ensures that when the database object is passed as props,
     // the old reference isn't updated and therefore the component is unable to detect change

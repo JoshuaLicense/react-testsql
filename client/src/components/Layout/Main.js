@@ -3,18 +3,26 @@ import React from "react";
 import Section from "../Section";
 import Question from "../Question";
 
-import InputForm from "../Database/Input";
 import OutputTable from "../Database/Output";
 
 import Feedback from "../Feedback";
-
-import Schema from "../Schema";
 
 import checkAnswer, { IncorrectAnswer } from "../Question/answer"; // eslint-disable-line no-unused-vars
 
 import getQuestions from "../Question/helpers";
 
 import { saveProgress } from "../Group/API";
+
+import Schema from "../Schema";
+
+import Loadable from "react-loadable";
+
+const LoadableInputForm = Loadable({
+  loader: () => import("../Database/Input" /* webpackChunkName: "inputForm" */),
+  loading() {
+    return <div>Loading...</div>;
+  }
+});
 
 const containerStyle = {
   display: "flex",
@@ -188,7 +196,7 @@ export default class Main extends React.Component {
           </Section>
 
           <Section title="Statement" gutters>
-            <InputForm submitHandler={this.runQuery} />
+            <LoadableInputForm submitHandler={this.runQuery} />
           </Section>
 
           {results &&

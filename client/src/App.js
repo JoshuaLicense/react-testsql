@@ -1,17 +1,27 @@
 import React, { Component } from "react";
 
 import UserProvider from "./components/Auth/Provider";
-import DatabaseProvider from "./components/Database/Provider";
 
 import Layout from "./components/Layout";
+
+import Loadable from "react-loadable";
+
+// Code splitting as sql.js is big! Load the Database provider dynamically
+const LoadableDatabaseProvider = Loadable({
+  loader: () =>
+    import("./components/Database/Provider" /* webpackChunkName: "database" */),
+  loading() {
+    return <div>Loading...</div>;
+  }
+});
 
 class App extends Component {
   render() {
     return (
       <UserProvider>
-        <DatabaseProvider>
+        <LoadableDatabaseProvider>
           <Layout />
-        </DatabaseProvider>
+        </LoadableDatabaseProvider>
       </UserProvider>
     );
   }

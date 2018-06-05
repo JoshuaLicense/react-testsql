@@ -20,8 +20,6 @@ import UserContext from "../Auth/Context";
 
 import { withStyles } from "@material-ui/core/styles";
 
-import SQL from "sql.js";
-
 import Tooltip from "@material-ui/core/Tooltip";
 
 const styles = theme => ({
@@ -131,10 +129,8 @@ class Schema extends React.Component {
     fileReader.onload = () => {
       const typedArray = new Uint8Array(fileReader.result);
 
-      const database = new SQL.Database(typedArray);
-
       // Run the submit handler from the parent component
-      this.props.uploadDatabaseHandler(database);
+      this.props.uploadDatabaseHandler(typedArray);
 
       this.toggleSidebar();
     };

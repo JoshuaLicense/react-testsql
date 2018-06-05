@@ -3,8 +3,6 @@ import React from "react";
 
 import * as api from "./API";
 
-import SQL from "sql.js";
-
 import IconButton from "@material-ui/core/IconButton";
 
 import Divider from "@material-ui/core/Divider";
@@ -49,9 +47,7 @@ export default class DatabaseManager extends React.Component {
       .then(fileBuffer => {
         const typedArray = new Uint8Array(fileBuffer);
 
-        const database = new SQL.Database(typedArray);
-
-        return this.props.loadDatabaseHandler(database);
+        return this.props.loadDatabaseHandler(typedArray);
       })
       .then(() => this.close())
       .catch(error => {
