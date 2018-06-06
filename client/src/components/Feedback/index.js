@@ -7,6 +7,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import Typography from "@material-ui/core/Typography";
 
 class Feedback extends React.Component {
+  handleClear = () => this.props.changeHandler(null);
+
   render() {
     const { message, error, changeHandler } = this.props;
 
@@ -18,7 +20,7 @@ class Feedback extends React.Component {
         }}
         open={!!message}
         autoHideDuration={6000}
-        onClose={() => changeHandler(null)}
+        onClose={this.handleClear}
         ContentProps={{
           "aria-describedby": "message-id"
         }}
@@ -32,7 +34,7 @@ class Feedback extends React.Component {
             key="close"
             aria-label="Close"
             color="inherit"
-            onClick={() => changeHandler(null)}
+            onClick={this.handleClear}
           >
             <CloseIcon />
           </IconButton>

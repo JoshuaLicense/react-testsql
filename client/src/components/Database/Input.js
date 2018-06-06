@@ -36,34 +36,34 @@ const styles = theme => ({
   }
 });
 
+const codeMirrorOptions = {
+  mode: "text/x-sql",
+  theme: "mdn-like",
+  lineNumbers: true
+};
+
 class Form extends React.Component {
   state = {
     statement: null
   };
 
-  handleSubmit = e => {
-    // Don't submit the form
-    e.preventDefault();
+  handleChange = (editor, data, statement) => this.setState({ statement });
 
-    // Run the submit handler from the parent component
-    this.props.submitHandler(this.state.statement);
-  };
+  handleClear = () => this.setState({ statement: null });
+
+  handleSubmit = () => this.props.submitHandler(this.state.statement);
 
   render() {
     const { classes } = this.props;
 
+    const { statement } = this.state;
+
     return (
-      <form onSubmit={this.handleSubmit}>
+      <React.Fragment>
         <CodeMirror
-          value={this.state.statement}
-          options={{
-            mode: "text/x-sql",
-            theme: "mdn-like",
-            lineNumbers: true
-          }}
-          onBeforeChange={(editor, data, statement) =>
-            this.setState({ statement })
-          }
+          value={statement}
+          options={codeMirrorOptions}
+          onBeforeChange={this.handleChange}
           className={classes.codemirror}
         />
 
@@ -82,12 +82,12 @@ class Form extends React.Component {
           size="small"
           variant="raised"
           color="secondary"
-          onClick={() => this.setState({ statement: null })}
+          onClick={this.handleClear}
         >
           Clear
           <ClearIcon className={classes.rightIcon} />
         </Button>
-      </form>
+      </React.Fragment>
     );
   }
 }
