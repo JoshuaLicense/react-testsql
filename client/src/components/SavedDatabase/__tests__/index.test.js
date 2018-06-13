@@ -7,21 +7,24 @@ import IconButton from "@material-ui/core/IconButton";
 import Dialog from "@material-ui/core/Dialog";
 
 describe("DatabaseManager component", () => {
-  it("renders a default database icon (not in any group)", () => {
-    const databaseManager = shallow(<DatabaseManager />);
+  let databaseManager;
 
+  beforeEach(() => {
+    databaseManager = shallow(<DatabaseManager />);
+  });
+
+  it("renders a default database icon (not in any group)", () => {
     expect(databaseManager.find(IconButton).prop("disabled")).toBeFalsy();
   });
 
   it("renders a disabled icon when in a current group", () => {
-    const databaseManager = shallow(<DatabaseManager disabled={true} />);
+    // Add a current group prop.
+    databaseManager = databaseManager.setProps({ disabled: true });
 
     expect(databaseManager.find(IconButton).prop("disabled")).toBeTruthy();
   });
 
   it("toggle the dialog", () => {
-    const databaseManager = shallow(<DatabaseManager />);
-
     // Should start closed.
     expect(databaseManager.find(Dialog).prop("open")).toEqual(false);
 
