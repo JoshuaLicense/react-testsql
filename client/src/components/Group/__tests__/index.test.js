@@ -7,9 +7,13 @@ import IconButton from "@material-ui/core/IconButton";
 import Dialog from "@material-ui/core/Dialog";
 
 describe("GroupManager component", () => {
-  it("renders a default group icon (not in any group)", () => {
-    const groupManager = shallow(<GroupManager currentGroup={null} />);
+  let groupManager;
 
+  beforeEach(() => {
+    groupManager = shallow(<GroupManager />);
+  });
+
+  it("renders a default group icon (not in any group)", () => {
     expect(groupManager.find(IconButton).prop("color")).toEqual("inherit");
   });
 
@@ -18,15 +22,13 @@ describe("GroupManager component", () => {
       _id: "123",
       title: "Test current group"
     };
-
-    const groupManager = shallow(<GroupManager currentGroup={currentGroup} />);
+    // Add a current group prop.
+    groupManager = groupManager.setProps({ currentGroup });
 
     expect(groupManager.find(IconButton).prop("color")).toEqual("secondary");
   });
 
   it("toggle the dialog", () => {
-    const groupManager = shallow(<GroupManager />);
-
     // Should start closed.
     expect(groupManager.find(Dialog).prop("open")).toEqual(false);
 
