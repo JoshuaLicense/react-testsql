@@ -58,13 +58,9 @@ export default class DatabaseManager extends React.Component {
   handleDeleteDatabase = id =>
     api.deleteDatabase(id).then(() => this.refreshSavedDatabaseList());
 
-  open = () => {
-    this.setState({ open: true });
-  };
+  handleOpen = () => this.setState({ open: true });
 
-  close = () => {
-    this.setState({ open: false });
-  };
+  handleClose = () => this.setState({ open: false });
 
   render() {
     const { open, list } = this.state;
