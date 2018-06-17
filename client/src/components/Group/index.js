@@ -29,11 +29,7 @@ class GroupManager extends React.Component {
   render() {
     const { open } = this.state;
 
-    const {
-      currentGroup,
-      loadDatabaseHandler,
-      refreshUserContext
-    } = this.props;
+    const { currentGroup } = this.props;
 
     return (
       <React.Fragment>
@@ -49,30 +45,9 @@ class GroupManager extends React.Component {
 
         <Router>
           <Dialog fullWidth onClose={this.handleClose} open={open}>
-            <Route
-              exact
-              path="/"
-              render={() => (
-                <GroupList
-                  currentGroup={currentGroup}
-                  refreshUserContext={refreshUserContext}
-                  loadDatabaseHandler={loadDatabaseHandler}
-                  closeHandler={this.handleClose}
-                />
-              )}
-            />
-            <Route
-              path="/group/create"
-              render={props => (
-                <CreateGroup {...props} closeHandler={this.handleClose} />
-              )}
-            />
-            <Route
-              path="/group/manage/:id"
-              render={props => (
-                <ManageGroup {...props} closeHandler={this.handleClose} />
-              )}
-            />
+            <Route exact path="/" render={GroupList} />
+            <Route path="/group/create" render={CreateGroup} />
+            <Route path="/group/manage/:id" component={ManageGroup} />
           </Dialog>
         </Router>
       </React.Fragment>

@@ -117,7 +117,7 @@ export const leaveCurrentGroup = () => {
   }).then(handleError);
 };
 
-export const leaveGroup = id => {
+export const leaveActiveGroup = id => {
   return fetch(`/api/group/leave/${id}`, {
     method: "GET",
     credentials: "same-origin",
