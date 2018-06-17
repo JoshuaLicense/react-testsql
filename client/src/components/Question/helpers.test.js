@@ -1,9 +1,4 @@
-import {
-  getTables,
-  getColumns,
-  getForeignColumns,
-  getRows
-} from "./helpers";
+import { getTables, getColumns, getForeignColumns, getRows } from "./helpers";
 
 const mockDB = {
   exec: jest.fn()
@@ -62,6 +57,37 @@ describe("getColumns()", () => {
       {
         table: "Employees",
         column: "EmployeeID"
+      }
+    ]);
+  });
+
+  it("moves on to the next table due to lack of columns", () => {
+    mockDB.exec.mockReturnValueOnce([
+      {
+        columns: ["cid", "name", "type", "notnull", "dflt_value", "pk"],
+        values: [[0, "EmployeeID", "INTEGER", 1, null, 1]]
+      }
+    ]);
+
+    mockDB.exec.mockReturnValueOnce([
+      {
+        columns: ["cid", "name", "type", "notnull", "dflt_value", "pk"],
+        values: [
+          [0, "CustomerID", "INTEGER", 1, null, 1],
+          [1, "CustomerName", "VARCHAR(20)", 1, null, 0],
+          [2, "CustomerAddress", "VARCHAR(20)", 0, null, 0]
+        ]
+      }
+    ]);
+
+    expect(getColumns(mockDB, tables, { x: 2 })).toEqual([
+      {
+        table: "Customers",
+        column: "CustomerID"
+      },
+      {
+        table: "Customers",
+        column: "CustomerName"
       }
     ]);
   });
@@ -178,7 +204,7 @@ describe("getColumns()", () => {
       {
         table: "Employees",
         column: "EmployeeID"
-      },
+      }
     ]);
   });
 
@@ -197,7 +223,7 @@ describe("getColumns()", () => {
       }
     ]);
 
-    expect(() => getColumns(mockDB, tables, {x : 7 })).toThrowError(
+    expect(() => getColumns(mockDB, tables, { x: 7 })).toThrowError(
       /^Not enough columns found in the database.$/
     );
   });
@@ -230,7 +256,15 @@ describe("getRows()", () => {
 });
 
 describe("getForeignColumns()", () => {
-  const tables = ["Album", "Invoice", "Customer", "Artist", "Employee", "Track", "MediaType"];
+  const tables = [
+    "Album",
+    "Invoice",
+    "Customer",
+    "Artist",
+    "Employee",
+    "Track",
+    "MediaType"
+  ];
 
   it("fails as no foreign keys exist", () => {
     // PRAMGA foreign_key_list will return a blank array upon not finding any fk's for that table
@@ -244,51 +278,104 @@ describe("getForeignColumns()", () => {
   it("returns 2 foreign keys", () => {
     mockDB.exec.mockReturnValueOnce([
       {
-        columns: ["id", "seq", "table", "from", "to", "on_update", "on_delete", "match"],
+        columns: [
+          "id",
+          "seq",
+          "table",
+          "from",
+          "to",
+          "on_update",
+          "on_delete",
+          "match"
+        ],
         values: [
-          [0, 0, "Customer", "CustomerId", "CustomerId", "NO ACTION", "NO ACTION", "NONE"],
+          [
+            0,
+            0,
+            "Customer",
+            "CustomerId",
+            "CustomerId",
+            "NO ACTION",
+            "NO ACTION",
+            "NONE"
+          ]
         ]
       }
     ]);
     mockDB.exec.mockReturnValueOnce([
       {
-        columns: ["id", "seq", "table", "from", "to", "on_update", "on_delete", "match"],
+        columns: [
+          "id",
+          "seq",
+          "table",
+          "from",
+          "to",
+          "on_update",
+          "on_delete",
+          "match"
+        ],
         values: [
-          [0, 0, "Employee", "SupportRepId", "EmployeeId", "NO ACTION", "NO ACTION", "NONE"],
+          [
+            0,
+            0,
+            "Employee",
+            "SupportRepId",
+            "EmployeeId",
+            "NO ACTION",
+            "NO ACTION",
+            "NONE"
+          ]
         ]
       }
     ]);
     mockDB.exec.mockReturnValueOnce([
       {
-        columns: ["id", "seq", "table", "from", "to", "on_update", "on_delete", "match"],
+        columns: [
+          "id",
+          "seq",
+          "table",
+          "from",
+          "to",
+          "on_update",
+          "on_delete",
+          "match"
+        ],
         values: [
-          [0, 0, "Track", "TrackId", "TrackId", "NO ACTION", "NO ACTION", "NONE"],
+          [
+            0,
+            0,
+            "Track",
+            "TrackId",
+            "TrackId",
+            "NO ACTION",
+            "NO ACTION",
+            "NONE"
+          ]
         ]
       }
     ]);
 
-    expect(getForeignColumns(mockDB, tables, 2)).toEqual(
-      [
-        { 
-          from : { 
-            table: "Customer", 
-            column: "CustomerId" 
-          }, 
-          to : { 
-            table: "Album", 
-            column: "CustomerId"
-          }
+    expect(getForeignColumns(mockDB, tables, 2)).toEqual([
+      {
+        from: {
+          table: "Customer",
+          column: "CustomerId"
         },
-        { 
-          from : { 
-            table: "Employee", 
-            column: "SupportRepId" 
-          }, 
-          to : { 
-            table: "Invoice", 
-            column: "EmployeeId"
-          }
+        to: {
+          table: "Album",
+          column: "CustomerId"
+        }
+      },
+      {
+        from: {
+          table: "Employee",
+          column: "SupportRepId"
         },
+        to: {
+          table: "Invoice",
+          column: "EmployeeId"
+        }
+      }
     ]);
   });
 });
