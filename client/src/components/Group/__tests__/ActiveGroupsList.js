@@ -4,9 +4,11 @@ import ActiveGroupList from "../ActiveGroupList";
 
 import GroupItem from "../GroupItem";
 
-import { listActiveGroups } from "../API";
+import { listActiveGroups, joinGroup } from "../API";
 
 jest.mock("../API.js");
+
+jest.mock("../../SavedDatabase/API.js");
 
 const activeGroups = [
   {
@@ -53,9 +55,14 @@ const activeGroups = [
   }
 ];
 
+const currentGroup = {
+  ...activeGroups[0],
+  database: "bfdbe464ea748402db487249ceb0b591"
+};
+
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
-describe("ActiveGroups component", () => {
+describe("ActiveGroups component (Initial loading)", () => {
   it("shows a list of the active groups", async () => {
     listActiveGroups.mockImplementation(
       () => new Promise(resolve => resolve(activeGroups))
@@ -106,5 +113,85 @@ describe("ActiveGroups component", () => {
 
     // Expecting the component to be compact.
     expect(component.prop("dense")).toEqual(true);
+  });
+});
+
+describe("ActiveGroupList (functional testing)", () => {
+  let component;
+
+  beforeEach(async () => {
+    // Disable lifecycle methods so the script can access the load promise directly.
+    component = shallow(<ActiveGroupList />, {
+      disableLifecycleMethods: true
+    });
+
+    // Mock so only 3 active groups are rendered.
+    listActiveGroups.mockImplementation(
+      () => new Promise(resolve => resolve(activeGroups))
+    );
+
+    // Await for the mocked API call to finish.
+    await component.instance().load();
+
+    // Update the component, with the new props.
+    component.update();
+  });
+
+  fit("re-joins an active group", async () => {
+    const loadDatabaseMock = jest.fn();
+    const refreshUserContextMock = jest.fn();
+
+    // Disable lifecycle methods so the script can access the load promise directly.
+    const component = shallow(
+      <ActiveGroupList
+        loadDatabaseHandler={loadDatabaseMock}
+        refreshUserContext={refreshUserContextMock}
+      />,
+      {
+        disableLifecycleMethods: true
+      }
+    );
+
+    listActiveGroups.mockImplementation(
+      () => new Promise(resolve => resolve(activeGroups))
+    );
+
+    // Await for the mocked API call to finish.
+    await component.instance().load();
+
+    // Update the component, with the new props.
+    component.update();
+
+    joinGroup.mockImplementation(
+      id =>
+        new Promise((resolve, reject) => {
+          const joinedGroup = activeGroups.find(group => group._id === id);
+
+          if (!joinedGroup) {
+            return reject();
+          }
+
+          return resolve({
+            ...joinedGroup,
+            database: "49af33548724bec6494ceb018b007bb1"
+          });
+        })
+    );
+
+    const firstGroupItem = component
+      .find(GroupItem)
+      .first()
+      .dive();
+
+    firstGroupItem.simulate("click");
+
+    // Wait for the event loop to finish.
+    await flushPromises();
+
+    expect(joinGroup).toHaveBeenCalledTimes(1);
+
+    expect(loadDatabaseMock).toHaveBeenCalledTimes(1);
+
+    expect(refreshUserContextMock).toHaveBeenCalledTimes(1);
   });
 });
