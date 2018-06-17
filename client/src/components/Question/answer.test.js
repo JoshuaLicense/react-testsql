@@ -15,123 +15,134 @@ const mockAnswer = [
   }
 ];
 
-it("fails on missing keywords", () => {
-  const mockKeywordQuestion = {
-    ...mockQuestion,
-    keywords: ["ThE", "QuiCK", "RED"]
-  };
+describe("test checkAnswer passes", () => {
+  it("fails on missing keywords", () => {
+    const mockKeywordQuestion = {
+      ...mockQuestion,
+      keywords: ["ThE", "QuiCK", "RED"]
+    };
 
-  const input = "The quick brown fox jumps over the lazy dog";
+    const input = "The quick brown fox jumps over the lazy dog";
 
-  expect(() => checkAnswer(mockDB, input, mockKeywordQuestion)).toThrowError(
-    /^Looking for the incursion of the keyword: RED, but not found or found in the wrong position!$/
-  );
-});
+    expect(() => checkAnswer(mockDB, input, mockKeywordQuestion)).toThrowError(
+      /^Looking for the incursion of the keyword: RED, but not found or found in the wrong position!$/
+    );
+  });
 
-it("fails on keyword in wrong order", () => {
-  const mockKeywordQuestion = {
-    ...mockQuestion,
-    keywords: ["ThE", "BrowN", "QuiCK"]
-  };
+  it("fails on keyword in wrong order", () => {
+    const mockKeywordQuestion = {
+      ...mockQuestion,
+      keywords: ["ThE", "BrowN", "QuiCK"]
+    };
 
-  const input = "The quick brown fox jumps over the lazy dog";
+    const input = "The quick brown fox jumps over the lazy dog";
 
-  expect(() => checkAnswer(mockDB, input, mockKeywordQuestion)).toThrowError(
-    /^Looking for the incursion of the keyword: QuiCK, but not found or found in the wrong position!$/
-  );
-});
+    expect(() => checkAnswer(mockDB, input, mockKeywordQuestion)).toThrowError(
+      /^Looking for the incursion of the keyword: QuiCK, but not found or found in the wrong position!$/
+    );
+  });
 
-it("fails on incorrect column number", () => {
-  mockDB.exec.mockReturnValueOnce([
-    {
-      columns: ["ID", "FirstName", "LastName"],
-      values: [
-        [1, "Joe", "Bloggs"],
-        [2, "Jane", "Doe"],
-        [3, "John", "Doe"],
-        [4, "Josh", "Bloggs"]
-      ]
-    }
-  ]);
+  it("fails on lack of results returned", () => {
+    mockDB.exec.mockReturnValueOnce([]);
+    mockDB.exec.mockReturnValueOnce([]);
 
-  mockDB.exec.mockReturnValueOnce(mockAnswer);
+    expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
+      /^No rows returned!$/
+    );
+  });
 
-  expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
-    /^Expected a total of 4 column\(s\) to be returned, instead got 3!$/
-  );
-});
+  it("fails on incorrect column number", () => {
+    mockDB.exec.mockReturnValueOnce([
+      {
+        columns: ["ID", "FirstName", "LastName"],
+        values: [
+          [1, "Joe", "Bloggs"],
+          [2, "Jane", "Doe"],
+          [3, "John", "Doe"],
+          [4, "Josh", "Bloggs"]
+        ]
+      }
+    ]);
 
-it("fails on incorrect result number", () => {
-  mockDB.exec.mockReturnValueOnce([
-    {
-      columns: ["ID", "FirstName", "LastName", "Phone"],
-      values: [
-        [1, "Joe", "Bloggs"],
-        [2, "Jane", "Doe", "021312"],
-        [3, "John", "Doe", "123233"]
-      ]
-    }
-  ]);
+    mockDB.exec.mockReturnValueOnce(mockAnswer);
 
-  mockDB.exec.mockReturnValueOnce(mockAnswer);
+    expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
+      /^Expected a total of 4 column\(s\) to be returned, instead got 3!$/
+    );
+  });
 
-  expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
-    /^Expected a total of 2 row\(s\) to be returned, instead got 3!$/
-  );
-});
+  it("fails on incorrect result number", () => {
+    mockDB.exec.mockReturnValueOnce([
+      {
+        columns: ["ID", "FirstName", "LastName", "Phone"],
+        values: [
+          [1, "Joe", "Bloggs"],
+          [2, "Jane", "Doe", "021312"],
+          [3, "John", "Doe", "123233"]
+        ]
+      }
+    ]);
 
-it("fails on wrong column selection", () => {
-  mockDB.exec.mockReturnValueOnce([
-    {
-      columns: ["ID", "FirstName", "LastName", "City"],
-      values: [[2, "Jane", "Doe", "Manchester"], [3, "John", "Doe", "Leeds"]]
-    }
-  ]);
+    mockDB.exec.mockReturnValueOnce(mockAnswer);
 
-  mockDB.exec.mockReturnValueOnce(mockAnswer);
+    expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
+      /^Expected a total of 2 row\(s\) to be returned, instead got 3!$/
+    );
+  });
 
-  expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
-    /^Expected only the following column\(s\) to be selected: ID, FirstName, LastName, Phone$/
-  );
-});
+  it("fails on wrong column selection", () => {
+    mockDB.exec.mockReturnValueOnce([
+      {
+        columns: ["ID", "FirstName", "LastName", "City"],
+        values: [[2, "Jane", "Doe", "Manchester"], [3, "John", "Doe", "Leeds"]]
+      }
+    ]);
 
-it("fails on non-exact match", () => {
-  mockDB.exec.mockReturnValueOnce([
-    {
-      columns: ["ID", "FirstName", "LastName", "Phone"],
-      values: [[1, "Joe", "Bloggs"], [3, "John", "Doe", "123233"]]
-    }
-  ]);
+    mockDB.exec.mockReturnValueOnce(mockAnswer);
 
-  mockDB.exec.mockReturnValueOnce(mockAnswer);
+    expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
+      /^Expected only the following column\(s\) to be selected: ID, FirstName, LastName, Phone$/
+    );
+  });
 
-  expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
-    /^The column value 2 was not found in the column ID$/
-  );
+  it("fails on non-exact match", () => {
+    mockDB.exec.mockReturnValueOnce([
+      {
+        columns: ["ID", "FirstName", "LastName", "Phone"],
+        values: [[1, "Joe", "Bloggs"], [3, "John", "Doe", "123233"]]
+      }
+    ]);
 
-  mockDB.exec.mockReturnValueOnce([
-    {
-      columns: ["ID", "FirStName", "LastName", "PhoNE"],
-      values: [[2, "Jane", "Doe", "0213120"], [3, "John", "Doe", "123233"]]
-    }
-  ]);
+    mockDB.exec.mockReturnValueOnce(mockAnswer);
 
-  mockDB.exec.mockReturnValueOnce(mockAnswer);
+    expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
+      /^The column value 2 was not found in the column ID$/
+    );
 
-  expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
-    /^The column value 021312 was not found in the column Phone$/
-  );
-});
+    mockDB.exec.mockReturnValueOnce([
+      {
+        columns: ["ID", "FirStName", "LastName", "PhoNE"],
+        values: [[2, "Jane", "Doe", "0213120"], [3, "John", "Doe", "123233"]]
+      }
+    ]);
 
-it("marked as correct answer", () => {
-  mockDB.exec.mockReturnValueOnce([
-    {
-      columns: ["id", "FiRStName", "LastNAme", "PhOne"],
-      values: [[2, "Jane", "Doe", "021312"], [3, "John", "Doe", "123233"]]
-    }
-  ]);
+    mockDB.exec.mockReturnValueOnce(mockAnswer);
 
-  mockDB.exec.mockReturnValueOnce(mockAnswer);
+    expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
+      /^The column value 021312 was not found in the column Phone$/
+    );
+  });
 
-  expect(checkAnswer(mockDB, "", mockQuestion)).toBe(true);
+  it("marked as correct answer", () => {
+    mockDB.exec.mockReturnValueOnce([
+      {
+        columns: ["id", "FiRStName", "LastNAme", "PhOne"],
+        values: [[2, "Jane", "Doe", "021312"], [3, "John", "Doe", "123233"]]
+      }
+    ]);
+
+    mockDB.exec.mockReturnValueOnce(mockAnswer);
+
+    expect(checkAnswer(mockDB, "", mockQuestion)).toBe(true);
+  });
 });
