@@ -25,20 +25,22 @@ class LoggedIn extends React.Component {
       <React.Fragment>
         <UserContext.Consumer>
           {({ user }) => (
-            <React.Fragment>
-              <DatabaseContext.Consumer>
-                {({ database: currentDatabase, loadDatabase }) => (
-                  <React.Fragment>
-                    <ManageDatabase
-                      currentDatabase={currentDatabase}
-                      loadDatabaseHandler={loadDatabase}
-                      disabled={Boolean(user.group)}
-                    />
-                  </React.Fragment>
-                )}
-              </DatabaseContext.Consumer>
-              <ManageGroup currentGroup={user && user.group} />
-            </React.Fragment>
+            <DatabaseContext.Consumer>
+              {({ database: currentDatabase, loadDatabase }) => (
+                <React.Fragment>
+                  <ManageDatabase
+                    currentDatabase={currentDatabase}
+                    loadDatabaseHandler={loadDatabase}
+                    disabled={Boolean(user.group)}
+                  />
+                  <ManageGroup
+                    loadDatabaseHandler={loadDatabase}
+                    currentGroup={user && user.group}
+                    refreshUserContext={this.props.refreshUserContext}
+                  />
+                </React.Fragment>
+              )}
+            </DatabaseContext.Consumer>
           )}
         </UserContext.Consumer>
 
