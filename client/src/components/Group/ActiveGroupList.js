@@ -101,7 +101,7 @@ export default class ActiveGroupList extends React.Component {
             canLeave={group.canLeave}
             joinGroupHandler={this.handleJoinGroup}
             leaveCurrentGroupHandler={this.handleLeaveCurrentGroup}
-            leaveGroupHandler={this.handleLeaveGroup}
+            leaveGroupHandler={this.handleLeaveActiveGroup}
           />
         ))}
       </List>
