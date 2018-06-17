@@ -7,14 +7,14 @@ import IconButton from "@material-ui/core/IconButton";
 import Dialog from "@material-ui/core/Dialog";
 
 describe("GroupManager component", () => {
-  let groupManager;
+  let component;
 
   beforeEach(() => {
-    groupManager = shallow(<GroupManager />);
+    component = shallow(<GroupManager />);
   });
 
   it("renders a default group icon (not in any group)", () => {
-    expect(groupManager.find(IconButton).prop("color")).toEqual("inherit");
+    expect(component.find(IconButton).prop("color")).toEqual("inherit");
   });
 
   it("renders a different group icon when in a current group", () => {
@@ -23,30 +23,30 @@ describe("GroupManager component", () => {
       title: "Test current group"
     };
     // Add a current group prop.
-    groupManager = groupManager.setProps({ currentGroup });
+    component = component.setProps({ currentGroup });
 
-    expect(groupManager.find(IconButton).prop("color")).toEqual("secondary");
+    expect(component.find(IconButton).prop("color")).toEqual("secondary");
   });
 
   it("toggle the dialog", () => {
     // Should start closed.
-    expect(groupManager.find(Dialog).prop("open")).toEqual(false);
+    expect(component.find(Dialog).prop("open")).toEqual(false);
 
     // Simulate a click on the icon.
-    groupManager.instance().handleOpen();
+    component.instance().handleOpen();
     // Update the instance as the component state has changed.
-    groupManager.update();
+    component.update();
     // Check if the dialog was opened.
-    expect(groupManager.state("open")).toEqual(true);
+    expect(component.state("open")).toEqual(true);
     // Check the state opens the dialog.
-    expect(groupManager.find(Dialog).prop("open")).toEqual(true);
+    expect(component.find(Dialog).prop("open")).toEqual(true);
     // Simulate another click, should close the dialog.
-    groupManager.instance().handleClose();
+    component.instance().handleClose();
     // Update the instance as the component state has changed.
-    groupManager.update();
+    component.update();
     // Check if the dialog was opened.
-    expect(groupManager.state("open")).toEqual(false);
+    expect(component.state("open")).toEqual(false);
     // Check the state opens the dialog.
-    expect(groupManager.find(Dialog).prop("open")).toEqual(false);
+    expect(component.find(Dialog).prop("open")).toEqual(false);
   });
 });
