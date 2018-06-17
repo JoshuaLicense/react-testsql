@@ -31,7 +31,7 @@ const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 class CreateGroup extends React.Component {
   state = {
     errors: null,
-    databaseList: null,
+    list: null,
 
     name: "",
     selectedDatabase: "",
@@ -39,7 +39,7 @@ class CreateGroup extends React.Component {
   };
 
   componentDidMount = () =>
-    listDatabases().then(list => this.setState({ databaseList: list }));
+    listDatabases().then(list => this.setState({ list }));
 
   handleSubmit = () => {
     const { name, selectedDatabase } = this.state;
@@ -60,13 +60,7 @@ class CreateGroup extends React.Component {
   };
 
   render() {
-    const {
-      name,
-      errors,
-      databaseList,
-      selectedDatabase,
-      redirect
-    } = this.state;
+    const { name, errors, list, selectedDatabase, redirect } = this.state;
 
     if (redirect) {
       return <Redirect to="/" />;
@@ -140,8 +134,8 @@ class CreateGroup extends React.Component {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  {databaseList &&
-                    databaseList.map(database => (
+                  {list &&
+                    list.map(database => (
                       <MenuItem key={database._id} value={database._id}>
                         {database.title}
                       </MenuItem>

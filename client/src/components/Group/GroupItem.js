@@ -17,8 +17,10 @@ import { Link } from "react-router-dom";
 
 export default class GroupItem extends React.Component {
   handleJoinGroup = () => this.props.joinGroupHandler(this.props.id);
+
   handleLeaveCurrentGroup = () =>
     this.props.leaveCurrentGroupHandler(this.props.id);
+
   handleLeaveGroup = () => this.props.leaveGroupHandler(this.props.id);
 
   render() {

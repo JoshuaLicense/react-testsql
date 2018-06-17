@@ -129,7 +129,9 @@ exports.listActive = (req, res, next) => {
 
       const userGroupObjects = usergroups.map(usergroup => ({
         ...usergroup.group,
-        isCurrent: usergroup.group._id.equals(req.session.group._id),
+        isCurrent:
+          req.session.group &&
+          usergroup.group._id.equals(req.session.group._id),
         canManage: usergroup.group.creator.equals(req.user.id),
         canLeave: !usergroup.group.creator.equals(req.user.id)
       }));

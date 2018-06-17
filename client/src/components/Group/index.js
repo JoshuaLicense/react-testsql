@@ -45,8 +45,8 @@ class GroupManager extends React.Component {
 
         <Router>
           <Dialog fullWidth onClose={this.handleClose} open={open}>
-            <Route exact path="/" render={GroupList} />
-            <Route path="/group/create" render={CreateGroup} />
+            <Route exact path="/" component={GroupList} />
+            <Route path="/group/create" component={CreateGroup} />
             <Route path="/group/manage/:id" component={ManageGroup} />
           </Dialog>
         </Router>
