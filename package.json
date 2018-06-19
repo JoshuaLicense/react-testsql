@@ -24,7 +24,9 @@
   },
   "scripts": {
     "start": "concurrently \"yarn server\" \"yarn client\"",
-    "server": "nodemon server.js",
+    "start-dev": "concurrently \"yarn dev-server\" \"yarn client\"",
+    "server": "node server.js",
+    "dev-server": "nodemon server.js",
     "client": "node start-client.js",
     "install-all": "yarn install && cd client && yarn install",
     "test": "cd client && yarn test",
