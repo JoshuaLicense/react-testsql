@@ -71,6 +71,18 @@ export const removeUserFromGroup = (groupId, userId) => {
   }).then(handleError);
 };
 
+export const listGroups = () => {
+  return fetch("/api/group/list/all", {
+    method: "GET",
+    credentials: "same-origin",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  })
+    .then(handleError)
+    .then(res => res.json());
+};
+
 export const listActiveGroups = () => {
   return fetch("/api/group/list/active", {
     method: "GET",
@@ -83,7 +95,7 @@ export const listActiveGroups = () => {
     .then(res => res.json());
 };
 
-export const listGroups = () => {
+/*export const listGroups = () => {
   return fetch("/api/group/list/all", {
     method: "GET",
     credentials: "same-origin",
@@ -93,7 +105,7 @@ export const listGroups = () => {
   })
     .then(handleError)
     .then(res => res.json());
-};
+};*/
 
 export const joinGroup = id => {
   return fetch(`/api/group/join/${id}`, {
