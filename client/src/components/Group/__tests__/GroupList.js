@@ -6,7 +6,7 @@ import GroupItem from "../GroupItem";
 
 import List from "@material-ui/core/List";
 
-import { listGroups, joinGroup, leaveGroup } from "../API";
+import { listGroups, joinGroup, leaveGroup, leaveCurrentGroup } from "../API";
 
 jest.mock("../API.js");
 
@@ -155,33 +155,15 @@ describe("ActiveGroups component (Initial loading)", () => {
     expect(refreshUserContextMock).toHaveBeenCalledTimes(1);
   });
 
-  it("leaves a group", async () => {
-    leaveGroup.mockImplementation(
-      id =>
-        new Promise((resolve, reject) => {
-          const joinedGroup = groups.find(group => group._id === id);
-
-          if (!joinedGroup) {
-            return reject();
-          }
-
-          return resolve({
-            ...joinedGroup,
-            database: "49af33548724bec6494ceb018b007bb1"
-          });
-        })
+  it("leaves the current group", async () => {
+    leaveCurrentGroup.mockImplementation(
+      () => new Promise(resolve => resolve())
     );
 
-    const firstGroupItem = component
-      .find(GroupItem)
-      .first()
-      .dive();
+    await component.instance().handleLeaveCurrentGroup();
 
-    console.log(firstGroupItem.debug());
-
-    firstGroupItem.simulate("click");
-
-    // Wait for the event loop to finish.
-    await flushPromises();
+    // Assert the relevant flow was followed.
+    expect(leaveCurrentGroup).toHaveBeenCalledTimes(1);
+    expect(refreshUserContextMock).toHaveBeenCalledTimes(1);
   });
 });
