@@ -5,7 +5,7 @@ import GroupIcon from "@material-ui/icons/GroupWork";
 
 import Dialog from "@material-ui/core/Dialog";
 
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import GroupList from "./GroupList";
 import CreateGroup from "./CreateGroup";
@@ -47,34 +47,36 @@ class GroupManager extends React.Component {
           </IconButton>
         </Tooltip>
 
-        <Router>
-          <Dialog fullWidth onClose={this.handleClose} open={open}>
-            <Route
-              exact
-              path="/"
-              render={() => (
-                <GroupList
-                  currentGroup={currentGroup}
-                  refreshUserContext={refreshUserContext}
-                  loadDatabaseHandler={loadDatabaseHandler}
-                  closeHandler={this.handleClose}
-                />
-              )}
-            />
-            <Route
-              path="/group/create"
-              render={props => (
-                <CreateGroup {...props} closeHandler={this.handleClose} />
-              )}
-            />
-            <Route
-              path="/group/manage/:id"
-              render={props => (
-                <ManageGroup {...props} closeHandler={this.handleClose} />
-              )}
-            />
-          </Dialog>
-        </Router>
+        <Dialog fullWidth onClose={this.handleClose} open={open}>
+          <Router>
+            <Switch>
+              <Route
+                exact
+                path="/"
+                render={() => (
+                  <GroupList
+                    currentGroup={currentGroup}
+                    refreshUserContext={refreshUserContext}
+                    loadDatabaseHandler={loadDatabaseHandler}
+                    closeHandler={this.handleClose}
+                  />
+                )}
+              />
+              <Route
+                path="/group/create"
+                render={props => (
+                  <CreateGroup {...props} closeHandler={this.handleClose} />
+                )}
+              />
+              <Route
+                path="/group/manage/:id"
+                render={props => (
+                  <ManageGroup {...props} closeHandler={this.handleClose} />
+                )}
+              />
+            </Switch>
+          </Router>
+        </Dialog>
       </React.Fragment>
     );
   }
