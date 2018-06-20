@@ -10,7 +10,7 @@ class Feedback extends React.Component {
   handleClear = () => this.props.changeHandler(null);
 
   render() {
-    const { message, error, changeHandler } = this.props;
+    const { message, error } = this.props;
 
     return (
       <Snackbar
