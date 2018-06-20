@@ -6,7 +6,8 @@ import GroupItem from "../GroupItem";
 
 import List from "@material-ui/core/List";
 
-import { listGroups, joinGroup, leaveGroup, leaveCurrentGroup } from "../API";
+import { listGroups, joinGroup, leaveCurrentGroup } from "../API";
+import handleError from "../../../utils/handleError";
 
 jest.mock("../API.js");
 
@@ -78,9 +79,12 @@ const groups = [
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
 describe("ActiveGroups component (Initial loading)", () => {
-  let component, loadDatabaseMock, refreshUserContextMock;
+  let component, loadDatabaseMock, refreshUserContextMock, closeHandlerMock;
 
   beforeEach(async () => {
+    jest.resetAllMocks();
+
+    closeHandlerMock = jest.fn();
     loadDatabaseMock = jest.fn();
     refreshUserContextMock = jest.fn();
 
@@ -94,6 +98,7 @@ describe("ActiveGroups component (Initial loading)", () => {
       <GroupList
         loadDatabaseHandler={loadDatabaseMock}
         refreshUserContext={refreshUserContextMock}
+        closeHandler={closeHandlerMock}
       />
     );
 
@@ -165,5 +170,86 @@ describe("ActiveGroups component (Initial loading)", () => {
     // Assert the relevant flow was followed.
     expect(leaveCurrentGroup).toHaveBeenCalledTimes(1);
     expect(refreshUserContextMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("catches an error when trying to join a group", async () => {
+    joinGroup.mockImplementation(() =>
+      new Promise(resolve => {
+        return resolve({
+          ok: false,
+          json: () =>
+            Promise.resolve({
+              message: "A problem occured while trying to join this group."
+            })
+        });
+      }).then(handleError)
+    );
+
+    await component
+      .instance()
+      .handleJoinGroup("31c286f9064f4d92911419783a7b299d");
+
+    // Assert the relevant flow was followed.
+    expect(joinGroup).toHaveBeenCalledTimes(1);
+    expect(loadDatabaseMock).toHaveBeenCalledTimes(0);
+    expect(refreshUserContextMock).toHaveBeenCalledTimes(0);
+
+    expect(component.state("error")).toEqual(
+      "A problem occured while trying to join this group."
+    );
+  });
+
+  it("catches an error when trying to get a list of groups", async () => {
+    listGroups.mockImplementation(() =>
+      new Promise(resolve => {
+        return resolve({
+          ok: false,
+          json: () =>
+            Promise.resolve({
+              message: "A problem occured while trying to load groups."
+            })
+        });
+      }).then(handleError)
+    );
+
+    await component.instance().load();
+
+    // Assert the relevant flow was followed.
+    // Called twice (ComponentDidMount and above)
+    expect(listGroups).toHaveBeenCalledTimes(2);
+
+    expect(component.state("error")).toEqual(
+      "A problem occured while trying to load groups."
+    );
+  });
+
+  it("catches an error when trying to leave a group", async () => {
+    leaveCurrentGroup.mockImplementation(() =>
+      new Promise(resolve => {
+        return resolve({
+          ok: false,
+          json: () =>
+            Promise.resolve({
+              message: "A problem occured while trying to leave this group."
+            })
+        });
+      }).then(handleError)
+    );
+
+    await component.instance().handleLeaveCurrentGroup();
+
+    // Assert the relevant flow was followed.
+    expect(leaveCurrentGroup).toHaveBeenCalledTimes(1);
+    expect(refreshUserContextMock).toHaveBeenCalledTimes(0);
+
+    expect(component.state("error")).toEqual(
+      "A problem occured while trying to leave this group."
+    );
+  });
+
+  it("calls the closeHandler props", async () => {
+    await component.instance().handleClose();
+
+    expect(closeHandlerMock).toHaveBeenCalledTimes(1);
   });
 });
