@@ -6,6 +6,9 @@ import IconButton from "@material-ui/core/IconButton";
 
 import Dialog from "@material-ui/core/Dialog";
 
+import { Route } from "react-router-dom";
+import MemoryRouter from "react-router-dom/MemoryRouter";
+
 describe("GroupManager component", () => {
   let component;
 
@@ -48,5 +51,15 @@ describe("GroupManager component", () => {
     expect(component.state("open")).toEqual(false);
     // Check the state opens the dialog.
     expect(component.find(Dialog).prop("open")).toEqual(false);
+  });
+
+  it("check the route components", () => {
+    const allRoutes = component.find(Route);
+
+    const routeRenderComponents = (
+      <MemoryRouter>{allRoutes.map(route => route)}</MemoryRouter>
+    );
+
+    console.log(routeRenderComponents);
   });
 });
