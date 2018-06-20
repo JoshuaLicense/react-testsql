@@ -17,10 +17,7 @@ import { Link } from "react-router-dom";
 export default class GroupItem extends React.Component {
   handleJoinGroup = () => this.props.joinGroupHandler(this.props.group._id);
 
-  handleLeaveCurrentGroup = () =>
-    this.props.leaveCurrentGroupHandler(this.props.group._id);
-
-  handleLeaveGroup = () => this.props.leaveGroupHandler(this.props.group._id);
+  handleLeaveCurrentGroup = () => this.props.leaveCurrentGroupHandler();
 
   render() {
     const {
@@ -29,7 +26,6 @@ export default class GroupItem extends React.Component {
       completedQuestions,
       totalQuestions,
       canManage,
-      canLeave,
       isCurrent
     } = this.props.group;
 
@@ -47,7 +43,7 @@ export default class GroupItem extends React.Component {
               <ManageIcon />
             </IconButton>
           )}
-          {isCurrent ? (
+          {isCurrent && (
             <IconButton
               color="secondary"
               onClick={this.handleLeaveCurrentGroup}
@@ -55,15 +51,6 @@ export default class GroupItem extends React.Component {
             >
               <LeaveIcon />
             </IconButton>
-          ) : (
-            canLeave && (
-              <IconButton
-                onClick={this.handleLeaveGroup}
-                aria-label="Leave group"
-              >
-                <DeleteIcon />
-              </IconButton>
-            )
           )}
         </ListItemSecondaryAction>
       </ListItem>

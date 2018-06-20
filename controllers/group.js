@@ -149,11 +149,10 @@ exports.list = (req, res, next) => {
 
               return {
                 ...group,
-                canManage: group.creator.equals(req.user.id),
-                canLeave: !group.creator.equals(req.user.id),
                 isCurrent: Boolean(
                   req.session.group && group._id.equals(req.session.group._id)
                 ),
+                canManage: group.creator.equals(req.user.id),
                 completedQuestions,
                 totalQuestions
               };
@@ -250,7 +249,7 @@ exports.createGroup = (req, res, next) => {
   });
 };
 
-exports.leaveCurrentGroup = (req, res, next) => {
+exports.leaveCurrentGroup = (req, res) => {
   // Just set/remove any current session.
   req.session.group = null;
 

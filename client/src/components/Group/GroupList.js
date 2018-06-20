@@ -17,16 +17,17 @@ import { loadDatabase } from "../SavedDatabase/API";
 
 import GroupItem from "./GroupItem";
 
-import { listGroups, joinGroup, leaveGroup, leaveCurrentGroup } from "./API";
+import { listGroups, joinGroup, leaveCurrentGroup } from "./API";
 
 const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
 class GroupList extends React.Component {
   state = {
-    activeList: null,
     list: null,
     error: null
   };
+
+  componentDidMount = () => this.load();
 
   load = async () =>
     listGroups()
@@ -43,8 +44,6 @@ class GroupList extends React.Component {
     // Remove any errors from the modal.
     this.setState({ error: null });
   };
-
-  componentDidMount = () => this.load();
 
   handleJoinGroup = id => {
     this.setState({ error: null });
@@ -63,22 +62,12 @@ class GroupList extends React.Component {
       });
   };
 
-  handleCurrentLeaveGroup = id => {
+  handleLeaveCurrentGroup = () => {
     this.setState({ error: null });
 
     return leaveCurrentGroup()
       .then(() => this.load())
       .then(() => this.props.refreshUserContext())
-      .catch(error => {
-        error.json().then(json => this.setState({ error: json.message }));
-      });
-  };
-
-  handleLeaveGroup = id => {
-    this.setState({ error: null });
-
-    return leaveGroup(id)
-      .then(() => this.load())
       .catch(error => {
         error.json().then(json => this.setState({ error: json.message }));
       });
@@ -123,14 +112,13 @@ class GroupList extends React.Component {
                 key={group._id}
                 group={group}
                 joinGroupHandler={this.handleJoinGroup}
-                leaveCurrentGroupHandler={this.handleCurrentLeaveGroup}
-                leaveGroupHandler={this.handleLeaveGroup}
+                leaveCurrentGroupHandler={this.handleLeaveCurrentGroup}
               />
             ))}
           </List>
         )}
         <DialogActions>
-          <Button onClick={this.props.closeHandler} color="primary">
+          <Button onClick={this.handleClose} color="primary">
             Close
           </Button>
         </DialogActions>
