@@ -8,7 +8,6 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 
 import Typography from "@material-ui/core/Typography";
 
-import DeleteIcon from "@material-ui/icons/Delete";
 import LeaveIcon from "@material-ui/icons/ExitToApp";
 import ManageIcon from "@material-ui/icons/Settings";
 
