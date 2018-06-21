@@ -1,5 +1,5 @@
 import React from "react";
-import { shallow, mount, render } from "enzyme";
+import { shallow, mount } from "enzyme";
 import GroupManager from "../index";
 
 import IconButton from "@material-ui/core/IconButton";

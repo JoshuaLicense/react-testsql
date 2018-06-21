@@ -68,11 +68,7 @@ class ManageGroup extends React.Component {
   };
 
   render() {
-    const { controlledTitle, group, errors, redirect } = this.state;
-
-    if (redirect) {
-      return <Redirect to="/" />;
-    }
+    const { controlledTitle, group, errors } = this.state;
 
     if (!group) {
       return <div>Loading group information...</div>;

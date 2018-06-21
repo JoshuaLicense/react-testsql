@@ -88,7 +88,6 @@ describe("ActiveGroups component (Initial loading)", () => {
     loadDatabaseMock = jest.fn();
     refreshUserContextMock = jest.fn();
 
-    // Mock so only 3 active groups are rendered.
     listGroups.mockImplementation(
       () => new Promise(resolve => resolve(groups))
     );
