@@ -33,14 +33,15 @@ import { getGroup, updateGroup, removeUserFromGroup } from "./API";
 
 import Divider from "@material-ui/core/Divider";
 
+import GroupUser from "./GroupUser";
+
 const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
 class ManageGroup extends React.Component {
   state = {
     group: null,
     controlledTitle: null,
-    errors: null,
-    redirect: null
+    errors: null
   };
 
   componentDidMount = () => this.loadGroup();
@@ -158,34 +159,6 @@ class ManageGroup extends React.Component {
           </Button>
         </DialogActions>
       </div>
-    );
-  }
-}
-
-class GroupUser extends React.Component {
-  handleRemoveUser = () => this.props.removeHandler(this.props.user._id);
-
-  render() {
-    const { user } = this.props;
-
-    const { username, totalQuestions, questionsCompleted, canRemove } = user;
-
-    return (
-      <ListItem button>
-        <Typography color="textSecondary">{`${questionsCompleted}/${totalQuestions}`}</Typography>
-        <ListItemText inset primary={username} />
-        {canRemove && (
-          <ListItemSecondaryAction>
-            <IconButton
-              color="secondary"
-              onClick={this.handleRemoveUser}
-              aria-label="Remove User from the group"
-            >
-              <RemoveUserIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
-        )}
-      </ListItem>
     );
   }
 }

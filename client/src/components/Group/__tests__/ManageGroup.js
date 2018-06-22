@@ -26,7 +26,7 @@ describe("ManageGroup component", () => {
   beforeEach(async () => {
     closeHandlerMock = jest.fn();
 
-    getGroup.mockImplementation(() => new Promise(resolve => resolve(group)));
+    getGroup.mockImplementation(id => new Promise(resolve => resolve(group)));
 
     component = shallow(
       <ManageGroup
@@ -44,6 +44,12 @@ describe("ManageGroup component", () => {
   it("renders and tries to get the group's information", () => {
     // Check the API was called, only once.
     expect(getGroup).toHaveBeenCalledTimes(1);
+
+    expect(component.state()).toEqual({
+      group,
+      errors: null,
+      controlledTitle: group.title
+    });
   });
 });
 
