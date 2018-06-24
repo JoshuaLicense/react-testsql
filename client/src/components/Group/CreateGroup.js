@@ -30,7 +30,7 @@ const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
 class CreateGroup extends React.Component {
   state = {
-    errors: null,
+    error: null,
     list: null,
 
     name: "",
@@ -55,12 +55,8 @@ class CreateGroup extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
-
   render() {
-    const { name, errors, list, selectedDatabase, redirect } = this.state;
+    const { name, error, list, selectedDatabase, redirect } = this.state;
 
     if (redirect) {
       return <Redirect to="/" />;
@@ -97,7 +93,7 @@ class CreateGroup extends React.Component {
             </Grid>
             <Grid item xs={9}>
               <FormControl
-                error={Boolean(errors)}
+                error={Boolean(error)}
                 aria-describedby="name-error-text"
                 fullWidth
               >
@@ -110,12 +106,9 @@ class CreateGroup extends React.Component {
                   autoFocus
                   fullWidth
                 />
-                {errors &&
-                  errors.name && (
-                    <FormHelperText id="name-error-text">
-                      {errors.name.msg}
-                    </FormHelperText>
-                  )}
+                {error && (
+                  <FormHelperText id="name-error-text">{error}</FormHelperText>
+                )}
               </FormControl>
             </Grid>
             <Grid item xs={3}>
