@@ -1,0 +1,141 @@
+import React from "react";
+import { shallow } from "enzyme";
+
+import { loadDatabase, deleteDatabase } from "../API";
+
+import DatabaseItem from "../DatabaseItem";
+
+import handleError from "../../../utils/handleError";
+import DatabaseList from "../DatabaseList";
+import { DialogContentText, Typography } from "@material-ui/core";
+
+jest.mock("../API.js");
+
+const flushPromises = () => new Promise(resolve => setImmediate(resolve));
+
+describe("ActiveGroups component (Initial loading)", () => {
+  // Blank objects are enough to mock the "database" info for the list
+  const list = [
+    { _id: "31c286f9064f4d92911419783a7b299d" },
+    { _id: "41f9064f1431c28619783ad9297b299d" }
+  ];
+
+  let component, loadDatabaseMock, refreshHandlerMock, closeHandlerMock;
+
+  beforeEach(async () => {
+    jest.resetAllMocks();
+
+    closeHandlerMock = jest.fn();
+    loadDatabaseMock = jest.fn();
+    refreshHandlerMock = jest.fn();
+
+    // Disable lifecycle methods so the script can access the load promise directly.
+    component = shallow(
+      <DatabaseList
+        list={list}
+        loadDatabaseHandler={loadDatabaseMock}
+        refreshHandler={refreshHandlerMock}
+        closeHandler={closeHandlerMock}
+      />
+    );
+  });
+
+  it(`renders ${list.length} amount of database items in the list`, () => {
+    expect(component.find(DatabaseItem).length).toEqual(list.length);
+  });
+
+  it("tries to load a saved database", async () => {
+    loadDatabase.mockImplementation(
+      () => new Promise(resolve => resolve(new ArrayBuffer(8)))
+    );
+
+    await component
+      .instance()
+      .handleLoadDatabase("31c286f9064f4d92911419783a7b299d");
+
+    // Assert the relevant flow was followed.
+    expect(loadDatabase).toHaveBeenCalledTimes(1);
+    expect(loadDatabaseMock).toHaveBeenCalledTimes(1);
+    expect(closeHandlerMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("tries to delete a saved database", async () => {
+    deleteDatabase.mockImplementation(() => new Promise(resolve => resolve()));
+
+    await component
+      .instance()
+      .handleDeleteDatabase("31c286f9064f4d92911419783a7b299d");
+
+    // Assert the relevant flow was followed.
+    expect(deleteDatabase).toHaveBeenCalledTimes(1);
+    expect(refreshHandlerMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("catches an error when trying to load a saved database", async () => {
+    loadDatabase.mockImplementation(() =>
+      new Promise(resolve => {
+        return resolve({
+          ok: false,
+          json: () =>
+            Promise.resolve({
+              message: "A problem occured while trying to load this database."
+            })
+        });
+      }).then(handleError)
+    );
+
+    await component
+      .instance()
+      .handleLoadDatabase("31c286f9064f4d92911419783a7b299d");
+
+    // Assert the relevant flow was followed.
+    expect(loadDatabase).toHaveBeenCalledTimes(1);
+    expect(loadDatabaseMock).toHaveBeenCalledTimes(0);
+    expect(closeHandlerMock).toHaveBeenCalledTimes(0);
+
+    expect(component.state("error")).toEqual(
+      "A problem occured while trying to load this database."
+    );
+  });
+
+  it("catches an error when trying to delete a saved database", async () => {
+    deleteDatabase.mockImplementation(() =>
+      new Promise(resolve => {
+        return resolve({
+          ok: false,
+          json: () =>
+            Promise.resolve({
+              message: "A problem occured while trying to delete this database."
+            })
+        });
+      }).then(handleError)
+    );
+
+    await component
+      .instance()
+      .handleDeleteDatabase("31c286f9064f4d92911419783a7b299d");
+
+    // Assert the relevant flow was followed.
+    expect(deleteDatabase).toHaveBeenCalledTimes(1);
+    expect(refreshHandlerMock).toHaveBeenCalledTimes(0);
+
+    expect(component.state("error")).toEqual(
+      "A problem occured while trying to delete this database."
+    );
+  });
+
+  it("calls the closeHandler props", async () => {
+    await component.instance().handleClose();
+
+    expect(closeHandlerMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+it("displays an empty placeholder when the user has no saved databases", async () => {
+  // Disable lifecycle methods so the script can access the load promise directly.
+  const list = [];
+
+  const component = shallow(<DatabaseList list={list} />);
+
+  expect(component.find(Typography).prop("variant")).toEqual("secondary");
+});
