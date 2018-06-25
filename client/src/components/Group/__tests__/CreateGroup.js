@@ -36,6 +36,8 @@ describe("CreateGroup component", () => {
   let component, closeHandlerMock;
 
   beforeEach(async () => {
+    jest.resetAllMocks();
+
     closeHandlerMock = jest.fn();
 
     listDatabases.mockImplementation(
