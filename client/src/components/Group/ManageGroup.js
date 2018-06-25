@@ -1,7 +1,5 @@
 import React from "react";
 
-import IconButton from "@material-ui/core/IconButton";
-
 import Grid from "@material-ui/core/Grid";
 
 import Button from "@material-ui/core/Button";
@@ -23,7 +21,7 @@ import UpdateIcon from "@material-ui/icons/Edit";
 
 import Typography from "@material-ui/core/Typography";
 
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { getGroup, updateGroup, removeUserFromGroup } from "./API";
 

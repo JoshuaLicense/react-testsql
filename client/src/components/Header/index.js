@@ -70,7 +70,7 @@ class Header extends React.Component {
             <UserContext.Consumer>
               {({ user, refresh }) =>
                 user ? (
-                  <LoggedIn refreshUserContext={refresh} />
+                  <LoggedIn user={user} refreshUserContext={refresh} />
                 ) : (
                   <Guest refreshUserContext={refresh} />
                 )

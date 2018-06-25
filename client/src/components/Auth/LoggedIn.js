@@ -9,7 +9,6 @@ import ManageGroup from "../Group";
 import ManageDatabase from "../SavedDatabase";
 
 import DatabaseContext from "../Database/Context";
-import UserContext from "./Context";
 
 import { logout } from "./API";
 
@@ -21,28 +20,26 @@ class LoggedIn extends React.Component {
   };
 
   render() {
+    const { user, refreshUserContext } = this.props;
+
     return (
       <React.Fragment>
-        <UserContext.Consumer>
-          {({ user }) => (
-            <DatabaseContext.Consumer>
-              {({ database: currentDatabase, loadDatabase }) => (
-                <React.Fragment>
-                  <ManageDatabase
-                    currentDatabase={currentDatabase}
-                    loadDatabaseHandler={loadDatabase}
-                    disabled={Boolean(user.group)}
-                  />
-                  <ManageGroup
-                    loadDatabaseHandler={loadDatabase}
-                    currentGroup={user && user.group}
-                    refreshUserContext={this.props.refreshUserContext}
-                  />
-                </React.Fragment>
-              )}
-            </DatabaseContext.Consumer>
+        <DatabaseContext.Consumer>
+          {({ database: currentDatabase, loadDatabase }) => (
+            <React.Fragment>
+              <ManageDatabase
+                currentDatabase={currentDatabase}
+                loadDatabaseHandler={loadDatabase}
+                disabled={Boolean(user.group)}
+              />
+              <ManageGroup
+                loadDatabaseHandler={loadDatabase}
+                currentGroup={user && user.group}
+                refreshUserContext={refreshUserContext}
+              />
+            </React.Fragment>
           )}
-        </UserContext.Consumer>
+        </DatabaseContext.Consumer>
 
         <Tooltip title="Logout">
           <IconButton

@@ -1,62 +1,49 @@
 import React from "react";
-//import PropTypes from 'prop-types';
-
-import IconButton from "@material-ui/core/IconButton";
 
 import List from "@material-ui/core/List";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogActions from "@material-ui/core/DialogActions";
 
-import DeleteIcon from "@material-ui/icons/Delete";
+import Button from "@material-ui/core/Button";
 
 import Typography from "@material-ui/core/Typography";
 
-class DatabaseItem extends React.Component {
-  handleClick = () => {
-    this.props.clickHandler(this.props.id);
-  };
+import { loadDatabase, deleteDatabase } from "./API";
 
-  handleDelete = () => {
-    this.props.deleteHandler(this.props.id);
-  };
+import DatabaseItem from "./DatabaseItem";
 
-  render() {
-    const { title, createdAt, deleteHandler } = this.props;
+import { Link } from "react-router-dom";
 
-    const date = new Date(createdAt).toDateString();
-
-    return (
-      <ListItem onClick={this.handleClick} button>
-        <ListItemText primary={title} secondary={date} />
-        {deleteHandler && (
-          <ListItemSecondaryAction onClick={this.handleDelete}>
-            <IconButton aria-label="Delete">
-              <DeleteIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
-        )}
-      </ListItem>
-    );
-  }
-}
+const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
 export default class DatabaseList extends React.Component {
   state = {
     error: null
   };
 
-  componentDidMount = () => this.props.refreshHandler();
+  handleLoadDatabase = id => {
+    return loadDatabase(id)
+      .then(fileBuffer => {
+        const typedArray = new Uint8Array(fileBuffer);
+
+        return this.props.loadDatabaseHandler(typedArray);
+      })
+      .then(() => this.close())
+      .catch(error => {
+        error.json().then(json => this.setState({ error: json.message }));
+      });
+  };
+
+  handleDeleteDatabase = id =>
+    deleteDatabase(id).then(() => this.refreshSavedDatabaseList());
 
   render() {
     const { error } = this.state;
 
-    const { list, clickHandler, deleteHandler, dense } = this.props;
+    const { list, dense } = this.props;
 
     const count = list && list.length;
 
@@ -69,19 +56,34 @@ export default class DatabaseList extends React.Component {
             </Typography>
           </DialogTitle>
         )}
+        <DialogTitle id="dialog-title">
+          <div style={flexSpaceBetween}>
+            Saved Databases
+            <Button
+              component={Link}
+              to="/database/create"
+              color="primary"
+              variant="raised"
+              size="small"
+            >
+              Save &raquo;
+            </Button>
+          </div>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Allows you to save your current database in a more permanent
+            location, the server.
+          </DialogContentText>
+        </DialogContent>
         {count > 0 ? (
-          <List
-            dense={Boolean(dense)}
-            subheader={<ListSubheader>Your saved databases</ListSubheader>}
-          >
+          <List dense={Boolean(dense)}>
             {list.map(database => (
               <DatabaseItem
                 key={database._id}
-                id={database._id}
-                title={database.title}
-                createdAt={database.createdAt}
-                clickHandler={clickHandler}
-                deleteHandler={deleteHandler}
+                database={database}
+                clickHandler={this.handleLoadDatabase}
+                deleteHandler={this.handleDeleteDatabase}
               />
             ))}
           </List>
@@ -90,6 +92,11 @@ export default class DatabaseList extends React.Component {
             <DialogContentText>No saved databases yet!</DialogContentText>
           </DialogContent>
         )}
+        <DialogActions>
+          <Button onClick={this.handleClose} color="primary">
+            Cancel
+          </Button>
+        </DialogActions>
       </React.Fragment>
     );
   }

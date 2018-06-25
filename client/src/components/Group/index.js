@@ -18,13 +18,9 @@ class GroupManager extends React.Component {
     open: false
   };
 
-  handleOpen = () => {
-    this.setState({ open: true });
-  };
+  handleOpen = () => this.setState({ open: true });
 
-  handleClose = () => {
-    this.setState({ open: false });
-  };
+  handleClose = () => this.setState({ open: false });
 
   render() {
     const { open } = this.state;
