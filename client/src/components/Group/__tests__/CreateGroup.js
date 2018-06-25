@@ -87,11 +87,6 @@ describe("CreateGroup component", () => {
   });
 
   it("sets an error while creating a new group", async () => {
-    component = component.setState({
-      name: "Test group",
-      selectedDatabase: "51839c4be9cef3b047b48b644a0720b1"
-    });
-
     // Error text to be hidden initially.
     expect(component.find(FormHelperText).length).toEqual(0);
 
