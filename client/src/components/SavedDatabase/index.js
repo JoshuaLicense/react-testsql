@@ -33,7 +33,11 @@ export default class DatabaseManager extends React.Component {
   render() {
     const { open, list } = this.state;
 
-    const { currentDatabase, disabled } = this.props;
+    if (!list) {
+      return <div>Loading your saved databases...</div>;
+    }
+
+    const { currentDatabase, loadDatabaseHandler, disabled } = this.props;
 
     return (
       <React.Fragment>
@@ -56,17 +60,18 @@ export default class DatabaseManager extends React.Component {
                 render={() => (
                   <DatabaseList
                     list={list}
+                    loadDatabaseHandler={loadDatabaseHandler}
                     refreshHandler={this.refreshSavedDatabaseList}
                     closeHandler={this.handleClose}
                   />
                 )}
               />
               <Route
-                path="/database/create"
+                path="/database/save"
                 render={() => (
                   <SaveDatabase
                     currentDatabase={currentDatabase}
-                    currentSavedDatabaseCount={list && list.length}
+                    currentSavedDatabaseCount={list.length}
                     refreshHandler={this.refreshSavedDatabaseList}
                     closeHandler={this.handleClose}
                   />

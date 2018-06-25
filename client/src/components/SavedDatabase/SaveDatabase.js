@@ -5,6 +5,8 @@ import Button from "@material-ui/core/Button";
 
 import Input from "@material-ui/core/Input";
 
+import Redirect from "react-router-dom/Redirect";
+
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 
@@ -33,7 +35,7 @@ export default class SaveDatabase extends React.Component {
 
     return saveDatabase(title, database)
       .then(refreshHandler)
-      .then(() => this.setState({ title: "", error: null }))
+      .then(() => this.setState({ title: "", error: null, redirect: true }))
       .catch(error => {
         error.json().then(json => this.setState({ error: json.message }));
       });
@@ -43,8 +45,14 @@ export default class SaveDatabase extends React.Component {
     this.setState({ title: e.target.value });
   };
 
+  handleClose = () => this.props.closeHandler();
+
   render() {
-    const { title, error } = this.state;
+    const { title, error, redirect } = this.state;
+
+    if (redirect) {
+      return <Redirect to="/" />;
+    }
 
     const { currentSavedDatabaseCount } = this.props;
 

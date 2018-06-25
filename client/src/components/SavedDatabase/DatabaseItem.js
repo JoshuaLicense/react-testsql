@@ -18,15 +18,15 @@ export default class DatabaseItem extends React.Component {
   };
 
   render() {
-    const { title, createdAt, deleteHandler } = this.props.database;
+    const { title, createdAt } = this.props.database;
 
     const date = new Date(createdAt).toDateString();
 
     return (
       <ListItem onClick={this.handleClick} button>
         <ListItemText primary={title} secondary={date} />
-        {deleteHandler && (
-          <ListItemSecondaryAction onClick={this.handleDelete}>
+        {this.props.deleteHandler && (
+          <ListItemSecondaryAction component onClick={this.handleDelete}>
             <IconButton aria-label="Delete">
               <DeleteIcon />
             </IconButton>

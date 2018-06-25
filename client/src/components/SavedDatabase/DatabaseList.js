@@ -16,6 +16,7 @@ import { loadDatabase, deleteDatabase } from "./API";
 import DatabaseItem from "./DatabaseItem";
 
 import { Link } from "react-router-dom";
+import { ListItem, ListSubheader } from "@material-ui/core";
 
 const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
@@ -25,27 +26,29 @@ export default class DatabaseList extends React.Component {
   };
 
   handleLoadDatabase = id => {
-    return loadDatabase(id)
-      .then(fileBuffer => {
-        const typedArray = new Uint8Array(fileBuffer);
+    const { loadDatabaseHandler, closeHandler } = this.props;
 
-        return this.props.loadDatabaseHandler(typedArray);
-      })
-      .then(() => this.close())
+    return loadDatabase(id)
+      .then(fileBuffer => loadDatabaseHandler(new Uint8Array(fileBuffer)))
+      .then(() => closeHandler())
       .catch(error => {
         error.json().then(json => this.setState({ error: json.message }));
       });
   };
 
   handleDeleteDatabase = id =>
-    deleteDatabase(id).then(() => this.refreshSavedDatabaseList());
+    deleteDatabase(id)
+      .then(this.props.refreshHandler)
+      .catch(error => {
+        error.json().then(json => this.setState({ error: json.message }));
+      });
+
+  handleClose = () => this.props.closeHandler();
 
   render() {
     const { error } = this.state;
 
-    const { list, dense } = this.props;
-
-    const count = list && list.length;
+    const { list } = this.props;
 
     return (
       <React.Fragment>
@@ -76,21 +79,19 @@ export default class DatabaseList extends React.Component {
             location, the server.
           </DialogContentText>
         </DialogContent>
-        {count > 0 ? (
-          <List dense={Boolean(dense)}>
-            {list.map(database => (
-              <DatabaseItem
-                key={database._id}
-                database={database}
-                clickHandler={this.handleLoadDatabase}
-                deleteHandler={this.handleDeleteDatabase}
-              />
-            ))}
-          </List>
-        ) : (
-          <DialogContent>
-            <DialogContentText>No saved databases yet!</DialogContentText>
-          </DialogContent>
+
+        <List>
+          {list.map(database => (
+            <DatabaseItem
+              key={database._id}
+              database={database}
+              clickHandler={this.handleLoadDatabase}
+              deleteHandler={this.handleDeleteDatabase}
+            />
+          ))}
+        </List>
+        {list.length === 0 && (
+          <Typography variant="secondary">No saved databases yet!</Typography>
         )}
         <DialogActions>
           <Button onClick={this.handleClose} color="primary">
