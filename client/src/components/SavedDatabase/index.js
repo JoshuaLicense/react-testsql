@@ -1,26 +1,19 @@
 import React from "react";
-//import PropTypes from 'prop-types';
 
-import * as api from "./API";
+import { listDatabases } from "./API";
 
 import IconButton from "@material-ui/core/IconButton";
 
-import Divider from "@material-ui/core/Divider";
-
 import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogActions from "@material-ui/core/DialogActions";
 
 import DatabaseIcon from "@material-ui/icons/Storage";
-
-import Button from "@material-ui/core/Button";
 
 import DatabaseList from "./DatabaseList";
 import SaveDatabase from "./SaveDatabase";
 
 import Tooltip from "@material-ui/core/Tooltip";
+
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 export default class DatabaseManager extends React.Component {
   state = {
@@ -28,43 +21,14 @@ export default class DatabaseManager extends React.Component {
     open: false
   };
 
+  componentDidMount = () => this.refreshSavedDatabaseList();
+
   refreshSavedDatabaseList = () =>
-    api.listDatabases().then(list => this.setState({ list }));
+    listDatabases().then(list => this.setState({ list }));
 
-  handleSaveDatabase = title => {
-    const database = this.props.currentDatabase.export();
+  handleOpen = () => this.setState({ open: true });
 
-    return api.saveDatabase(title, database).then(json => {
-      this.refreshSavedDatabaseList();
-
-      return json;
-    });
-  };
-
-  handleLoadDatabase = id => {
-    return api
-      .loadDatabase(id)
-      .then(fileBuffer => {
-        const typedArray = new Uint8Array(fileBuffer);
-
-        return this.props.loadDatabaseHandler(typedArray);
-      })
-      .then(() => this.close())
-      .catch(error => {
-        error.json().then(json => this.setState({ error: json.message }));
-      });
-  };
-
-  handleDeleteDatabase = id =>
-    api.deleteDatabase(id).then(() => this.refreshSavedDatabaseList());
-
-  open = () => {
-    this.setState({ open: true });
-  };
-
-  close = () => {
-    this.setState({ open: false });
-  };
+  handleClose = () => this.setState({ open: false });
 
   render() {
     const { open, list } = this.state;
@@ -75,7 +39,7 @@ export default class DatabaseManager extends React.Component {
       <React.Fragment>
         <Tooltip title="Saved Databases">
           <IconButton
-            onClick={this.open}
+            onClick={this.handleOpen}
             color="inherit"
             aria-label="Saved Database Actions"
             disabled={disabled}
@@ -83,33 +47,33 @@ export default class DatabaseManager extends React.Component {
             <DatabaseIcon />
           </IconButton>
         </Tooltip>
-        <Dialog onClose={this.close} open={open} fullWidth>
-          <DialogTitle>Saved Databases</DialogTitle>
-          <DialogContent style={{ paddingBottom: 0 }}>
-            <DialogContentText>
-              Allows you to save your current database in a more permanent
-              location, the server.
-            </DialogContentText>
-          </DialogContent>
-          <SaveDatabase
-            currentDatabase={currentDatabase}
-            currentSavedDatabaseCount={list && list.length}
-            refreshHandler={this.refreshSavedDatabaseList}
-            clickHandler={this.handleSaveDatabase}
-          />
-          <Divider />
-          <DatabaseList
-            list={list}
-            refreshHandler={this.refreshSavedDatabaseList}
-            clickHandler={this.handleLoadDatabase}
-            deleteHandler={this.handleDeleteDatabase}
-            closeHandler={this.close}
-          />
-          <DialogActions>
-            <Button onClick={this.close} color="primary">
-              Cancel
-            </Button>
-          </DialogActions>
+        <Dialog onClose={this.handleClose} open={open} fullWidth>
+          <Router>
+            <Switch>
+              <Route
+                exact
+                path="/"
+                render={() => (
+                  <DatabaseList
+                    list={list}
+                    refreshHandler={this.refreshSavedDatabaseList}
+                    closeHandler={this.handleClose}
+                  />
+                )}
+              />
+              <Route
+                path="/database/create"
+                render={() => (
+                  <SaveDatabase
+                    currentDatabase={currentDatabase}
+                    currentSavedDatabaseCount={list && list.length}
+                    refreshHandler={this.refreshSavedDatabaseList}
+                    closeHandler={this.handleClose}
+                  />
+                )}
+              />
+            </Switch>
+          </Router>
         </Dialog>
       </React.Fragment>
     );

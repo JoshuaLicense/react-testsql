@@ -30,8 +30,8 @@ const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
 class CreateGroup extends React.Component {
   state = {
-    errors: null,
-    databaseList: null,
+    error: null,
+    list: null,
 
     name: "",
     selectedDatabase: "",
@@ -39,7 +39,7 @@ class CreateGroup extends React.Component {
   };
 
   componentDidMount = () =>
-    listDatabases().then(list => this.setState({ databaseList: list }));
+    listDatabases().then(list => this.setState({ list }));
 
   handleSubmit = () => {
     const { name, selectedDatabase } = this.state;
@@ -55,18 +55,8 @@ class CreateGroup extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
-
   render() {
-    const {
-      name,
-      errors,
-      databaseList,
-      selectedDatabase,
-      redirect
-    } = this.state;
+    const { name, error, list, selectedDatabase, redirect } = this.state;
 
     if (redirect) {
       return <Redirect to="/" />;
@@ -103,7 +93,7 @@ class CreateGroup extends React.Component {
             </Grid>
             <Grid item xs={9}>
               <FormControl
-                error={Boolean(errors)}
+                error={Boolean(error)}
                 aria-describedby="name-error-text"
                 fullWidth
               >
@@ -116,12 +106,9 @@ class CreateGroup extends React.Component {
                   autoFocus
                   fullWidth
                 />
-                {errors &&
-                  errors.name && (
-                    <FormHelperText id="name-error-text">
-                      {errors.name.msg}
-                    </FormHelperText>
-                  )}
+                {error && (
+                  <FormHelperText id="name-error-text">{error}</FormHelperText>
+                )}
               </FormControl>
             </Grid>
             <Grid item xs={3}>
@@ -140,8 +127,8 @@ class CreateGroup extends React.Component {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  {databaseList &&
-                    databaseList.map(database => (
+                  {list &&
+                    list.map(database => (
                       <MenuItem key={database._id} value={database._id}>
                         {database.title}
                       </MenuItem>

@@ -1,7 +1,5 @@
 import React from "react";
 
-import IconButton from "@material-ui/core/IconButton";
-
 import Grid from "@material-ui/core/Grid";
 
 import Button from "@material-ui/core/Button";
@@ -12,9 +10,6 @@ import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 
 import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListSubheader from "@material-ui/core/ListSubheader";
 
 import DialogActions from "@material-ui/core/DialogActions";
@@ -22,16 +17,17 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 
 import DeleteIcon from "@material-ui/icons/Delete";
-import RemoveUserIcon from "@material-ui/icons/RemoveCircle";
 import UpdateIcon from "@material-ui/icons/Edit";
 
 import Typography from "@material-ui/core/Typography";
 
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { getGroup, updateGroup, removeUserFromGroup } from "./API";
 
 import Divider from "@material-ui/core/Divider";
+
+import GroupUser from "./GroupUser";
 
 const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
@@ -39,8 +35,7 @@ class ManageGroup extends React.Component {
   state = {
     group: null,
     controlledTitle: null,
-    errors: null,
-    redirect: null
+    error: null
   };
 
   componentDidMount = () => this.loadGroup();
@@ -57,22 +52,20 @@ class ManageGroup extends React.Component {
       this.loadGroup()
     );
 
-  handleChange = e => this.setState({ controlledTitle: e.currentTarget.value });
+  handleChange = e => this.setState({ controlledTitle: e.target.value });
 
   loadGroup = () => {
     const { id } = this.props.match.params;
 
-    return getGroup(id).then(group =>
-      this.setState({ group, controlledTitle: group.title })
-    );
+    return getGroup(id)
+      .then(group => this.setState({ group, controlledTitle: group.title }))
+      .catch(error => {
+        error.json().then(json => this.setState({ error: json.message }));
+      });
   };
 
   render() {
-    const { controlledTitle, group, errors, redirect } = this.state;
-
-    if (redirect) {
-      return <Redirect to="/" />;
-    }
+    const { controlledTitle, group, error } = this.state;
 
     if (!group) {
       return <div>Loading group information...</div>;
@@ -107,7 +100,7 @@ class ManageGroup extends React.Component {
             </Grid>
             <Grid item xs={9}>
               <FormControl
-                error={Boolean(errors)}
+                error={Boolean(error)}
                 aria-describedby="title-error-text"
                 fullWidth
               >
@@ -120,12 +113,9 @@ class ManageGroup extends React.Component {
                   autoFocus
                   fullWidth
                 />
-                {errors &&
-                  errors.title && (
-                    <FormHelperText id="title-error-text">
-                      {errors.title.msg}
-                    </FormHelperText>
-                  )}
+                {error && (
+                  <FormHelperText id="title-error-text">{error}</FormHelperText>
+                )}
               </FormControl>
             </Grid>
           </Grid>
@@ -162,34 +152,6 @@ class ManageGroup extends React.Component {
           </Button>
         </DialogActions>
       </div>
-    );
-  }
-}
-
-class GroupUser extends React.Component {
-  handleRemoveUser = () => this.props.removeHandler(this.props.user._id);
-
-  render() {
-    const { user } = this.props;
-
-    const { username, totalQuestions, questionsCompleted, canRemove } = user;
-
-    return (
-      <ListItem button>
-        <Typography color="textSecondary">{`${questionsCompleted}/${totalQuestions}`}</Typography>
-        <ListItemText inset primary={username} />
-        {canRemove && (
-          <ListItemSecondaryAction>
-            <IconButton
-              color="secondary"
-              onClick={this.handleRemoveUser}
-              aria-label="Remove User from the group"
-            >
-              <RemoveUserIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
-        )}
-      </ListItem>
     );
   }
 }

@@ -11,24 +11,31 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import { Typography } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
+
+import { saveDatabase } from "./API";
+
+import { Link } from "react-router-dom";
+
+const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
 export default class SaveDatabase extends React.Component {
   state = {
     title: "",
-    errors: {}
+    error: null
   };
 
-  handleSaveDatabase = e => {
-    return this.props
-      .clickHandler(this.state.title)
-      .then(json => {
-        this.setState({ title: "", errors: {} });
-      })
+  handleSaveDatabase = () => {
+    const { title } = this.state;
+    const { refreshHandler, currentDatabase } = this.props;
+
+    const database = currentDatabase.export();
+
+    return saveDatabase(title, database)
+      .then(refreshHandler)
+      .then(() => this.setState({ title: "", error: null }))
       .catch(error => {
-        error.json().then(({ errors }) => {
-          this.setState({ errors });
-        });
+        error.json().then(json => this.setState({ error: json.message }));
       });
   };
 
@@ -37,20 +44,31 @@ export default class SaveDatabase extends React.Component {
   };
 
   render() {
-    const { title, errors } = this.state;
+    const { title, error } = this.state;
 
     const { currentSavedDatabaseCount } = this.props;
 
     return (
       <React.Fragment>
-        <DialogTitle disableTypography>
-          <Typography variant="body2" color="textSecondary">
-            Save the current database
-          </Typography>
+        <DialogTitle
+          id="dialog-title"
+          style={flexSpaceBetween}
+          disableTypography
+        >
+          <Typography variant="title">Save your current database</Typography>
+          <Button
+            component={Link}
+            color="secondary"
+            variant="raised"
+            size="small"
+            to="/"
+          >
+            &laquo; Back
+          </Button>
         </DialogTitle>
         <DialogContent>
           <FormControl
-            error={Boolean(errors.title)}
+            error={Boolean(error)}
             aria-describedby="name-error-text"
             fullWidth
           >
@@ -63,10 +81,8 @@ export default class SaveDatabase extends React.Component {
               autoFocus
               fullWidth
             />
-            {errors.title && (
-              <FormHelperText id="name-error-text">
-                {errors.title.msg}
-              </FormHelperText>
+            {error && (
+              <FormHelperText id="name-error-text">{error}</FormHelperText>
             )}
           </FormControl>
         </DialogContent>
@@ -80,6 +96,9 @@ export default class SaveDatabase extends React.Component {
             }
           >
             Save ({currentSavedDatabaseCount}/5)
+          </Button>
+          <Button onClick={this.handleClose} color="primary">
+            Cancel
           </Button>
         </DialogActions>
       </React.Fragment>

@@ -202,14 +202,20 @@ app.get(
 app.get(
   "/api/group/list/all",
   passportConfig.isAuthenticated,
-  groupController.listGroups
+  groupController.list
+);
+/*
+app.get(
+  "/api/group/list",
+  passportConfig.isAuthenticated,
+  groupController.listAvailable
 );
 
 app.get(
   "/api/group/list/active",
   passportConfig.isAuthenticated,
   groupController.listActive
-);
+);*/
 
 app.post(
   "/api/group/create",

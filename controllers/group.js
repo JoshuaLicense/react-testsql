@@ -12,13 +12,15 @@ exports.getGroup = (req, res, next) => {
   const { id } = req.params;
 
   Group.findById(id, "title creator", { lean: true }, (err, group) => {
-    if (err) next(err);
+    if (err) return next(err);
 
     UserGroup.find({ group: id })
       .select("user questions")
       .populate("user", "id username")
       .lean()
       .exec((err, allUsersInGroup) => {
+        if (err) return next(err);
+
         // Query returns { user: [{ user : { ... }}]}
         // Below removes the top level "user", resulting in just an array of users.
         // [{ username: ..., ... }, { username: ..., ... }]
@@ -119,6 +121,47 @@ exports.listGroups = (req, res, next) => {
   });
 };
 
+exports.list = (req, res, next) => {
+  Group.find()
+    .lean()
+    .exec((err, groups) => {
+      if (err) return next(err);
+
+      // Make only one query to the database, saved an array of user group progress.
+      UserGroup.find({ user: req.user.id })
+        .select("group questions")
+        .lean()
+        .exec((err, userGroups) => {
+          if (err) return next(err);
+
+          return res.json(
+            groups.map(group => {
+              // Loop each group checking for any user progress, if so, add it to the group array object (key: progress).
+              const groupProgress = userGroups.find(userGroup =>
+                userGroup.group.equals(group._id)
+              )["questions"];
+
+              // Get the number of completed questions + total
+              const completedQuestions = groupProgress.filter(
+                question => question.completed
+              ).length;
+              const totalQuestions = groupProgress.length;
+
+              return {
+                ...group,
+                isCurrent: Boolean(
+                  req.session.group && group._id.equals(req.session.group._id)
+                ),
+                canManage: group.creator.equals(req.user.id),
+                completedQuestions,
+                totalQuestions
+              };
+            })
+          );
+        });
+    });
+};
+
 exports.listActive = (req, res, next) => {
   UserGroup.find({ user: req.user.id })
     .select("group")
@@ -206,7 +249,7 @@ exports.createGroup = (req, res, next) => {
   });
 };
 
-exports.leaveCurrentGroup = (req, res, next) => {
+exports.leaveCurrentGroup = (req, res) => {
   // Just set/remove any current session.
   req.session.group = null;
 
