@@ -81,7 +81,7 @@ describe("GroupManager component", () => {
     expect(routeRenderComponents.find(GroupList).length).toEqual(1);
   });
 
-  it('renders the default list when the URL matches "/group/create" ', () => {
+  it('renders the create a group component when the URL matches "/group/create" ', () => {
     const allRoutes = component.find(Route);
 
     const routeRenderComponents = mount(
@@ -96,7 +96,7 @@ describe("GroupManager component", () => {
     expect(routeRenderComponents.find(CreateGroup).length).toEqual(1);
   });
 
-  it('renders the default list when the URL matches "/group/manage/:id" ', () => {
+  it('renders the manage a group component when the URL matches "/group/manage/:id" ', () => {
     const allRoutes = component.find(Route);
 
     const routeRenderComponents = mount(
