@@ -1,6 +1,8 @@
 import { configure } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 
+window.fetch = jest.fn();
+
 configure({ adapter: new Adapter() });
 
 global.document.createRange = () => {
