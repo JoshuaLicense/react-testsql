@@ -83,30 +83,6 @@ export const listGroups = () => {
     .then(res => res.json());
 };
 
-export const listActiveGroups = () => {
-  return fetch("/api/group/list/active", {
-    method: "GET",
-    credentials: "same-origin",
-    headers: new Headers({
-      "Content-Type": "application/json"
-    })
-  })
-    .then(handleError)
-    .then(res => res.json());
-};
-
-/*export const listGroups = () => {
-  return fetch("/api/group/list/all", {
-    method: "GET",
-    credentials: "same-origin",
-    headers: new Headers({
-      "Content-Type": "application/json"
-    })
-  })
-    .then(handleError)
-    .then(res => res.json());
-};*/
-
 export const joinGroup = id => {
   return fetch(`/api/group/join/${id}`, {
     method: "GET",
@@ -121,16 +97,6 @@ export const joinGroup = id => {
 
 export const leaveCurrentGroup = () => {
   return fetch(`/api/group/leave/current`, {
-    method: "GET",
-    credentials: "same-origin",
-    headers: new Headers({
-      "Content-Type": "application/json"
-    })
-  }).then(handleError);
-};
-
-export const leaveGroup = id => {
-  return fetch(`/api/group/leave/${id}`, {
     method: "GET",
     credentials: "same-origin",
     headers: new Headers({
