@@ -3,14 +3,9 @@ import { shallow } from "enzyme";
 
 import SaveDatabase from "../SaveDatabase";
 
-import { saveDatabase } from "../API";
-import handleError from "../../../utils/handleError";
-
 import { Redirect } from "react-router-dom";
 import Input from "@material-ui/core/Input";
 import FormHelperText from "@material-ui/core/FormHelperText";
-
-jest.mock("../API");
 
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
@@ -47,7 +42,12 @@ describe("SaveDatabase component", () => {
       title: "Test database title"
     });
 
-    saveDatabase.mockImplementation(() => new Promise(resolve => resolve()));
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({})
+      })
+    );
 
     await component.instance().handleSaveDatabase();
 
@@ -55,7 +55,7 @@ describe("SaveDatabase component", () => {
     component.update();
 
     // Expect an API call was made.
-    expect(saveDatabase).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(1);
     expect(refreshHandlerMock).toHaveBeenCalledTimes(1);
 
     // Expect the redirect state flag to true, and a redirect is "rendered".
@@ -67,16 +67,14 @@ describe("SaveDatabase component", () => {
     // Error text to be hidden initially.
     expect(component.find(FormHelperText).length).toEqual(0);
 
-    saveDatabase.mockImplementation(() =>
-      new Promise(resolve => {
-        return resolve({
-          ok: false,
-          json: () =>
-            Promise.resolve({
-              message: "A problem occured while trying to save this database."
-            })
-        });
-      }).then(handleError)
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: false,
+        json: () =>
+          Promise.resolve({
+            message: "A problem occured while trying to save this database."
+          })
+      })
     );
 
     await component.instance().handleSaveDatabase();

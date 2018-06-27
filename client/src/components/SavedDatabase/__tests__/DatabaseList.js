@@ -1,15 +1,11 @@
 import React from "react";
 import { shallow } from "enzyme";
 
-import { loadDatabase, deleteDatabase } from "../API";
-
 import DatabaseItem from "../DatabaseItem";
 
 import handleError from "../../../utils/handleError";
 import DatabaseList from "../DatabaseList";
 import { DialogContentText, Typography } from "@material-ui/core";
-
-jest.mock("../API.js");
 
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
@@ -45,8 +41,11 @@ describe("ActiveGroups component (Initial loading)", () => {
   });
 
   it("tries to load a saved database", async () => {
-    loadDatabase.mockImplementation(
-      () => new Promise(resolve => resolve(new ArrayBuffer(8)))
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        arrayBuffer: () => Promise.resolve(new ArrayBuffer(8))
+      })
     );
 
     await component
@@ -54,34 +53,38 @@ describe("ActiveGroups component (Initial loading)", () => {
       .handleLoadDatabase("31c286f9064f4d92911419783a7b299d");
 
     // Assert the relevant flow was followed.
-    expect(loadDatabase).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(1);
     expect(loadDatabaseMock).toHaveBeenCalledTimes(1);
     expect(closeHandlerMock).toHaveBeenCalledTimes(1);
   });
 
   it("tries to delete a saved database", async () => {
-    deleteDatabase.mockImplementation(() => new Promise(resolve => resolve()));
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({})
+      })
+    );
+    //deleteDatabase.mockImplementation(() => new Promise(resolve => resolve()));
 
     await component
       .instance()
       .handleDeleteDatabase("31c286f9064f4d92911419783a7b299d");
 
     // Assert the relevant flow was followed.
-    expect(deleteDatabase).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(1);
     expect(refreshHandlerMock).toHaveBeenCalledTimes(1);
   });
 
   it("catches an error when trying to load a saved database", async () => {
-    loadDatabase.mockImplementation(() =>
-      new Promise(resolve => {
-        return resolve({
-          ok: false,
-          json: () =>
-            Promise.resolve({
-              message: "A problem occured while trying to load this database."
-            })
-        });
-      }).then(handleError)
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: false,
+        json: () =>
+          Promise.resolve({
+            message: "A problem occured while trying to load this database."
+          })
+      })
     );
 
     await component
@@ -89,7 +92,7 @@ describe("ActiveGroups component (Initial loading)", () => {
       .handleLoadDatabase("31c286f9064f4d92911419783a7b299d");
 
     // Assert the relevant flow was followed.
-    expect(loadDatabase).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(1);
     expect(loadDatabaseMock).toHaveBeenCalledTimes(0);
     expect(closeHandlerMock).toHaveBeenCalledTimes(0);
 
@@ -99,16 +102,14 @@ describe("ActiveGroups component (Initial loading)", () => {
   });
 
   it("catches an error when trying to delete a saved database", async () => {
-    deleteDatabase.mockImplementation(() =>
-      new Promise(resolve => {
-        return resolve({
-          ok: false,
-          json: () =>
-            Promise.resolve({
-              message: "A problem occured while trying to delete this database."
-            })
-        });
-      }).then(handleError)
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: false,
+        json: () =>
+          Promise.resolve({
+            message: "A problem occured while trying to delete this database."
+          })
+      })
     );
 
     await component
@@ -116,7 +117,7 @@ describe("ActiveGroups component (Initial loading)", () => {
       .handleDeleteDatabase("31c286f9064f4d92911419783a7b299d");
 
     // Assert the relevant flow was followed.
-    expect(deleteDatabase).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(1);
     expect(refreshHandlerMock).toHaveBeenCalledTimes(0);
 
     expect(component.state("error")).toEqual(
@@ -131,7 +132,7 @@ describe("ActiveGroups component (Initial loading)", () => {
   });
 });
 
-it("displays an empty placeholder when the user has no saved databases", async () => {
+it("displays an empty placeholder when the user has no saved databases", () => {
   // Disable lifecycle methods so the script can access the load promise directly.
   const list = [];
 

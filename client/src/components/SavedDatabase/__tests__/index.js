@@ -13,10 +13,6 @@ import { Switch } from "react-router-dom";
 import SaveDatabase from "../SaveDatabase";
 import DatabaseList from "../DatabaseList";
 
-import { listDatabases } from "../API";
-import handleError from "../../../utils/handleError";
-
-jest.mock("../API.js");
 jest.mock("../SaveDatabase.js");
 jest.mock("../DatabaseList.js");
 
@@ -29,7 +25,12 @@ describe("DatabaseManager component", () => {
   let component;
 
   beforeEach(async () => {
-    listDatabases.mockImplementation(() => new Promise(resolve => resolve({})));
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({})
+      })
+    );
 
     component = shallow(<DatabaseManager />);
 
@@ -98,7 +99,12 @@ describe("DatabaseManager component", () => {
 });
 
 it("displays loading the saved databases while waiting for promise to resolve", () => {
-  listDatabases.mockImplementation(() => new Promise(resolve => resolve({})));
+  fetch.mockImplementationOnce(() =>
+    Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({})
+    })
+  );
 
   const component = shallow(<DatabaseManager />);
 
