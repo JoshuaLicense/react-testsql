@@ -44,12 +44,21 @@ class ManageGroup extends React.Component {
     const { id } = this.props.match.params;
     const { controlledTitle } = this.state;
 
-    return updateGroup(id, controlledTitle).then(() => this.loadGroup());
+    return updateGroup(id, controlledTitle).then(() =>
+      this.setState(prevState => ({
+        group: { ...prevState.group, title: controlledTitle }
+      }))
+    );
   };
 
   handleRemoveUser = userId =>
     removeUserFromGroup(this.props.match.params.id, userId).then(() =>
-      this.loadGroup()
+      this.setState(prevState => ({
+        group: {
+          ...prevState.group,
+          users: [...prevState.group.users.filter(user => user._id !== userId)]
+        }
+      }))
     );
 
   handleChange = e => this.setState({ controlledTitle: e.target.value });

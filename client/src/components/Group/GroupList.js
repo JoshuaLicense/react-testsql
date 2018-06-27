@@ -31,9 +31,7 @@ class GroupList extends React.Component {
 
   load = async () =>
     listGroups()
-      .then(groups => {
-        this.setState({ list: groups });
-      })
+      .then(groups => this.setState({ list: groups }))
       .catch(error => {
         error.json().then(json => this.setState({ error: json.message }));
       });
@@ -49,6 +47,19 @@ class GroupList extends React.Component {
     this.setState({ error: null });
 
     return joinGroup(id)
+      .then(group => {
+        // Find the group the user has just joined, and set it as active
+        const updatedGroupList = this.state.list.map(listGroup => {
+          // Update the isCurrent for all the groups in the list, leaving the last joined group as the active one.
+          listGroup.isCurrent = group._id === listGroup._id;
+
+          return listGroup;
+        });
+
+        this.setState({ list: updatedGroupList });
+
+        return group;
+      })
       .then(group => loadDatabase(group.database))
       .then(fileBuffer => {
         const typedArray = new Uint8Array(fileBuffer);
@@ -56,7 +67,6 @@ class GroupList extends React.Component {
         return this.props.loadDatabaseHandler(typedArray);
       })
       .then(() => this.props.refreshUserContext())
-      .then(() => this.load())
       .catch(error => {
         error.json().then(json => this.setState({ error: json.message }));
       });
@@ -66,7 +76,16 @@ class GroupList extends React.Component {
     this.setState({ error: null });
 
     return leaveCurrentGroup()
-      .then(() => this.load())
+      .then(() => {
+        // Update the isCurrent for all the groups in the list to false
+        const updatedGroupList = this.state.list.map(listGroup => {
+          listGroup.isCurrent = false;
+
+          return listGroup;
+        });
+
+        this.setState({ list: updatedGroupList });
+      })
       .then(() => this.props.refreshUserContext())
       .catch(error => {
         error.json().then(json => this.setState({ error: json.message }));
