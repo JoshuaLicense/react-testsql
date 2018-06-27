@@ -3,17 +3,9 @@ import { shallow } from "enzyme";
 
 import CreateGroup from "../CreateGroup";
 
-import { createGroup } from "../API";
-
-import { listDatabases } from "../../SavedDatabase/API";
-import handleError from "../../../utils/handleError";
-
 import { Redirect } from "react-router-dom";
 import Input from "@material-ui/core/Input";
 import FormHelperText from "@material-ui/core/FormHelperText";
-
-jest.mock("../API");
-jest.mock("../../SavedDatabase/API");
 
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
@@ -40,8 +32,11 @@ describe("CreateGroup component", () => {
 
     closeHandlerMock = jest.fn();
 
-    listDatabases.mockImplementation(
-      id => new Promise(resolve => resolve(databases))
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(databases)
+      })
     );
 
     component = shallow(<CreateGroup closeHandler={closeHandlerMock} />);
@@ -54,7 +49,7 @@ describe("CreateGroup component", () => {
 
   it("renders and lists all the users saved databases", () => {
     // Check the API was called, only once.
-    expect(listDatabases).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(1);
 
     expect(component.state()).toEqual({
       list: databases,
@@ -71,15 +66,17 @@ describe("CreateGroup component", () => {
       selectedDatabase: "51839c4be9cef3b047b48b644a0720b1"
     });
 
-    createGroup.mockImplementation(() => new Promise(resolve => resolve()));
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve()
+      })
+    );
 
     await component.instance().handleSubmit();
 
     // Update the component, to allow state changes to take effect.
     component.update();
-
-    // Expect an API call was made.
-    expect(createGroup).toHaveBeenCalledTimes(1);
 
     // Expect the redirect state flag to true, and a redirect is "rendered".
     expect(component.state("redirect")).toBeTruthy();
@@ -90,16 +87,14 @@ describe("CreateGroup component", () => {
     // Error text to be hidden initially.
     expect(component.find(FormHelperText).length).toEqual(0);
 
-    createGroup.mockImplementation(() =>
-      new Promise(resolve => {
-        return resolve({
-          ok: false,
-          json: () =>
-            Promise.resolve({
-              message: "A problem occured while trying to create a group."
-            })
-        });
-      }).then(handleError)
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: false,
+        json: () =>
+          Promise.resolve({
+            message: "A problem occured while trying to create a group."
+          })
+      })
     );
 
     await component.instance().handleSubmit();

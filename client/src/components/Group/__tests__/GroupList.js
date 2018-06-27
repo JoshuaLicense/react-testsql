@@ -6,13 +6,6 @@ import GroupItem from "../GroupItem";
 
 import List from "@material-ui/core/List";
 
-import { listGroups, joinGroup, leaveCurrentGroup } from "../API";
-import handleError from "../../../utils/handleError";
-
-jest.mock("../API.js");
-
-jest.mock("../../SavedDatabase/API.js");
-
 const groups = [
   {
     _id: "31c286f9064f4d92911419783a7b299d",
@@ -88,8 +81,11 @@ describe("ActiveGroups component (Initial loading)", () => {
     loadDatabaseMock = jest.fn();
     refreshUserContextMock = jest.fn();
 
-    listGroups.mockImplementation(
-      () => new Promise(resolve => resolve(groups))
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(groups)
+      })
     );
 
     // Disable lifecycle methods so the script can access the load promise directly.
@@ -110,17 +106,16 @@ describe("ActiveGroups component (Initial loading)", () => {
   it("shows a list of groups", async () => {
     // Data is in __mocks__/API.js, returns an array of 3 objects.
     expect(component.find(GroupItem).length).toEqual(groups.length);
-
-    // Check the API was called, only once.
-    expect(listGroups).toHaveBeenCalledTimes(1);
   });
 
   it("alters padding on count > 5", async () => {
     // Expecting the component to be compact.
     expect(component.find(List).prop("dense")).toEqual(true);
-    // Mock so only 3 active groups are rendered.
-    listGroups.mockImplementationOnce(
-      () => new Promise(resolve => resolve(groups.slice(0, 3)))
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(groups.splice(0, 3))
+      })
     );
 
     // Await for the mocked API call to finish.
@@ -133,55 +128,74 @@ describe("ActiveGroups component (Initial loading)", () => {
   });
 
   it("joins a group", async () => {
-    joinGroup.mockImplementation(
-      id =>
-        new Promise((resolve, reject) => {
-          const joinedGroup = groups.find(group => group._id === id);
-
-          if (!joinedGroup) {
-            return reject();
-          }
-
-          return resolve({
-            ...joinedGroup,
-            database: "49af33548724bec6494ceb018b007bb1"
-          });
-        })
+    // joinGroup mock, expects a json object to be returned.
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({})
+      })
     );
 
-    await component
-      .instance()
-      .handleJoinGroup("31c286f9064f4d92911419783a7b299d");
+    // loadDatabase mock, expects an ArrayBuffer to be returned.
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        arrayBuffer: () => Promise.resolve(new ArrayBuffer(8))
+      })
+    );
+
+    const joinGroupId = "5a01082ce3db43f2a5fc548bf69c1eec";
+
+    await component.instance().handleJoinGroup(joinGroupId);
 
     // Assert the relevant flow was followed.
-    expect(joinGroup).toHaveBeenCalledTimes(1);
     expect(loadDatabaseMock).toHaveBeenCalledTimes(1);
     expect(refreshUserContextMock).toHaveBeenCalledTimes(1);
+
+    // Expect the group just joined to be the only new current group.
+    expect(component.state("list")).toEqual(
+      // Find the group the user has just joined, and set it as active
+      groups.map(listGroup => {
+        // Update the isCurrent for all the groups in the list, leaving the last joined group as the active one.
+        listGroup.isCurrent = joinGroupId === listGroup._id;
+
+        return listGroup;
+      })
+    );
   });
 
   it("leaves the current group", async () => {
-    leaveCurrentGroup.mockImplementation(
-      () => new Promise(resolve => resolve())
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve()
+      })
     );
 
     await component.instance().handleLeaveCurrentGroup();
 
     // Assert the relevant flow was followed.
-    expect(leaveCurrentGroup).toHaveBeenCalledTimes(1);
     expect(refreshUserContextMock).toHaveBeenCalledTimes(1);
+
+    // Expect all the groups to have isCurrent = false
+    expect(component.state("list")).toEqual(
+      groups.map(listGroup => {
+        listGroup.isCurrent = false;
+
+        return listGroup;
+      })
+    );
   });
 
   it("catches an error when trying to join a group", async () => {
-    joinGroup.mockImplementation(() =>
-      new Promise(resolve => {
-        return resolve({
-          ok: false,
-          json: () =>
-            Promise.resolve({
-              message: "A problem occured while trying to join this group."
-            })
-        });
-      }).then(handleError)
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: false,
+        json: () =>
+          Promise.resolve({
+            message: "A problem occured while trying to join this group."
+          })
+      })
     );
 
     await component
@@ -189,7 +203,6 @@ describe("ActiveGroups component (Initial loading)", () => {
       .handleJoinGroup("31c286f9064f4d92911419783a7b299d");
 
     // Assert the relevant flow was followed.
-    expect(joinGroup).toHaveBeenCalledTimes(1);
     expect(loadDatabaseMock).toHaveBeenCalledTimes(0);
     expect(refreshUserContextMock).toHaveBeenCalledTimes(0);
 
@@ -199,23 +212,17 @@ describe("ActiveGroups component (Initial loading)", () => {
   });
 
   it("catches an error when trying to get a list of groups", async () => {
-    listGroups.mockImplementation(() =>
-      new Promise(resolve => {
-        return resolve({
-          ok: false,
-          json: () =>
-            Promise.resolve({
-              message: "A problem occured while trying to load groups."
-            })
-        });
-      }).then(handleError)
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: false,
+        json: () =>
+          Promise.resolve({
+            message: "A problem occured while trying to load groups."
+          })
+      })
     );
 
     await component.instance().load();
-
-    // Assert the relevant flow was followed.
-    // Called twice (ComponentDidMount and above)
-    expect(listGroups).toHaveBeenCalledTimes(2);
 
     expect(component.state("error")).toEqual(
       "A problem occured while trying to load groups."
@@ -223,22 +230,19 @@ describe("ActiveGroups component (Initial loading)", () => {
   });
 
   it("catches an error when trying to leave a group", async () => {
-    leaveCurrentGroup.mockImplementation(() =>
-      new Promise(resolve => {
-        return resolve({
-          ok: false,
-          json: () =>
-            Promise.resolve({
-              message: "A problem occured while trying to leave this group."
-            })
-        });
-      }).then(handleError)
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: false,
+        json: () =>
+          Promise.resolve({
+            message: "A problem occured while trying to leave this group."
+          })
+      })
     );
 
     await component.instance().handleLeaveCurrentGroup();
 
     // Assert the relevant flow was followed.
-    expect(leaveCurrentGroup).toHaveBeenCalledTimes(1);
     expect(refreshUserContextMock).toHaveBeenCalledTimes(0);
 
     expect(component.state("error")).toEqual(
