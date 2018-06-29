@@ -9,13 +9,12 @@ import Feedback from "../Feedback";
 
 import checkAnswer, { IncorrectAnswer } from "../Question/answer"; // eslint-disable-line no-unused-vars
 
-import getQuestions from "../Question/helpers";
-
 import { saveProgress } from "../Group/API";
 
 import Schema from "../Schema";
 
 import Loadable from "react-loadable";
+import buildQuestions from "../../questions/utils/buildQuestions";
 
 const LoadableInputForm = Loadable({
   loader: () => import("../Database/Input" /* webpackChunkName: "inputForm" */),
@@ -58,7 +57,7 @@ export default class Main extends React.Component {
     if (userGroup && userGroup.questions && userGroup.questions.length > 0) {
       allQuestions = this.props.user.group.questions;
     } else {
-      allQuestions = await getQuestions(this.props.currentDatabase);
+      allQuestions = await buildQuestions(this.props.currentDatabase);
 
       // If the user has no saved questions, then send all the generated questions up to the server.
       // If the user is in a group. Save the progress.
@@ -75,7 +74,7 @@ export default class Main extends React.Component {
     if (
       prevProps.currentDatabase.filename !== this.props.currentDatabase.filename
     ) {
-      getQuestions(this.props.currentDatabase).then(allQuestions => {
+      buildQuestions(this.props.currentDatabase).then(allQuestions => {
         this.setState({ allQuestions, activeQuestion: allQuestions[0] });
       });
     }
