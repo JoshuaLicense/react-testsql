@@ -1,4 +1,4 @@
-import checkAnswer from "./answer";
+import checkAnswer from "../answer";
 
 const mockDB = {
   exec: jest.fn()
