@@ -1,18 +1,18 @@
 import getRandomInt from "lodash/random";
 
-const getRandomConjunction = () => {
-  const conjunctions = [
-    {
-      code: "&&",
-      text: "and"
-    },
-    {
-      code: "||",
-      text: "or"
-    }
-  ];
+export const conjunctions = [
+  {
+    code: "&&",
+    text: "and"
+  },
+  {
+    code: "||",
+    text: "or"
+  }
+];
 
-  return conjunctions[getRandomInt(conjunctions.length)];
+const getRandomConjunction = () => {
+  return conjunctions[getRandomInt(conjunctions.length - 1)];
 };
 
 export default getRandomConjunction;

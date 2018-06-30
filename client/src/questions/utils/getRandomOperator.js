@@ -1,28 +1,30 @@
-export const getRandomOperator = () => {
-  const operators = [
-    {
-      code: "=",
-      text: "equal"
-    },
-    {
-      code: ">=",
-      text: "greater or equal"
-    },
-    {
-      code: ">",
-      text: "greater than"
-    },
-    {
-      code: "<=",
-      text: "less or equal"
-    },
-    {
-      code: "<",
-      text: "less than"
-    }
-  ];
+import getRandomInt from "lodash/random";
 
-  return operators[getRandomInt(operators.length)];
+export const operators = [
+  {
+    code: "=",
+    text: "equal"
+  },
+  {
+    code: ">=",
+    text: "greater or equal"
+  },
+  {
+    code: ">",
+    text: "greater than"
+  },
+  {
+    code: "<=",
+    text: "less or equal"
+  },
+  {
+    code: "<",
+    text: "less than"
+  }
+];
+
+export const getRandomOperator = () => {
+  return operators[getRandomInt(operators.length - 1)];
 };
 
 export default getRandomOperator;

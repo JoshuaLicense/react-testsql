@@ -1,4 +1,5 @@
 import getTables from "./utils/getTables";
+import getColumns from "./utils/getColumns";
 
 const selectSpecific = {
   set: "Easy",

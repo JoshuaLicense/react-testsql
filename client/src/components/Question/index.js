@@ -78,29 +78,6 @@ class QuestionManager extends React.Component {
     });
   };
 
-  /**
-   * Required to update the "active question set".
-   * The props passed is the full question set.
-   */
-  componentDidUpdate = prevProps => {
-    // Only update if the current active queston isn't identical (is now completed).
-    if (!Object.is(prevProps.activeQuestion, this.props.activeQuestion)) {
-      const { allQuestions, activeQuestion } = this.props;
-
-      // Only get the questions in this set.
-      const activeQuestionSet = [
-        ...allQuestions.filter(
-          question => question.set === this.state.activeSet
-        )
-      ];
-
-      this.setState({
-        activeQuestionSet,
-        activeQuestionIndex: activeQuestionSet.indexOf(activeQuestion)
-      });
-    }
-  };
-
   handleNext = () => {
     // Allows the looping of questions so get a remainder of the total.
     const next =
@@ -144,6 +121,7 @@ class QuestionManager extends React.Component {
       ...allQuestions.filter(question => question.set === set)
     ];
 
+    // Set doesn't exist...
     if (activeQuestionSet.length === 0) return;
 
     // Set the active question to the first in the set.
