@@ -16,7 +16,6 @@ import { loadDatabase, deleteDatabase } from "./API";
 import DatabaseItem from "./DatabaseItem";
 
 import { Link } from "react-router-dom";
-import { ListItem, ListSubheader } from "@material-ui/core";
 
 const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
