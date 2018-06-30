@@ -47,7 +47,7 @@ const styles = theme => ({
   }
 });
 
-class Question extends React.Component {
+class QuestionManager extends React.Component {
   state = {
     allSetNames: [],
     activeSet: null,
@@ -71,11 +71,11 @@ class Question extends React.Component {
 
     this.handleQuestionChange(0, activeQuestionSet[0])();
 
-    this.setState(state => ({
+    this.setState({
       allSetNames,
       activeSet,
       activeQuestionSet
-    }));
+    });
   };
 
   /**
@@ -131,7 +131,7 @@ class Question extends React.Component {
   handleQuestionChange = (index, question) => () => {
     this.props.changeQuestionHandler(question);
 
-    this.setState(state => ({ activeQuestionIndex: index }));
+    this.setState({ activeQuestionIndex: index });
   };
 
   handleSetChange = event => {
@@ -152,11 +152,11 @@ class Question extends React.Component {
     const activeQuestionIndex = 0;
     const activeSet = set;
 
-    this.setState(state => ({
+    this.setState({
       activeSet,
       activeQuestionSet,
       activeQuestionIndex
-    }));
+    });
   };
 
   render() {
@@ -182,11 +182,11 @@ class Question extends React.Component {
                 <StepButton
                   className={classes.stepperButton}
                   onClick={this.handleQuestionChange(index, question)}
-                  completed={!!question.completed}
+                  completed={Boolean(question.completed)}
                 >
                   <StepLabel
                     classes={{ iconContainer: classes.stepperLabel }}
-                    error={!!question.error}
+                    error={Boolean(question.error)}
                   />
                 </StepButton>
               </Step>
@@ -240,4 +240,4 @@ class Question extends React.Component {
   }
 }
 
-export default withStyles(styles)(Question);
+export default withStyles(styles)(QuestionManager);
