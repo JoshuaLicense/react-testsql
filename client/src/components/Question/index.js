@@ -78,6 +78,29 @@ class QuestionManager extends React.Component {
     });
   };
 
+  /**
+   * Required to update the "active question set".
+   * The props passed is the full question set.
+   */
+  componentDidUpdate = prevProps => {
+    // Only update if the current active queston isn't identical (meaning the question is now completed).
+    if (!Object.is(prevProps.activeQuestion, this.props.activeQuestion)) {
+      const { allQuestions, activeQuestion } = this.props;
+
+      // Means that the component has to rebuild the active set, as we created a brand new completed question object.
+      const activeQuestionSet = [
+        ...allQuestions.filter(
+          question => question.set === this.state.activeSet
+        )
+      ];
+
+      this.setState({
+        activeQuestionSet,
+        activeQuestionIndex: activeQuestionSet.indexOf(activeQuestion)
+      });
+    }
+  };
+
   handleNext = () => {
     // Allows the looping of questions so get a remainder of the total.
     const next =
