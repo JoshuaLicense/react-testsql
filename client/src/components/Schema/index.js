@@ -25,13 +25,13 @@ const styles = theme => ({
     display: "flex"
   },
   heading: {
-    marginTop: theme.spacing.unit * 2
+    marginTop: "16px"
   },
   drawerBottomActions: {
     display: "flex",
     justifyContent: "space-evenly",
     marginTop: "auto",
-    marginBottom: theme.spacing.unit
+    marginBottom: "8px"
   }
 });
 
@@ -60,8 +60,7 @@ class Schema extends React.Component {
   load = () => {
     const { currentDatabase } = this.props;
 
-    const sql =
-      'SELECT `tbl_name` FROM `sqlite_master` WHERE `type` = "table" AND `tbl_name` NOT LIKE "__testSQL_Database_%"';
+    const sql = 'SELECT `tbl_name` FROM `sqlite_master` WHERE `type` = "table"';
 
     // Destructure the response to get only the values (the real schema data)
     let [{ values: tableNames }] = currentDatabase.exec(sql);

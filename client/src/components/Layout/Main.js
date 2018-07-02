@@ -80,7 +80,7 @@ export default class Main extends React.Component {
     if (
       prevProps.currentDatabase.filename !== this.props.currentDatabase.filename
     ) {
-      buildQuestions(this.props.currentDatabase).then(allQuestions => {
+      buildQuestions(this.props.currentDatabase, true).then(allQuestions => {
         this.setState({ allQuestions, activeQuestion: allQuestions[0] });
       });
     }
