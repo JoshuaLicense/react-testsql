@@ -25,8 +25,6 @@ class UploadDatabase extends React.Component {
 
       // Run the submit handler from the parent component
       this.props.uploadDatabaseHandler(typedArray);
-
-      this.toggleSidebar();
     };
 
     // Tell the file reader to read the selected file as an array buffer
@@ -48,7 +46,7 @@ class UploadDatabase extends React.Component {
             <React.Fragment>
               <input
                 accept=".db,.sqlite"
-                onChange={this.uploadDatabase}
+                onChange={this.handleUpload}
                 style={displayNone}
                 id="uploadfile"
                 type="file"

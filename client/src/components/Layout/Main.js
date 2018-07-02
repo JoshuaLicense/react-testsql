@@ -189,7 +189,7 @@ export default class Main extends React.Component {
           currentDatabase={currentDatabase}
           uploadDatabaseHandler={loadDatabase}
           showSchemaHandler={this.displaySchema}
-          sidebarHandler={sidebarToggleHandler}
+          toggleSidebarHandler={sidebarToggleHandler}
         />
         <main style={innerContainerStyle}>
           <Section title="Questions">
