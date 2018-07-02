@@ -142,6 +142,12 @@ export default class Main extends React.Component {
     // Directly update the active question element.
     updatedAllQuestions[index] = completedActiveQuestion;
 
+    // Save the updated set to the client localStorage.
+    localStorage.setItem(
+      "__testSQL_Questions__",
+      JSON.stringify(updatedAllQuestions)
+    );
+
     this.setState({
       allQuestions: updatedAllQuestions,
       activeQuestion: completedActiveQuestion
