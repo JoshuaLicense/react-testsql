@@ -16,6 +16,8 @@ import { withStyles } from "@material-ui/core/styles";
 import green from "@material-ui/core/colors/green";
 import amber from "@material-ui/core/colors/amber";
 
+import classNames from "classnames";
+
 const variantIcon = {
   success: CheckCircleIcon,
   warning: WarningIcon,
@@ -37,9 +39,11 @@ const style = theme => ({
     backgroundColor: amber[700]
   },
   icon: {
-    fontSize: 20,
+    fontSize: 20
+  },
+  iconVariant: {
     opacity: 0.9,
-    marginRight: "8px"
+    marginRight: theme.spacing.unit
   },
   message: {
     display: "flex",
@@ -48,14 +52,32 @@ const style = theme => ({
 });
 
 class Feedback extends React.Component {
+  queue = [];
+
   state = {
+    message: null,
+    variant: null,
+    timestamp: null,
     open: false
   };
 
   componentDidUpdate(prevProps) {
     // If the message has changed, open the feedback!
-    if (this.props.message !== prevProps.message) {
-      this.setState({ open: true });
+    // If a new message is recieved.
+    if (this.props.timestamp !== prevProps.timestamp) {
+      this.queue.push({
+        message: this.props.message,
+        variant: this.props.variant,
+        timestamp: this.props.timestamp
+      });
+
+      if (this.state.open) {
+        // immediately begin dismissing current message
+        // to start showing new one
+        this.setState({ open: false });
+      } else {
+        this.processQueue();
+      }
     }
   }
 
@@ -67,33 +89,48 @@ class Feedback extends React.Component {
     this.setState({ open: false });
   };
 
-  render() {
-    const { message, variant, classes } = this.props;
+  processQueue = () => {
+    if (this.queue.length > 0) {
+      const { message, variant, timestamp } = this.queue.shift();
 
-    if (!this.state.open) {
-      return null;
+      this.setState({
+        message,
+        variant,
+        timestamp,
+        open: true
+      });
     }
+  };
+
+  handleExited = () => this.processQueue();
+
+  render() {
+    const { classes } = this.props;
+
+    const { message, variant, timestamp, open } = this.state;
+
+    if (!message) return null;
 
     const Icon = variantIcon[variant];
 
-    console.log(Icon, variant, variantIcon);
-
     return (
       <SnackBar
+        key={timestamp}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "right"
         }}
-        open={this.state.open}
-        autoHideDuration={6000}
+        open={open}
+        autoHideDuration={5000}
         onClose={this.handleClose}
+        onExited={this.handleExited}
       >
         <SnackBarContent
           className={classes[variant]}
           aria-describedby="feedback-message"
           message={
             <span id="feedback-message" className={classes.message}>
-              <Icon className={classes.icon} />
+              <Icon className={classNames(classes.icon, classes.iconVariant)} />
               {message}
             </span>
           }

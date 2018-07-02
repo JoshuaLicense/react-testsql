@@ -45,6 +45,12 @@ export default class Main extends React.Component {
     results: null
   };
 
+  changeFeedback = object => {
+    const feedback = { ...object, timestamp: new Date().getTime() };
+
+    this.setState({ feedback });
+  };
+
   componentDidMount = async () => {
     let allQuestions;
     // Load the group questions that have come from the server,
@@ -104,7 +110,7 @@ export default class Main extends React.Component {
         });
       }
     } catch (Error) {
-      this.changeFeedback({ message: Error.message, variant: "error" });
+      return this.changeFeedback({ message: Error.message, variant: "error" });
     }
 
     try {
@@ -152,10 +158,6 @@ export default class Main extends React.Component {
     }));
 
     this.props.sidebarToggleHandler();
-  };
-
-  changeFeedback = object => {
-    this.setState({ feedback: object });
   };
 
   render() {
