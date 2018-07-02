@@ -104,7 +104,7 @@ export default class Main extends React.Component {
         });
       }
     } catch (Error) {
-      this.changeFeedback({ message: Error.message, error: true });
+      this.changeFeedback({ message: Error.message, variant: "error" });
     }
 
     try {
@@ -114,14 +114,14 @@ export default class Main extends React.Component {
         return saveProgress(sql, allQuestions);
       }
     } catch (Error) {
-      return this.changeFeedback({ message: Error.message, error: true });
+      return this.changeFeedback({ message: Error.message, variant: "error" });
     }
   };
 
   completeCurrentQuestion = sql => {
     const { activeQuestion, allQuestions } = this.state;
 
-    this.changeFeedback({ message: "Correct Answer" });
+    this.changeFeedback({ message: "Correct Answer", variant: "success" });
 
     // Create a new question object with completed=true
     const completedActiveQuestion = { ...activeQuestion, completed: true };
