@@ -1,6 +1,6 @@
 import React from "react";
 
-import Section from "../Section";
+import Section from "./Section";
 import Question from "../Question";
 
 import OutputTable from "../Database/Output";
