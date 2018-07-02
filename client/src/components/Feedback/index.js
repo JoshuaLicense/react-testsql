@@ -86,7 +86,7 @@ class Feedback extends React.Component {
         }}
         open={this.state.open}
         autoHideDuration={6000}
-        onClose={this.handleClear}
+        onClose={this.handleClose}
       >
         <SnackBarContent
           className={classes[variant]}
