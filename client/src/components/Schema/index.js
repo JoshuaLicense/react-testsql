@@ -2,25 +2,13 @@ import React from "react";
 
 import Drawer from "@material-ui/core/Drawer";
 
-import Typography from "@material-ui/core/Typography";
-
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-
 import Hidden from "@material-ui/core/Hidden";
-
-import DownloadIcon from "@material-ui/icons/FileDownload";
-import UploadIcon from "@material-ui/icons/FileUpload";
-
-import IconButton from "@material-ui/core/IconButton";
-
-import UserContext from "../Auth/Context";
 
 import { withStyles } from "@material-ui/core/styles";
 
-import Tooltip from "@material-ui/core/Tooltip";
+import SchemaList from "../Schema/SchemaList";
+import UploadDatabase from "./UploadDatabase";
+import DownloadDatabase from "./DownloadDatabase";
 
 const styles = theme => ({
   drawerDocked: {
@@ -44,9 +32,6 @@ const styles = theme => ({
     justifyContent: "space-evenly",
     marginTop: "auto",
     marginBottom: theme.spacing.unit
-  },
-  uploadDatabaseFile: {
-    display: "none"
   }
 });
 
@@ -83,8 +68,11 @@ class Schema extends React.Component {
 
     // tableNames are returned as [[0] => "Tbl_name", [1] => "Tbl_name"]]
     const schema = tableNames.map(([tableName]) => {
-      const count = currentDatabase.exec(`SELECT COUNT(*) FROM ${tableName}`)[0]
-        .values[0];
+      const [
+        {
+          values: [[count]]
+        }
+      ] = currentDatabase.exec(`SELECT COUNT(*) FROM ${tableName}`);
 
       return {
         name: tableName,
@@ -96,58 +84,37 @@ class Schema extends React.Component {
     this.setState({ schema });
   };
 
-  downloadDatabase = () => {
-    const { currentDatabase } = this.props;
-
-    const blob = new Blob([currentDatabase.export()], {
-      type: `application/x-sqlite-3`
-    });
-
-    const a = document.createElement("a");
-    a.href = window.URL.createObjectURL(blob);
-    a.download = "testSQL.sqlite";
-    a.onclick = () => {
-      setTimeout(() => {
-        window.URL.revokeObjectURL(a.href);
-      }, 1500);
-    };
-    a.click();
-
-    this.toggleSidebar();
-  };
-
-  handleUpload = e => {
-    const files = e.target.files;
-
-    // No file selected, return
-    if (files.length === 0) return false;
-
-    const [file] = files;
-
-    const fileReader = new FileReader();
-
-    fileReader.onload = () => {
-      const typedArray = new Uint8Array(fileReader.result);
-
-      // Run the submit handler from the parent component
-      this.props.uploadDatabaseHandler(typedArray);
-
-      this.toggleSidebar();
-    };
-
-    // Tell the file reader to read the selected file as an array buffer
-    fileReader.readAsArrayBuffer(file);
-
-    // Reset the import back to blank so in theory could re-upload the same file
-    e.target.value = "";
-  };
-
-  toggleSidebar = () => this.props.sidebarHandler();
+  handleToggleSidebar = () => this.props.toggleSidebarHandler();
 
   render() {
-    const { classes, open, showSchemaHandler } = this.props;
-
     const { schema } = this.state;
+
+    if (!schema) {
+      return <div>Loading...</div>;
+    }
+
+    const {
+      classes,
+      open,
+      showSchemaHandler,
+      uploadDatabaseHandler,
+      currentDatabase
+    } = this.props;
+
+    const schemaList = (
+      <SchemaList
+        classes={classes}
+        schema={schema}
+        showSchemaHandler={showSchemaHandler}
+      />
+    );
+
+    const schemaActions = (
+      <div className={classes.drawerBottomActions}>
+        <UploadDatabase uploadDatabaseHandler={uploadDatabaseHandler} />
+        <DownloadDatabase currentDatabase={currentDatabase} />
+      </div>
+    );
 
     return (
       <div className={classes.container}>
@@ -159,17 +126,10 @@ class Schema extends React.Component {
             }}
             anchor="left"
             open={open}
-            onClose={this.toggleSidebar}
+            onClose={this.handleToggleSidebar}
           >
-            {schema && (
-              <SchemaList
-                classes={classes}
-                schema={schema}
-                uploadDatabaseHandler={this.handleUpload}
-                downloadDatabaseHandler={this.downloadDatabase}
-                showSchemaHandler={showSchemaHandler}
-              />
-            )}
+            {schemaList}
+            {schemaActions}
           </Drawer>
         </Hidden>
         <Hidden implementation="css" smDown>
@@ -181,119 +141,13 @@ class Schema extends React.Component {
             variant="permanent"
             open
           >
-            {schema && (
-              <SchemaList
-                classes={classes}
-                schema={schema}
-                uploadDatabaseHandler={this.handleUpload}
-                downloadDatabaseHandler={this.downloadDatabase}
-                showSchemaHandler={showSchemaHandler}
-              />
-            )}
+            {schemaList}
+            {schemaActions}
           </Drawer>
         </Hidden>
       </div>
     );
   }
-}
-
-class SchemaList extends React.Component {
-  handleDownloadDatabase = () => this.props.downloadDatabaseHandler();
-
-  render() {
-    const {
-      schema,
-      classes,
-      showSchemaHandler,
-      uploadDatabaseHandler,
-      downloadDatabaseHandler
-    } = this.props;
-
-    return (
-      <React.Fragment>
-        <Typography
-          className={classes.heading}
-          component="h3"
-          variant="body2"
-          color="textSecondary"
-          align="center"
-          gutterBottom
-        >
-          Database Schema
-        </Typography>
-        <List dense>
-          {schema.map(({ name, count }) => (
-            <SchemaItem
-              key={name}
-              name={name}
-              count={count}
-              showSchemaHandler={showSchemaHandler}
-            />
-          ))}
-        </List>
-        <div className={classes.drawerBottomActions}>
-          <UserContext.Consumer>
-            {({ user }) =>
-              user && user.group ? (
-                <IconButton
-                  className={classes.button}
-                  component="span"
-                  aria-label="Upload Database"
-                  disabled
-                >
-                  <UploadIcon />
-                </IconButton>
-              ) : (
-                <React.Fragment>
-                  <input
-                    accept=".db,.sqlite"
-                    onChange={uploadDatabaseHandler}
-                    className={classes.uploadDatabaseFile}
-                    id="uploadfile"
-                    type="file"
-                  />
-
-                  <Tooltip title="Upload Database">
-                    <label htmlFor="uploadfile">
-                      <IconButton
-                        className={classes.button}
-                        component="span"
-                        aria-label="Upload Database"
-                      >
-                        <UploadIcon />
-                      </IconButton>
-                    </label>
-                  </Tooltip>
-                </React.Fragment>
-              )
-            }
-          </UserContext.Consumer>
-          <Tooltip title="Download Database">
-            <IconButton
-              className={classes.button}
-              onClick={downloadDatabaseHandler}
-              aria-label="Download Database"
-            >
-              <DownloadIcon />
-            </IconButton>
-          </Tooltip>
-        </div>
-      </React.Fragment>
-    );
-  }
-}
-
-class SchemaItem extends React.Component {
-  handleClick = () => this.props.showSchemaHandler(this.props.name);
-
-  render = () => (
-    <ListItem onClick={this.handleClick} button>
-      <ListItemText primary={this.props.name} />
-      <ListItemSecondaryAction>
-        <ListItemText secondary={this.props.count} />
-      </ListItemSecondaryAction>
-    </ListItem>
-  );
 }
 
 export default withStyles(styles)(Schema);
