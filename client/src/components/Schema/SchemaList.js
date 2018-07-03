@@ -7,8 +7,6 @@ import List from "@material-ui/core/List";
 import SchemaItem from "./SchemaItem";
 
 class SchemaList extends React.Component {
-  handleDownloadDatabase = () => this.props.downloadDatabaseHandler();
-
   render() {
     const { schema, classes, showSchemaHandler } = this.props;
 
