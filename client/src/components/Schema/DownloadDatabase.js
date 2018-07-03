@@ -5,6 +5,8 @@ import IconButton from "@material-ui/core/IconButton";
 
 import DownloadIcon from "@material-ui/icons/FileDownload";
 
+import FileSaver from "file-saver";
+
 class DownloadDatabase extends React.Component {
   handleDownload = () => {
     const { currentDatabase } = this.props;
@@ -13,15 +15,7 @@ class DownloadDatabase extends React.Component {
       type: `application/x-sqlite-3`
     });
 
-    const a = document.createElement("a");
-    a.href = window.URL.createObjectURL(blob);
-    a.download = "testSQL.sqlite";
-    a.onclick = () => {
-      setTimeout(() => {
-        window.URL.revokeObjectURL(a.href);
-      }, 1500);
-    };
-    a.click();
+    FileSaver.saveAs(blob, "testSQL.sqlite");
   };
 
   render() {
