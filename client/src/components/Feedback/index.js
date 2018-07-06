@@ -64,7 +64,7 @@ class Feedback extends React.Component {
   componentDidUpdate(prevProps) {
     // If the message has changed, open the feedback!
     // If a new message is recieved.
-    if (this.props.timestamp !== prevProps.timestamp) {
+    if (prevProps.timestamp || this.props.timestamp !== prevProps.timestamp) {
       this.queue.push({
         message: this.props.message,
         variant: this.props.variant,
@@ -109,6 +109,7 @@ class Feedback extends React.Component {
 
     const { message, variant, timestamp, open } = this.state;
 
+    // Return nothing if no message is set yet.
     if (!message) return null;
 
     const Icon = variantIcon[variant];
