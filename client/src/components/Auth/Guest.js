@@ -28,17 +28,12 @@ class Guest extends React.Component {
     );
   };
 
-  handleChange = event => {
+  handleChange = event =>
     this.setState({ [event.target.id]: event.target.value });
-  };
 
-  handleOpen = () => {
-    this.setState({ open: true });
-  };
+  handleOpen = () => this.setState({ open: true });
 
-  handleClose = () => {
-    this.setState({ open: false });
-  };
+  handleClose = () => this.setState({ open: false });
 
   render() {
     return (
