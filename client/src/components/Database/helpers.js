@@ -1,6 +1,6 @@
 import defaultDatabase from "../../default.sqlite";
 
-const getDatabase = async () =>
+const getDatabase = () =>
   new Promise(async (resolve, reject) => {
     const cachedDatabase = localStorage.getItem("__testSQL_Database__");
 
@@ -20,19 +20,18 @@ const getDatabase = async () =>
     return resolve(typedArray);
   });
 
-export const saveDatabase = database => {
+export const saveDatabase = database =>
   localStorage.setItem("__testSQL_Database__", toBinString(database.export()));
+
+export const toBinArray = string => {
+  const length = string.length;
+  const typedArray = new Uint8Array(length);
+  for (let i = 0; i < length; i++) typedArray[i] = string.charCodeAt(i);
+
+  return typedArray;
 };
 
-export function toBinArray(str) {
-  var l = str.length,
-    arr = new Uint8Array(l);
-  for (var i = 0; i < l; i++) arr[i] = str.charCodeAt(i);
-  return arr;
-}
-
-export function toBinString(arr) {
-  return arr.reduce((data, byte) => data + String.fromCharCode(byte), "");
-}
+export const toBinString = typedArray =>
+  typedArray.reduce((data, byte) => data + String.fromCharCode(byte), "");
 
 export default getDatabase;
