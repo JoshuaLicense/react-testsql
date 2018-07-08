@@ -6,23 +6,21 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 
-import { withStyles } from "@material-ui/core/styles";
-
 import PropTypes from "prop-types";
 
-const styles = theme => ({
-  customTable: {
-    padding: theme.spacing.unit
+const styles = {
+  padding: {
+    padding: "0.5rem"
   },
-  customRow: {
+  rowHeight: {
     height: "2rem"
   }
-});
+};
 
-const DatabaseOutput = ({ classes, columns, values }) => (
+const DatabaseOutput = ({ columns, values }) => (
   <Table>
     <TableHead>
-      <TableRow className={classes.customRow}>
+      <TableRow style={styles.rowHeight}>
         {columns.map((name, i) => (
           <TableCell padding="none" key={i}>
             {name}
@@ -31,17 +29,15 @@ const DatabaseOutput = ({ classes, columns, values }) => (
       </TableRow>
     </TableHead>
     <TableBody>
-      {values.map((row, i) => {
-        return (
-          <TableRow key={i} className={classes.customRow}>
-            {row.map((value, i) => (
-              <TableCell padding="none" key={i}>
-                {value}
-              </TableCell>
-            ))}
-          </TableRow>
-        );
-      })}
+      {values.map((row, i) => (
+        <TableRow key={i} style={styles.rowHeight}>
+          {row.map((value, i) => (
+            <TableCell padding="none" key={i}>
+              {value}
+            </TableCell>
+          ))}
+        </TableRow>
+      ))}
     </TableBody>
   </Table>
 );
@@ -53,4 +49,4 @@ DatabaseOutput.propTypes = {
   ).isRequired
 };
 
-export default withStyles(styles)(DatabaseOutput);
+export default DatabaseOutput;

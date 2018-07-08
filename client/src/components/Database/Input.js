@@ -19,14 +19,14 @@ import { Controlled as CodeMirror } from "react-codemirror2";
 
 const styles = theme => ({
   button: {
-    marginRight: theme.spacing.unit,
-    marginTop: theme.spacing.unit
+    marginRight: 8,
+    marginTop: 8
   },
   leftIcon: {
-    marginRight: theme.spacing.unit
+    marginRight: 8
   },
   rightIcon: {
-    marginLeft: theme.spacing.unit
+    marginLeft: 8
   },
   iconSmall: {
     fontSize: 20
@@ -42,7 +42,7 @@ const codeMirrorOptions = {
   lineNumbers: true
 };
 
-class Form extends React.Component {
+class DatabaseInput extends React.Component {
   state = {
     statement: null
   };
@@ -92,8 +92,8 @@ class Form extends React.Component {
   }
 }
 
-Form.propTypes = {
+DatabaseInput.propTypes = {
   submitHandler: PropTypes.func
 };
 
-export default withStyles(styles)(Form);
+export default withStyles(styles)(DatabaseInput);
