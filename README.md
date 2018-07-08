@@ -1,4 +1,4 @@
-# testSQL [![Build Status](https://travis-ci.org/JoshuaLicense/react-testsql.svg?branch=master)](https://travis-ci.org/JoshuaLicense/react-testsql) [![Coverage Status](https://coveralls.io/repos/github/JoshuaLicense/react-testsql/badge.svg?branch=master)](https://coveralls.io/github/JoshuaLicense/react-testsql?branch=master) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE)
+# testSQL [![Build Status](https://travis-ci.org/JoshuaLicense/react-testsql.svg?branch=master)](https://travis-ci.org/JoshuaLicense/react-testsql) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE)
 
 > An dynamic tuition tool that aids the learning of SQL.
 
