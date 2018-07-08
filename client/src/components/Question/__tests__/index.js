@@ -111,6 +111,25 @@ describe("Question component", () => {
     // Expect the state to not change
     expect(component.state("activeQuestionSet")).toEqual(prevState);
   });
+
+  it("updates the questions when a new active question is detected", () => {
+    const activeQuestion = { ...questions[4], completed: true };
+
+    const allQuestions = [
+      questions[0],
+      questions[1],
+      questions[2],
+      questions[3],
+      activeQuestion
+    ];
+
+    component.setProps({
+      activeQuestion,
+      allQuestions
+    });
+
+    expect(component.state("activeQuestionIndex")).toEqual(2);
+  });
 });
 
 it("shows the active question", () => {
