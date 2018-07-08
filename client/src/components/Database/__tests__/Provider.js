@@ -2,9 +2,11 @@ import React from "react";
 import { shallow } from "enzyme";
 import Provider from "../Provider";
 
-import getDatabase, { saveDatabase } from "../helpers";
+import getDatabase from "../utils/getDatabase";
+import saveDatabase from "../utils/saveDatabase";
 
-jest.mock("../helpers");
+jest.mock("../utils/getDatabase");
+jest.mock("../utils/saveDatabase");
 
 const database = new ArrayBuffer(8);
 

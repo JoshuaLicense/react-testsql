@@ -2,7 +2,8 @@ import React from "react";
 
 import SQL from "sql.js";
 
-import getDatabase, { saveDatabase } from "./helpers";
+import getDatabase from "./utils/getDatabase";
+import saveDatabase from "./utils/saveDatabase";
 
 import DatabaseContext from "./Context";
 
