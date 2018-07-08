@@ -32,13 +32,12 @@ export default class Layout extends React.Component {
           {({ user, isLoaded }) =>
             isLoaded ? (
               <DatabaseContext.Consumer>
-                {({ database, loadDatabase, updateDatabase }) =>
+                {({ database, loadDatabase }) =>
                   database ? (
                     <Main
                       user={user}
                       currentDatabase={database}
                       loadDatabase={loadDatabase}
-                      updateDatabase={updateDatabase}
                       sidebarToggleHandler={this.toggleSidebar}
                       openSidebar={openSidebar}
                     />

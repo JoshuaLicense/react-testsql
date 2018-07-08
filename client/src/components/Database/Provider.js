@@ -18,40 +18,22 @@ export default class Provider extends React.Component {
 
     Object.assign(newDatabase, database, { lastModified: Date.now() });
 
+    // Save the database in the cache, for persistence without reliance of the server.
     saveDatabase(newDatabase);
 
-    this.setState(state => ({ database: newDatabase }));
+    this.setState({ database: newDatabase });
 
-    return Promise.resolve();
-  };
-
-  updateDatabase = typedArray => {
-    const database = new SQL.Database(typedArray);
-    // Create a new object with a new lastModified date.
-    // This ensures that when the database object is passed as props,
-    // the old reference isn't updated and therefore the component is unable to detect change
-    const newDatabase = Object.create(database.__proto__);
-
-    Object.assign(newDatabase, database, { lastModified: Date.now() });
-
-    saveDatabase(newDatabase);
-
-    this.setState(state => ({ database: newDatabase }));
-
+    // Allow promise chaining.
     return Promise.resolve();
   };
 
   state = {
     database: null,
-    loadDatabase: this.loadDatabase,
-    updateDatabase: this.updateDatabase
+    loadDatabase: this.loadDatabase
   };
 
-  componentDidMount() {
-    return getDatabase().then(database => {
-      this.updateDatabase(database);
-    });
-  }
+  componentDidMount = () =>
+    getDatabase().then(database => this.loadDatabase(database));
 
   render() {
     return (

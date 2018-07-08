@@ -89,7 +89,7 @@ export default class Main extends React.Component {
   changeQuestion = question => this.setState({ activeQuestion: question });
 
   runQuery = async sql => {
-    const { currentDatabase, updateDatabase } = this.props;
+    const { currentDatabase, loadDatabase } = this.props;
 
     const { activeQuestion, allQuestions } = this.state;
 
@@ -103,7 +103,7 @@ export default class Main extends React.Component {
 
       // Check if any database actions were ran, if so only update the database.
       if (currentDatabase.getRowsModified()) {
-        updateDatabase(currentDatabase);
+        loadDatabase(currentDatabase);
       } else {
         this.setState({
           results
