@@ -7,21 +7,4 @@ const UserContext = React.createContext({
   refresh: () => {}
 });
 
-/*
-export const withUserContext = Component => props => (
-  <UserContext.Consumer>
-    {user => <Component {...props} user={user} />}
-  </UserContext.Consumer>
-);*/
-
-export function withUserContext(Component) {
-  return function withUserContext2(props) {
-    return (
-      <UserContext.Consumer>
-        {user => <Component {...props} user={user} />}
-      </UserContext.Consumer>
-    );
-  };
-}
-
 export default UserContext;
