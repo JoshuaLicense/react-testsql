@@ -45,11 +45,8 @@ export default class Main extends React.Component {
     results: null
   };
 
-  changeFeedback = object => {
-    const feedback = { ...object, timestamp: new Date().getTime() };
-
-    this.setState({ feedback });
-  };
+  changeFeedback = feedback =>
+    this.setState({ ...feedback, timestamp: new Date().getTime() });
 
   componentDidMount = async () => {
     let allQuestions;
