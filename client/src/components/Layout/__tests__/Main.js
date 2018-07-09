@@ -32,7 +32,20 @@ describe("the Main component", () => {
     );
   });
 
-  it("works", () => {
-    console.log("works");
+  it("alters the state to add a feedback item", () => {
+    const feedback = { message: "Test Feedback", variant: "error" };
+
+    component.instance().changeFeedback(feedback);
+
+    component.update();
+
+    expect(component.state("feedback")).toHaveProperty(
+      "message",
+      "Test Feedback"
+    );
+
+    expect(component.state("feedback")).toHaveProperty("variant", "error");
+
+    expect(component.state("feedback")).toHaveProperty("timestamp");
   });
 });
