@@ -2,7 +2,7 @@ import React from "react";
 
 import { shallow } from "enzyme";
 
-import Main from "../index";
+import Main from "../Main";
 
 describe("the Main component", () => {
   let component,
