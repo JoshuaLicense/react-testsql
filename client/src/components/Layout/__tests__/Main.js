@@ -26,6 +26,7 @@ describe("the Main component", () => {
     userMock = {};
 
     currentDatabaseMock = {
+      filename: "Current database mock filename",
       export: jest.fn(() => {})
     };
 
@@ -58,6 +59,41 @@ describe("the Main component", () => {
     expect(component.state("feedback")).toHaveProperty("variant", "error");
 
     expect(component.state("feedback")).toHaveProperty("timestamp");
+  });
+
+  it("builds a new question set when the database changes", async () => {
+    // Trigger the componentDidMount().
+    const questions = [
+      {
+        mockObjectThree: "Mock question 3"
+      },
+      {
+        mockObjectFour: "Mock question 4"
+      }
+    ];
+
+    buildQuestions.mockResolvedValueOnce(questions);
+
+    const currentDatabaseMock2 = {
+      filename: "Current database 2 mock filename",
+      export: jest.fn(() => {})
+    };
+
+    component = component.setProps({ currentDatabase: currentDatabaseMock2 });
+
+    await flushPromises();
+
+    expect(component.state("allQuestions")).toEqual(questions);
+    expect(component.state("activeQuestion")).toEqual(questions[0]);
+  });
+
+  it("changes question when a new active question is supplied", () => {
+    // Supply a new active question to the changeQuestion() function.
+    const mockActiveQuestion = { mockQuestion: "Mock Question" };
+
+    component.instance().changeQuestion(mockActiveQuestion);
+
+    expect(component.state("activeQuestion")).toEqual(mockActiveQuestion);
   });
 });
 
@@ -99,7 +135,10 @@ it("loads the a new set of user questions for the group they are in and saves th
     group: null
   };
 
-  buildQuestions.mockResolvedValueOnce(questions);
+  // Reset the mock implementations just incase...
+  buildQuestions.mockReset();
+
+  buildQuestions.mockResolvedValue(questions);
 
   const component = shallow(<Main user={user} />);
 
@@ -118,6 +157,9 @@ it("builds a set of questions for a user not part of a group", async () => {
       mockObjectTwo: "Mock question 2"
     }
   ];
+
+  // Reset the mock implementations just incase...
+  buildQuestions.mockReset();
 
   buildQuestions.mockResolvedValueOnce(questions);
 
