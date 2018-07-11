@@ -104,15 +104,9 @@ export default class Main extends React.Component {
       if (currentDatabase.getRowsModified()) {
         loadDatabase(currentDatabase);
       } else {
-        this.setState({
-          results
-        });
+        this.setState({ results });
       }
-    } catch (Error) {
-      return this.changeFeedback({ message: Error.message, variant: "error" });
-    }
 
-    try {
       if (checkAnswer(currentDatabase, sql, activeQuestion)) {
         await this.completeCurrentQuestion(sql);
 
@@ -158,11 +152,9 @@ export default class Main extends React.Component {
 
     const results = currentDatabase.exec(`SELECT * FROM ${name} LIMIT 10`);
 
-    this.setState(state => ({
-      results
-    }));
+    this.setState({ results });
 
-    this.props.sidebarToggleHandler();
+    return this.props.sidebarToggleHandler();
   };
 
   render() {
