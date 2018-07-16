@@ -193,13 +193,13 @@ export default class Main extends React.Component {
             )}
           </Section>
 
-          <Section title="Statement" gutters>
+          <Section title="Statement" padding="16px">
             <LoadableInputForm submitHandler={this.runQuery} />
           </Section>
 
           {results &&
             results.map((result, i) => (
-              <Section title="Results" key={i} gutters>
+              <Section title="Results" key={i} padding="16px">
                 <OutputTable columns={result.columns} values={result.values} />
               </Section>
             ))}
