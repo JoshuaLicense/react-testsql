@@ -1,31 +1,30 @@
 import React from "react";
 
-import { withStyles } from "@material-ui/core/styles";
-import classNames from "classnames";
-
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 
-const styles = theme => ({
+const style = {
   heading: {
     fontWeight: 500
   },
   seperator: {
-    margin: theme.spacing.unit * 2
+    margin: "16px"
   },
   paper: {
     overflow: "auto"
   },
   gutters: {
-    padding: theme.spacing.unit * 2
+    padding: "16px"
   }
-});
+};
 
 const Section = props => {
-  const { classes, title, children, gutters, ...other } = props;
+  const { title, children, padding = 0, ...other } = props;
+
+  const paperStyle = { ...style.paper, padding };
 
   return (
-    <div className={classes.seperator} {...other}>
+    <div style={style.seperator} {...other}>
       <Typography
         variant="body2"
         color="textSecondary"
@@ -34,14 +33,11 @@ const Section = props => {
       >
         {title}
       </Typography>
-      <Paper
-        className={classNames(gutters && classes.gutters, classes.paper)}
-        elevation={2}
-      >
+      <Paper style={paperStyle} elevation={2}>
         {children}
       </Paper>
     </div>
   );
 };
 
-export default withStyles(styles)(Section);
+export default Section;
