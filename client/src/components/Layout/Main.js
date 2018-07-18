@@ -7,7 +7,7 @@ import OutputTable from "../Database/Output";
 
 import Feedback from "../Feedback";
 
-import checkAnswer, { IncorrectAnswer } from "../Question/answer"; // eslint-disable-line no-unused-vars
+import checkAnswer from "../Question/answer";
 
 import { saveProgress } from "../Group/API";
 
@@ -18,9 +18,7 @@ import buildQuestions from "../../questions/utils/buildQuestions";
 
 const LoadableInputForm = Loadable({
   loader: () => import("../Database/Input" /* webpackChunkName: "inputForm" */),
-  loading() {
-    return <div>Loading...</div>;
-  }
+  loading: () => <div>Loading...</div>
 });
 
 const containerStyle = {
@@ -95,13 +93,14 @@ export default class Main extends React.Component {
     // Defaultly set the results to blank.
     // setState() are grouped so calling this shouldn't update,
     // the actual state if called further in the function.
-    this.setState({ results: [] });
+    this.setState({ results: null });
 
     try {
       const results = currentDatabase.exec(sql);
 
       // Check if any database actions were ran, if so only update the database.
       if (currentDatabase.getRowsModified()) {
+        // TODO: Make this function name a saveDatabase()...
         loadDatabase(currentDatabase);
       } else {
         this.setState({ results });
