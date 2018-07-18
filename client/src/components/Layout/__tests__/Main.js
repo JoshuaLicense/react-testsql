@@ -5,10 +5,14 @@ import { shallow } from "enzyme";
 import Main from "../Main";
 
 import { saveProgress } from "../../Group/API";
+import checkAnswer from "../../Question/answer";
 import buildQuestions from "../../../questions/utils/buildQuestions";
+import DatabaseOutput from "../../Database/Output";
+import Question from "../../Question";
 
 jest.mock("../../Group/API");
 jest.mock("../../../questions/utils/buildQuestions");
+jest.mock("../../Question/answer");
 
 buildQuestions.mockResolvedValue([{}]);
 saveProgress.mockResolvedValue(true);
@@ -27,6 +31,8 @@ describe("the Main component", () => {
 
     currentDatabaseMock = {
       filename: "Current database mock filename",
+      exec: jest.fn(() => {}),
+      getRowsModified: jest.fn(),
       export: jest.fn(() => {})
     };
 
@@ -59,6 +65,164 @@ describe("the Main component", () => {
     expect(component.state("feedback")).toHaveProperty("variant", "error");
 
     expect(component.state("feedback")).toHaveProperty("timestamp");
+  });
+
+  describe("runQuery()", () => {
+    it("resets the results back to null", () => {
+      // Mock some example results.
+      const resultsMock = [{ columns: [], values: [] }];
+
+      component = component.setState({ results: resultsMock });
+
+      // Call the run query but route so new results are used.
+      currentDatabaseMock.getRowsModified.mockReturnValueOnce(1);
+
+      component.instance().runQuery('SELECT "Example Query";');
+
+      expect(component.state("results")).toBeNull();
+    });
+
+    it("saves the database when rows are modified", () => {
+      // Mock some example results.
+      const resultsMock = [{ columns: [], values: [] }];
+
+      component = component.setState({ results: resultsMock });
+
+      // Call the run query but route so new results are used.
+      currentDatabaseMock.getRowsModified.mockReturnValueOnce(1);
+
+      component.instance().runQuery('SELECT "Example Query";');
+
+      expect(loadDatabaseMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("saves progress on a correct answer", async () => {
+      checkAnswer.mockReturnValueOnce(true);
+
+      // Mock the changeFeedback method.
+      component.instance().completeCurrentQuestion = jest
+        .fn()
+        .mockResolvedValue(true);
+
+      component.instance().runQuery('SELECT "Example Query";');
+
+      await flushPromises();
+
+      expect(
+        component.instance().completeCurrentQuestion
+      ).toHaveBeenCalledTimes(1);
+      expect(saveProgress).toHaveBeenCalledTimes(1);
+    });
+
+    it("throws an Error exception when an incorrect answer", () => {
+      const errorMessage = "Incorrect Answer";
+      checkAnswer.mockImplementationOnce(() => {
+        throw new Error(errorMessage);
+      });
+
+      // Mock the changeFeedback method.
+      component.instance().changeFeedback = jest.fn();
+
+      component.instance().runQuery('SELECT "Example Query";');
+
+      expect(
+        component.instance().changeFeedback.mock.calls[0][0].message
+      ).toEqual(errorMessage);
+    });
+  });
+
+  it("marks the current question as completed", () => {
+    // Update the state to make sure we guarantee it is what is expected.
+    let allQuestionsMock = [
+      {
+        testProperty1: "testValue1"
+      },
+      {
+        testProperty2: "testValue2"
+      }
+    ];
+
+    const activeQuestionMock = allQuestionsMock[1];
+
+    component = component.setState({
+      activeQuestion: activeQuestionMock,
+      allQuestions: allQuestionsMock
+    });
+
+    // Mock the methods that are called inside completeCurrentQuestion(), to isolate it.
+    component.instance().changeFeedback = jest.fn();
+
+    // Call the actual method.
+    component.instance().completeCurrentQuestion('Select "Example SQL";');
+
+    const completedQuestionMock = {
+      testProperty2: "testValue2",
+      completed: true
+    };
+
+    allQuestionsMock[1] = completedQuestionMock;
+
+    component.update();
+
+    expect(component.state("activeQuestion")).toEqual(completedQuestionMock);
+    expect(component.state("allQuestions")).toEqual(allQuestionsMock);
+  });
+
+  it("queries the database to fetch the schema", () => {
+    const schemaMock = [{ columns: [], values: [] }];
+
+    // Mock the database call to return the schema mock.
+    currentDatabaseMock.exec.mockImplementation(() => schemaMock);
+
+    // Call the function.
+    component.instance().displaySchema("Test table");
+
+    // Update the component so the state can update inside the displaySchema call.
+    component.update();
+
+    // Expect the database to execute a query to fetch the schema.
+    expect(currentDatabaseMock.exec).toHaveBeenCalledTimes(1);
+
+    // Expect the state results property to be what was returned from the currentDatabase mock.
+    expect(component.state("results")).toEqual(schemaMock);
+  });
+
+  it("renders the results when the state recieves them", () => {
+    // Right now the results section should be hidden, as the state for results is empty.
+    expect(component.state("results")).toBeNull();
+
+    expect(component.find(DatabaseOutput).length).toBeFalsy();
+
+    // Once some results are injected the database output should be shown.
+    const results = [
+      {
+        columns: [],
+        values: []
+      }
+    ];
+    component = component.setState({ results });
+
+    expect(component.state("results")).toEqual(results);
+
+    expect(component.find(DatabaseOutput).length).toBe(1);
+  });
+
+  it("renders the Question component once all the questions are loaded", () => {
+    // The Questions component shouldn't be rendered until all the questions are loaded.
+    // Set the allQuestion state property back to null, as they'd get loaded in the componentDidMount() on shallow()
+    component = component.setState({ allQuestions: null });
+
+    // and expect it to be false/hidden
+    expect(component.find(Question).length).toBeFalsy();
+
+    // Then mock some allQuestions state
+    const allQuestions = [{}];
+
+    component = component.setState({ allQuestions });
+
+    expect(component.state("allQuestions")).toEqual(allQuestions);
+
+    expect(component.find(Question).length).toBe(1);
   });
 
   it("builds a new question set when the database changes", async () => {
