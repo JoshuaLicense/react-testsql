@@ -14,8 +14,8 @@ jest.mock("../../Group/API");
 jest.mock("../../../questions/utils/buildQuestions");
 jest.mock("../../Question/answer");
 
-buildQuestions.mockResolvedValue([{}]);
-saveProgress.mockResolvedValue(true);
+buildQuestions.mockImplementation(() => Promise.resolve([{}]));
+saveProgress.mockImplementation(() => Promise.resolve(true));
 
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
@@ -102,7 +102,7 @@ describe("the Main component", () => {
       // Mock the changeFeedback method.
       component.instance().completeCurrentQuestion = jest
         .fn()
-        .mockResolvedValue(true);
+        .mockImplementation(() => Promise.resolve(true));
 
       component.instance().runQuery('SELECT "Example Query";');
 
@@ -236,7 +236,7 @@ describe("the Main component", () => {
       }
     ];
 
-    buildQuestions.mockResolvedValueOnce(questions);
+    buildQuestions.mockImplementationOnce(() => Promise.resolve(questions));
 
     const currentDatabaseMock2 = {
       filename: "Current database 2 mock filename",
@@ -302,7 +302,7 @@ it("loads the a new set of user questions for the group they are in and saves th
   // Reset the mock implementations just incase...
   buildQuestions.mockReset();
 
-  buildQuestions.mockResolvedValue(questions);
+  buildQuestions.mockImplementation(() => Promise.resolve(questions));
 
   const component = shallow(<Main user={user} />);
 
@@ -325,7 +325,7 @@ it("builds a set of questions for a user not part of a group", async () => {
   // Reset the mock implementations just incase...
   buildQuestions.mockReset();
 
-  buildQuestions.mockResolvedValueOnce(questions);
+  buildQuestions.mockImplementationOnce(() => Promise.resolve(questions));
 
   const component = shallow(<Main user={{}} />);
 

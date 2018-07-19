@@ -21,10 +21,12 @@ describe("the getDatabase helper function", () => {
     localStorage.getItem.mockImplementation(() => null);
 
     // Mock the fetching of the default database.
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      arrayBuffer: () => Promise.resolve(new ArrayBuffer(8))
-    });
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        arrayBuffer: () => Promise.resolve(new ArrayBuffer(8))
+      })
+    );
 
     getDatabase().then(typedArray => expect(typedArray).toBeTruthy());
 
