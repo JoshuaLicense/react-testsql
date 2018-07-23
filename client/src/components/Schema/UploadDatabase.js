@@ -48,7 +48,7 @@ class UploadDatabase extends React.Component {
                 accept=".db,.sqlite"
                 onChange={this.handleUpload}
                 style={displayNone}
-                id="uploadfile"
+                id="uploadFile"
                 type="file"
               />
 
