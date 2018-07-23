@@ -21,9 +21,7 @@ export default class Provider extends React.Component {
     refresh: this.refresh
   };
 
-  componentDidMount() {
-    return this.refresh();
-  }
+  componentDidMount = () => this.refresh();
 
   render() {
     return (

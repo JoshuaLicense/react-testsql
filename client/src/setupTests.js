@@ -14,16 +14,16 @@ global.document.createRange = () => {
 };
 
 const localStorageMock = {
-  getItem: jest.fn(() => null),
-  setItem: jest.fn(() => null),
+  getItem: jest.fn(),
+  setItem: jest.fn(),
   clear: jest.fn()
 };
 
 global.localStorage = localStorageMock;
 
 const sessionStorageMock = {
-  getItem: jest.fn(() => null),
-  setItem: jest.fn(() => null),
+  getItem: jest.fn(),
+  setItem: jest.fn(),
   clear: jest.fn()
 };
 

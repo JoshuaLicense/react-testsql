@@ -1,6 +1,6 @@
 {
   "name": "react-testsql",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "homepage": "https://joshualicense.github.io/react-testsql",
   "proxy": "http://localhost:3001/",
@@ -37,6 +37,8 @@
     "client/node_modules"
   ],
   "devDependencies": {
+    "@types/enzyme": "^3.1.11",
+    "@types/jest": "^23.1.4",
     "concurrently": "^3.5.1",
     "eslint": "^4.9.0",
     "eslint-config-airbnb": "^16.1.0",

@@ -2,8 +2,7 @@ import React from "react";
 
 const DatabaseContext = React.createContext({
   database: null,
-  newDatabase: () => {},
-  updateDatabase: () => {}
+  loadDatabase: () => {}
 });
 
 export default DatabaseContext;

@@ -10,9 +10,7 @@ import Loadable from "react-loadable";
 const LoadableDatabaseProvider = Loadable({
   loader: () =>
     import("./components/Database/Provider" /* webpackChunkName: "database" */),
-  loading() {
-    return <div>Loading...</div>;
-  }
+  loading: () => <div>Loading...</div>
 });
 
 class App extends Component {

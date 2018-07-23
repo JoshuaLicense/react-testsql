@@ -17,29 +17,27 @@ export default class Layout extends React.Component {
     openSidebar: false
   };
 
-  toggleSidebar = () => {
+  handleToggleSidebar = () =>
     this.setState(state => ({ openSidebar: !state.openSidebar }));
-  };
 
   render() {
     const { openSidebar } = this.state;
 
     return (
       <div style={containerStyle}>
-        <Header sidebarToggleHandler={this.toggleSidebar} />
+        <Header sidebarToggleHandler={this.handleToggleSidebar} />
 
         <UserContext.Consumer>
           {({ user, isLoaded }) =>
             isLoaded ? (
               <DatabaseContext.Consumer>
-                {({ database, loadDatabase, updateDatabase }) =>
+                {({ database, loadDatabase }) =>
                   database ? (
                     <Main
                       user={user}
                       currentDatabase={database}
                       loadDatabase={loadDatabase}
-                      updateDatabase={updateDatabase}
-                      sidebarToggleHandler={this.toggleSidebar}
+                      sidebarToggleHandler={this.handleToggleSidebar}
                       openSidebar={openSidebar}
                     />
                   ) : (

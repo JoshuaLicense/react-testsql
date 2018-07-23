@@ -15,9 +15,7 @@ import { logout } from "./API";
 import Tooltip from "@material-ui/core/Tooltip";
 
 class LoggedIn extends React.Component {
-  handleLogout = () => {
-    return logout().then(() => this.props.refreshUserContext());
-  };
+  handleLogout = () => logout().then(() => this.props.refreshUserContext());
 
   render() {
     const { user, refreshUserContext } = this.props;

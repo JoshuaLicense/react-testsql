@@ -7,7 +7,7 @@ import OutputTable from "../Database/Output";
 
 import Feedback from "../Feedback";
 
-import checkAnswer, { IncorrectAnswer } from "../Question/answer"; // eslint-disable-line no-unused-vars
+import checkAnswer from "../Question/answer";
 
 import { saveProgress } from "../Group/API";
 
@@ -18,9 +18,7 @@ import buildQuestions from "../../questions/utils/buildQuestions";
 
 const LoadableInputForm = Loadable({
   loader: () => import("../Database/Input" /* webpackChunkName: "inputForm" */),
-  loading() {
-    return <div>Loading...</div>;
-  }
+  loading: () => <div>Loading...</div>
 });
 
 const containerStyle = {
@@ -45,11 +43,10 @@ export default class Main extends React.Component {
     results: null
   };
 
-  changeFeedback = object => {
-    const feedback = { ...object, timestamp: new Date().getTime() };
-
-    this.setState({ feedback });
-  };
+  changeFeedback = feedback =>
+    this.setState({
+      feedback: { ...feedback, timestamp: new Date().getTime() }
+    });
 
   componentDidMount = async () => {
     let allQuestions;
@@ -89,31 +86,26 @@ export default class Main extends React.Component {
   changeQuestion = question => this.setState({ activeQuestion: question });
 
   runQuery = async sql => {
-    const { currentDatabase, updateDatabase } = this.props;
+    const { currentDatabase, loadDatabase } = this.props;
 
     const { activeQuestion, allQuestions } = this.state;
 
     // Defaultly set the results to blank.
     // setState() are grouped so calling this shouldn't update,
     // the actual state if called further in the function.
-    this.setState({ results: [] });
+    this.setState({ results: null });
 
     try {
       const results = currentDatabase.exec(sql);
 
       // Check if any database actions were ran, if so only update the database.
       if (currentDatabase.getRowsModified()) {
-        updateDatabase(currentDatabase);
+        // TODO: Make this function name a saveDatabase()...
+        loadDatabase(currentDatabase);
       } else {
-        this.setState({
-          results
-        });
+        this.setState({ results });
       }
-    } catch (Error) {
-      return this.changeFeedback({ message: Error.message, variant: "error" });
-    }
 
-    try {
       if (checkAnswer(currentDatabase, sql, activeQuestion)) {
         await this.completeCurrentQuestion(sql);
 
@@ -159,11 +151,9 @@ export default class Main extends React.Component {
 
     const results = currentDatabase.exec(`SELECT * FROM ${name} LIMIT 10`);
 
-    this.setState(state => ({
-      results
-    }));
+    this.setState({ results });
 
-    this.props.sidebarToggleHandler();
+    return this.props.sidebarToggleHandler();
   };
 
   render() {
@@ -202,13 +192,13 @@ export default class Main extends React.Component {
             )}
           </Section>
 
-          <Section title="Statement" gutters>
+          <Section title="Statement" padding="16px">
             <LoadableInputForm submitHandler={this.runQuery} />
           </Section>
 
           {results &&
             results.map((result, i) => (
-              <Section title="Results" key={i} gutters>
+              <Section title="Results" key={i} padding="16px">
                 <OutputTable columns={result.columns} values={result.values} />
               </Section>
             ))}
