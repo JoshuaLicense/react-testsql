@@ -18,13 +18,13 @@ Make sure you have **git**, and **yarn** or **npm** installed.
     `yarn start`
 1.  Open `localhost:3000` in your browser.
 
-### Built using
+## Built using
 
 - [ReactJS](https://github.com/facebook/react/)
 - [create-react-app](https://github.com/facebook/create-react-app)
 - [Flow](https://github.com/facebook/flow)
 - [MaterialUI](https://github.com/mui-org/material-ui)
 
-### License
+## License
 
 See [here](https://github.com/JoshuaLicense/react-testsql/blob/master/LICENSE).
