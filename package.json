@@ -23,11 +23,10 @@
     "passport-local": "^1.0.0"
   },
   "scripts": {
-    "start": "concurrently \"yarn server\" \"yarn client\"",
-    "start-dev": "concurrently \"yarn dev-server\" \"yarn client\"",
-    "server": "node server.js",
-    "dev-server": "nodemon server.js",
-    "client": "node start-client.js",
+    "start": "node server.js",
+    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
+    "server": "nodemon server.js",
+    "client": "cd client && yarn start",
     "install-all": "yarn install && cd client && yarn install",
     "test": "cd client && yarn test",
     "heroku-postbuild": "cd client && yarn install --production && yarn build"
