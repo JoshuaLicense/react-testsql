@@ -8,7 +8,7 @@ const PRIMARY_KEY = 5; // eslint-disable-line no-unused-vars
 const getColumns = (
   db,
   tables,
-  { x = 1, type = "varchar", notnull = null, sameTable = true } = {}
+  { x = 1, type, notnull, sameTable = true } = {}
 ) => {
   const result = [];
 
@@ -16,13 +16,11 @@ const getColumns = (
     const [{ values: columns }] = db.exec(`PRAGMA table_info(${tables[i]})`);
 
     for (let j = 0; j < columns.length && x > result.length; ++j) {
-      if (notnull !== null && columns[j][COLUMN_NOT_NULL] !== +notnull) {
+      if (notnull && columns[j][COLUMN_NOT_NULL] !== +notnull) {
         continue;
       }
 
-      if (columns[j][COLUMN_NAME].indexOf(type) !== -1) {
-        result.push({ table: tables[i], column: columns[j][COLUMN_NAME] });
-
+      if (type && columns[j][COLUMN_TYPE].indexOf(type) === -1) {
         continue;
       }
 

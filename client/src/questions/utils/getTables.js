@@ -1,4 +1,4 @@
-const getTables = (db, x = false) => {
+const getTables = (db, x = null) => {
   const [{ values: tables }] = db.exec(
     `SELECT "tbl_name" FROM "sqlite_master" WHERE "type" = 'table' AND "tbl_name" != "ts-questions" ORDER BY RANDOM() ${
       x ? `LIMIT ${x}` : ""

@@ -14,7 +14,7 @@ const whereConjunction = {
       tables,
       {
         x: 3,
-        type: "varchar"
+        type: "VARCHAR"
       }
     );
 

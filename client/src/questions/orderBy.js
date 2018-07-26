@@ -8,7 +8,7 @@ const orderBy = {
 
     const [{ table, column: column_1 }] = getColumns(db, tables, {
       x: 1,
-      type: "int"
+      type: "INT"
     });
 
     return {
