@@ -8,6 +8,7 @@ import orderBy from "./orderBy";
 import orderByMultiple from "./orderByMultiple";
 import selectNull from "./selectNull";
 import limitAndOrder from "./limitAndOrder";
+import like from "./like";
 
 export default [
   selectAll,
@@ -19,5 +20,6 @@ export default [
   orderBy,
   orderByMultiple,
   selectNull,
-  limitAndOrder
+  limitAndOrder,
+  like
 ];
