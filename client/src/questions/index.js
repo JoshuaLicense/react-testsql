@@ -9,6 +9,7 @@ import orderByMultiple from "./orderByMultiple";
 import selectNull from "./selectNull";
 import limitAndOrder from "./limitAndOrder";
 import like from "./like";
+import between from "./between";
 
 export default [
   selectAll,
@@ -22,4 +23,5 @@ export default [
   selectNull,
   limitAndOrder,
   like
+  between
 ];
