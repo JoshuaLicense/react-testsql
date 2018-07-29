@@ -10,6 +10,7 @@ import selectNull from "./selectNull";
 import limitAndOrder from "./limitAndOrder";
 import like from "./like";
 import between from "./between";
+import minMaxAvg from "./minMaxAvg";
 
 export default [
   selectAll,
@@ -22,6 +23,7 @@ export default [
   orderByMultiple,
   selectNull,
   limitAndOrder,
-  like
-  between
+  like,
+  between,
+  minMaxAvg
 ];
