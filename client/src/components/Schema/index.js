@@ -40,7 +40,9 @@ class Schema extends React.Component {
     schema: []
   };
 
-  componentDidMount = () => this.load();
+  componentDidMount() {
+    this.load();
+  }
 
   componentDidUpdate(prevProps) {
     const { currentDatabase } = this.props;
@@ -66,21 +68,25 @@ class Schema extends React.Component {
     let [{ values: tableNames }] = currentDatabase.exec(sql);
 
     // tableNames are returned as [[0] => "Tbl_name", [1] => "Tbl_name"]]
-    const schema = tableNames.map(([tableName]) => {
-      const [
-        {
-          values: [[count]]
-        }
-      ] = currentDatabase.exec(`SELECT COUNT(*) FROM ${tableName}`);
+    // Promisify it in an attempt to make this faster.
+    tableNames.map(([tableName]) =>
+      new Promise(resolve => {
+        const [
+          {
+            values: [[count]]
+          }
+        ] = currentDatabase.exec(`SELECT COUNT(*) FROM ${tableName}`);
 
-      return {
-        name: tableName,
-        count
-      };
-    });
-
-    // Now they are in the format ["tbl_name", "tbl_name_2", ]
-    this.setState({ schema });
+        return resolve({
+          name: tableName,
+          count
+        });
+      }).then(schemaObj =>
+        this.setState(prevState => ({
+          schema: [schemaObj, ...prevState.schema]
+        }))
+      )
+    );
   };
 
   handleToggleSidebar = () => this.props.toggleSidebarHandler();
