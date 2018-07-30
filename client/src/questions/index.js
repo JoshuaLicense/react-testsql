@@ -11,6 +11,7 @@ import limitAndOrder from "./limitAndOrder";
 import like from "./like";
 import between from "./between";
 import minMaxAvg from "./minMaxAvg";
+import count from "./count";
 
 export default [
   selectAll,
@@ -25,5 +26,6 @@ export default [
   limitAndOrder,
   like,
   between,
-  minMaxAvg
+  minMaxAvg,
+  count
 ];
