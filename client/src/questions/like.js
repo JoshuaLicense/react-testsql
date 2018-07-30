@@ -16,7 +16,7 @@ const like = {
     // Three options get a random number between 0 and 2.
     let random = getRandomInt(2);
 
-    let question = `Display all the ${table}'s where the ${column} `;
+    let question = `Display all the **${table}** where the **${column}** `;
     let answer = `SELECT * FROM ${table} WHERE ${column} LIKE `;
 
     if (random === 1) {
