@@ -169,7 +169,7 @@ describe("getColumns()", () => {
       }
     ]);
 
-    expect(getColumns(mockDB, tables, { type: "int" })).toEqual([
+    expect(getColumns(mockDB, tables, { type: "INTEGER" })).toEqual([
       {
         table: "Employees",
         column: "EmployeeID"

@@ -16,7 +16,10 @@ const getColumns = (
     const [{ values: columns }] = db.exec(`PRAGMA table_info(${tables[i]})`);
 
     for (let j = 0; j < columns.length && x > result.length; ++j) {
-      if (notnull && columns[j][COLUMN_NOT_NULL] !== +notnull) {
+      if (
+        typeof notnull !== "undefined" &&
+        columns[j][COLUMN_NOT_NULL] !== +notnull
+      ) {
         continue;
       }
 
