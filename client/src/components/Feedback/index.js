@@ -62,22 +62,28 @@ class Feedback extends React.Component {
   };
 
   componentDidUpdate(prevProps) {
-    // If the message has changed, open the feedback!
-    // If a new message is recieved.
-    if (prevProps.timestamp || this.props.timestamp !== prevProps.timestamp) {
-      this.queue.push({
-        message: this.props.message,
-        variant: this.props.variant,
-        timestamp: this.props.timestamp
-      });
+    // Skip if no feedback object is passed OR is the same as the previous object.
+    if (
+      !this.props.timestamp ||
+      (typeof prevProps.timestamp !== "undefined" &&
+        this.props.timestamp === prevProps.timestamp)
+    ) {
+      return;
+    }
 
-      if (this.state.open) {
-        // immediately begin dismissing current message
-        // to start showing new one
-        this.setState({ open: false });
-      } else {
-        this.processQueue();
-      }
+    // If a new feedback object is passed, and isn't the same as the previous object injected
+    this.queue.push({
+      message: this.props.message,
+      variant: this.props.variant,
+      timestamp: this.props.timestamp
+    });
+
+    if (this.state.open) {
+      // immediately begin dismissing current message
+      // to start showing new one
+      return this.setState({ open: false });
+    } else {
+      return this.processQueue();
     }
   }
 
