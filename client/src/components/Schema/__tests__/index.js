@@ -43,11 +43,13 @@ describe("Schema component", () => {
   });
 
   it("loads all the schema detail", () => {
-    expect(component.state("schema")).toEqual([
-      { name: "Test table 1", count: 10 },
-      { name: "Test table 2", count: 10 },
-      { name: "Test table 3", count: 10 }
-    ]);
+    expect(component.state("schema")).toEqual(
+      expect.arrayContaining([
+        { name: "Test table 1", count: 10 },
+        { name: "Test table 2", count: 10 },
+        { name: "Test table 3", count: 10 }
+      ])
+    );
   });
 
   it("calls the prop to toggle the sidebar", () => {
