@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 
 import UserProvider from "./components/Auth/Provider";
 
@@ -13,16 +13,14 @@ const LoadableDatabaseProvider = Loadable({
   loading: () => <div>Loading...</div>
 });
 
-class App extends Component {
-  render() {
-    return (
-      <UserProvider>
-        <LoadableDatabaseProvider>
-          <Layout />
-        </LoadableDatabaseProvider>
-      </UserProvider>
-    );
-  }
-}
+const App = () => {
+  return (
+    <UserProvider>
+      <LoadableDatabaseProvider>
+        <Layout />
+      </LoadableDatabaseProvider>
+    </UserProvider>
+  );
+};
 
 export default App;
