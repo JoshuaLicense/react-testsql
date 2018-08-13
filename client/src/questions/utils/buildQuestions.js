@@ -3,7 +3,7 @@ const buildQuestions = async (database, forceRebuild = false) =>
     // Check the localStorage for any cached question sets
     const cachedQuestions = localStorage.getItem("__testSQL_Questions__");
 
-    if (cachedQuestions && !forceRebuild) {
+    if (cachedQuestions && !forceRebuild && false) {
       const decodedQuestions = JSON.parse(cachedQuestions);
 
       return resolve(decodedQuestions);
