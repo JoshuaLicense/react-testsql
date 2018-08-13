@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 
-const errorHandler = require("errorhandler");
+const errorhandler = require("errorhandler");
 
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
