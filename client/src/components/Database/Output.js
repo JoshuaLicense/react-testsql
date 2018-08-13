@@ -8,33 +8,20 @@ import TableRow from "@material-ui/core/TableRow";
 
 import PropTypes from "prop-types";
 
-const styles = {
-  padding: {
-    padding: "0.5rem"
-  },
-  rowHeight: {
-    height: "2rem"
-  }
-};
-
 const DatabaseOutput = ({ columns, values }) => (
-  <Table>
+  <Table padding="dense">
     <TableHead>
-      <TableRow style={styles.rowHeight}>
+      <TableRow>
         {columns.map((name, i) => (
-          <TableCell padding="none" key={i}>
-            {name}
-          </TableCell>
+          <TableCell key={i}>{name}</TableCell>
         ))}
       </TableRow>
     </TableHead>
     <TableBody>
       {values.map((row, i) => (
-        <TableRow key={i} style={styles.rowHeight}>
+        <TableRow key={i}>
           {row.map((value, i) => (
-            <TableCell padding="none" key={i}>
-              {value}
-            </TableCell>
+            <TableCell key={i}>{value}</TableCell>
           ))}
         </TableRow>
       ))}
