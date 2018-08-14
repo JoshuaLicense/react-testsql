@@ -261,7 +261,7 @@ describe("the Main component", () => {
   });
 });
 
-it("loads the an existing set of user questions for the group they are in", () => {
+it("loads the user's progress when in a group", () => {
   // Firstly update the user prop to mimic a user that is currently part of a group
   const questions = [
     {

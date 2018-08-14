@@ -1,14 +1,5 @@
-const buildQuestions = async (database, forceRebuild = false) =>
+const buildQuestions = async database =>
   new Promise((resolve, reject) => {
-    // Check the localStorage for any cached question sets
-    const cachedQuestions = localStorage.getItem("__testSQL_Questions__");
-
-    if (cachedQuestions && !forceRebuild && false) {
-      const decodedQuestions = JSON.parse(cachedQuestions);
-
-      return resolve(decodedQuestions);
-    }
-
     return import("../").then(({ default: _questions }) => {
       const questions = _questions.map(questionConfig => {
         const { func } = questionConfig;
@@ -35,9 +26,6 @@ const buildQuestions = async (database, forceRebuild = false) =>
           };
         }
       });
-
-      // Cache the built questions.
-      localStorage.setItem("__testSQL_Questions__", JSON.stringify(questions));
 
       return resolve(questions);
     });
