@@ -15,6 +15,7 @@ import Schema from "../Schema";
 
 import Loadable from "react-loadable";
 import buildQuestions from "../../questions/utils/buildQuestions";
+import saveQuestions from "../../questions/utils/saveQuestions";
 
 const LoadableInputForm = Loadable({
   loader: () => import("../Database/Input" /* webpackChunkName: "inputForm" */),
@@ -60,24 +61,37 @@ export default class Main extends React.Component {
     if (userGroup && userGroup.questions && userGroup.questions.length > 0) {
       allQuestions = this.props.user.group.questions;
     } else {
-      allQuestions = await buildQuestions(this.props.currentDatabase);
+      // Check the localStorage for any cached question sets
+      const cachedQuestions = localStorage.getItem("__testSQL_Questions__");
 
-      // If the user has no saved questions, then send all the generated questions up to the server.
-      // If the user is in a group. Save the progress.
-      if (userGroup) {
-        saveProgress(allQuestions);
+      if (cachedQuestions) {
+        allQuestions = JSON.parse(cachedQuestions);
+      } else {
+        allQuestions = await buildQuestions(this.props.currentDatabase);
+
+        // No group, no cache, so the questions got built, now save them locally.
+        saveQuestions(allQuestions);
+
+        // If the user has no saved questions, then send all the generated questions up to the server.
+        // If the user is in a group. Save the progress.
+        if (userGroup) {
+          saveProgress(allQuestions);
+        }
       }
     }
 
     this.setState({ allQuestions, activeQuestion: allQuestions[0] });
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     // If the database has changed, reconstruct the questions
     if (
       prevProps.currentDatabase.filename !== this.props.currentDatabase.filename
     ) {
-      buildQuestions(this.props.currentDatabase, true).then(allQuestions => {
+      buildQuestions(this.props.currentDatabase).then(allQuestions => {
+        // Save the questions locally.
+        saveQuestions(allQuestions);
+        // and alter the state.
         this.setState({ allQuestions, activeQuestion: allQuestions[0] });
       });
     }

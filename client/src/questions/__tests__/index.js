@@ -1,5 +1,3 @@
-import React from "react";
-
 import * as Questions from "../index";
 
 import SQL from "sql.js";
