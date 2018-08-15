@@ -70,10 +70,6 @@ app.use(passport.session());
 
 app.use(express.static(path.join("client", "build")));
 
-app.get("/", function(req, res) {
-  res.sendFile(path.join("client", "build", "index.html"));
-});
-
 // Routes
 app.post(
   "/register",
@@ -295,6 +291,10 @@ app.get(
     res.redirect(req.session.returnTo || "/");
   }
 );
+
+app.get("/*", (req, res) => {
+  res.sendFile(path.join("client", "build", "index.html"));
+});
 
 // Error Handler
 if (process.env.NODE_ENV === "development") {
