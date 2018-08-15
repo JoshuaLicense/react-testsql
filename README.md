@@ -13,7 +13,7 @@ Make sure you have **git**, and **yarn** or **npm** installed.
 1.  Change directory.  
     `cd react-testsql`
 1.  Install all depedancies for testSQL.  
-    `yarn install-all-dependancies`
+    `yarn`
 1.  Start testSQL.  
     `yarn start`
 1.  Open `localhost:3000` in your browser.
