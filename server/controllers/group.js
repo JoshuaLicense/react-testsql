@@ -78,6 +78,14 @@ exports.updateGroup = (req, res, next) => {
 };
 
 exports.saveProgress = (req, res, next) => {
+  if (!req.session.group) {
+    return res.status(400).json({
+      error: {
+        message: "You can only save progress when in a group."
+      }
+    });
+  }
+
   UserGroup.findOne(
     { group: req.session.group._id, user: req.user.id },
     (err, usergroup) => {

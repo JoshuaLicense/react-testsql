@@ -6,39 +6,40 @@ import Main from "../Main";
 
 import { saveProgress } from "../../Group/API";
 import checkAnswer from "../../Question/answer";
-import buildQuestions from "../../../questions/utils/buildQuestions";
 import DatabaseOutput from "../../Database/Output";
 import Question from "../../Question";
 
-jest.mock("../../Group/API");
-jest.mock("../../../questions/utils/buildQuestions");
-jest.mock("../../Question/answer");
+import saveQuestions from "../../../questions/utils/saveQuestions";
+import buildQuestions from "../../../questions/utils/buildQuestions";
 
-buildQuestions.mockImplementation(() => Promise.resolve([{}]));
+jest.mock("../../Group/API");
+jest.mock("../../Question/answer");
+jest.mock("../../../questions/utils/saveQuestions");
+jest.mock("../../../questions/utils/buildQuestions");
+
+buildQuestions.mockImplementation(() =>
+  Promise.resolve([{ q1: true }, { q2: true }])
+);
+
 saveProgress.mockImplementation(() => Promise.resolve(true));
+
+const currentDatabaseMock = {
+  filename: "Current database mock filename",
+  exec: jest.fn(() => {}),
+  getRowsModified: jest.fn(),
+  export: jest.fn(() => {})
+};
+
+const loadDatabaseMock = jest.fn();
+const handleToggleSidebarMock = jest.fn();
+const userMock = {};
 
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
 describe("the Main component", () => {
-  let component,
-    handleToggleSidebarMock,
-    loadDatabaseMock,
-    currentDatabaseMock,
-    userMock;
+  let component;
 
-  beforeEach(() => {
-    userMock = {};
-
-    currentDatabaseMock = {
-      filename: "Current database mock filename",
-      exec: jest.fn(() => {}),
-      getRowsModified: jest.fn(),
-      export: jest.fn(() => {})
-    };
-
-    loadDatabaseMock = jest.fn();
-    handleToggleSidebarMock = jest.fn();
-
+  beforeEach(async () => {
     component = shallow(
       <Main
         user={userMock}
@@ -48,6 +49,10 @@ describe("the Main component", () => {
         openSidebar={false}
       />
     );
+
+    await flushPromises();
+
+    jest.clearAllMocks();
   });
 
   it("alters the state to add a feedback item", () => {
@@ -96,7 +101,28 @@ describe("the Main component", () => {
       expect(loadDatabaseMock).toHaveBeenCalledTimes(1);
     });
 
-    it("saves progress on a correct answer", async () => {
+    it("saves progress (to server) on a correct answer", async () => {
+      checkAnswer.mockReturnValueOnce(true);
+
+      // Mock the changeFeedback method.
+      component.instance().completeCurrentQuestion = jest
+        .fn()
+        .mockImplementation(() => Promise.resolve(true));
+
+      component = component.setProps({ user: { group: {} } });
+
+      component.instance().runQuery('SELECT "Example Query";');
+
+      await flushPromises();
+
+      expect(
+        component.instance().completeCurrentQuestion
+      ).toHaveBeenCalledTimes(1);
+
+      expect(saveProgress).toHaveBeenCalledTimes(1);
+    });
+
+    it("saves progress (to client) on a correct answer", async () => {
       checkAnswer.mockReturnValueOnce(true);
 
       // Mock the changeFeedback method.
@@ -111,7 +137,8 @@ describe("the Main component", () => {
       expect(
         component.instance().completeCurrentQuestion
       ).toHaveBeenCalledTimes(1);
-      expect(saveProgress).toHaveBeenCalledTimes(1);
+
+      expect(saveQuestions).toHaveBeenCalledTimes(1);
     });
 
     it("throws an Error exception when an incorrect answer", () => {
@@ -299,10 +326,7 @@ it("loads the a new set of user questions for the group they are in and saves th
     group: null
   };
 
-  // Reset the mock implementations just incase...
-  buildQuestions.mockReset();
-
-  buildQuestions.mockImplementation(() => Promise.resolve(questions));
+  buildQuestions.mockImplementationOnce(() => Promise.resolve(questions));
 
   const component = shallow(<Main user={user} />);
 

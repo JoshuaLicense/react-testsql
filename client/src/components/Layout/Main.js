@@ -64,23 +64,23 @@ export default class Main extends React.Component {
       // Check the localStorage for any cached question sets
       const cachedQuestions = localStorage.getItem("__testSQL_Questions__");
 
-      if (cachedQuestions) {
+      if (cachedQuestions && !userGroup) {
         allQuestions = JSON.parse(cachedQuestions);
       } else {
         allQuestions = await buildQuestions(this.props.currentDatabase);
 
         // No group, no cache, so the questions got built, now save them locally.
         saveQuestions(allQuestions);
+      }
 
-        // If the user has no saved questions, then send all the generated questions up to the server.
-        // If the user is in a group. Save the progress.
-        if (userGroup) {
-          saveProgress(allQuestions);
-        }
+      // If the user has no saved questions, then send all the generated questions up to the server.
+      // If the user is in a group. Save the progress.
+      if (userGroup) {
+        saveProgress(allQuestions);
       }
     }
 
-    this.setState({ allQuestions, activeQuestion: allQuestions[0] });
+    return this.setState({ allQuestions, activeQuestion: allQuestions[0] });
   };
 
   componentDidUpdate(prevProps) {
@@ -123,7 +123,12 @@ export default class Main extends React.Component {
       if (checkAnswer(currentDatabase, sql, activeQuestion)) {
         await this.completeCurrentQuestion(sql);
 
-        return saveProgress(sql, allQuestions);
+        // Only save progress if in a group.
+        if (this.props.user && this.props.user.group) {
+          return saveProgress(sql, allQuestions);
+        } else {
+          return saveQuestions(allQuestions, this.props.user);
+        }
       }
     } catch (Error) {
       return this.changeFeedback({ message: Error.message, variant: "error" });
