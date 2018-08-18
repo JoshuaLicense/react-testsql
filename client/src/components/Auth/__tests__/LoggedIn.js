@@ -4,12 +4,12 @@ import { shallow } from "enzyme";
 
 import LoggedIn from "../LoggedIn";
 
+const refreshUserContextMock = jest.fn();
+
 describe("the LoggedIn component", () => {
-  let component, refreshUserContextMock;
+  let component;
 
   beforeEach(() => {
-    refreshUserContextMock = jest.fn();
-
     component = shallow(
       <LoggedIn refreshUserContext={refreshUserContextMock} />
     );

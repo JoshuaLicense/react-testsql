@@ -4,12 +4,12 @@ import { shallow } from "enzyme";
 
 import DatabaseInput from "../Input";
 
+const submitHandlerMock = jest.fn();
+
 describe("Database Input component", () => {
-  let component, submitHandlerMock;
+  let component;
 
   beforeEach(() => {
-    submitHandlerMock = jest.fn();
-
     component = shallow(
       <DatabaseInput submitHandler={submitHandlerMock} />
     ).dive();

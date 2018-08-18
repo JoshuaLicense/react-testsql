@@ -19,19 +19,19 @@ jest.mock("../DatabaseList.js");
 DatabaseList.mockImplementation(() => true);
 SaveDatabase.mockImplementation(() => true);
 
+fetch.mockImplementation(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({})
+  })
+);
+
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
 describe("DatabaseManager component", () => {
   let component;
 
   beforeEach(async () => {
-    fetch.mockImplementationOnce(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({})
-      })
-    );
-
     component = shallow(<DatabaseManager />);
 
     // Wait for the event loop to finish.

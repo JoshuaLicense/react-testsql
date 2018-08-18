@@ -3,11 +3,12 @@ import { shallow } from "enzyme";
 
 import DatabaseItem from "../DatabaseItem";
 
-import handleError from "../../../utils/handleError";
 import DatabaseList from "../DatabaseList";
-import { DialogContentText, Typography } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
 
-const flushPromises = () => new Promise(resolve => setImmediate(resolve));
+const loadDatabaseMock = jest.fn();
+const refreshHandlerMock = jest.fn();
+const closeHandlerMock = jest.fn();
 
 describe("ActiveGroups component (Initial loading)", () => {
   // Blank objects are enough to mock the "database" info for the list
@@ -16,15 +17,9 @@ describe("ActiveGroups component (Initial loading)", () => {
     { _id: "41f9064f1431c28619783ad9297b299d" }
   ];
 
-  let component, loadDatabaseMock, refreshHandlerMock, closeHandlerMock;
+  let component;
 
   beforeEach(async () => {
-    jest.resetAllMocks();
-
-    closeHandlerMock = jest.fn();
-    loadDatabaseMock = jest.fn();
-    refreshHandlerMock = jest.fn();
-
     // Disable lifecycle methods so the script can access the load promise directly.
     component = shallow(
       <DatabaseList
@@ -34,6 +29,8 @@ describe("ActiveGroups component (Initial loading)", () => {
         closeHandler={closeHandlerMock}
       />
     );
+
+    jest.clearAllMocks();
   });
 
   it(`renders ${list.length} amount of database items in the list`, () => {

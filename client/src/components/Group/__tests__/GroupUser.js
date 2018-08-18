@@ -5,13 +5,11 @@ import RemoveUserIcon from "@material-ui/icons/RemoveCircle";
 
 import GroupUser from "../GroupUser";
 
+const removeHandlerMock = jest.fn();
+
 describe("GroupItem component", () => {
-  let removeHandlerMock;
-
   beforeEach(() => {
-    jest.resetAllMocks();
-
-    removeHandlerMock = jest.fn();
+    jest.clearAllMocks();
   });
 
   it("displays/hides the option to remove a user", () => {

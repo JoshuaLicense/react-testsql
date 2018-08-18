@@ -38,6 +38,7 @@ describe("GroupManager component", () => {
       _id: "123",
       title: "Test current group"
     };
+
     // Add a current group prop.
     component = component.setProps({ currentGroup });
 

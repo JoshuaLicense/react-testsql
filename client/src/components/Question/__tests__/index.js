@@ -23,16 +23,12 @@ const questions = [
   }
 ];
 
-const flushPromises = () => new Promise(resolve => setImmediate(resolve));
+const changeQuestionMock = jest.fn();
 
 describe("Question component", () => {
-  let component, changeQuestionMock;
+  let component;
 
   beforeEach(() => {
-    jest.resetAllMocks();
-
-    changeQuestionMock = jest.fn();
-
     // Dive as the component is wrapped by withStyles() from MaterialUI
     component = shallow(
       <QuestionManager
@@ -40,6 +36,8 @@ describe("Question component", () => {
         changeQuestionHandler={changeQuestionMock}
       />
     ).dive();
+
+    jest.clearAllMocks();
   });
 
   it("extracts all the set names from the questions and sets the default active set as the first element", () => {
@@ -58,9 +56,6 @@ describe("Question component", () => {
       questions[4]
     ]);
 
-    // The change question prop updates the active question and passes it back.
-    expect(changeQuestionMock).toHaveBeenCalledTimes(1);
-
     expect(component.state("activeQuestionIndex")).toEqual(0);
   });
 
@@ -76,8 +71,8 @@ describe("Question component", () => {
     ]);
 
     // The change question prop updates the active question and passes it back.
-    // Called in ComponentDidMount() and in handleSetChange()
-    expect(changeQuestionMock).toHaveBeenCalledTimes(2);
+    // Called in handleSetChange()
+    expect(changeQuestionMock).toHaveBeenCalledTimes(1);
 
     expect(component.state("activeQuestionIndex")).toEqual(0);
   });
@@ -123,7 +118,7 @@ describe("Question component", () => {
       activeQuestion
     ];
 
-    component.setProps({
+    component = component.setProps({
       activeQuestion,
       allQuestions
     });

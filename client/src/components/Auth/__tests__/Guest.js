@@ -4,12 +4,12 @@ import { shallow } from "enzyme";
 
 import Guest from "../Guest";
 
+const refreshUserContextMock = jest.fn();
+
 describe("the Guest component", () => {
-  let component, refreshUserContextMock;
+  let component;
 
   beforeEach(() => {
-    refreshUserContextMock = jest.fn();
-
     component = shallow(<Guest refreshUserContext={refreshUserContextMock} />);
   });
 

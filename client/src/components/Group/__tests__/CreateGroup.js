@@ -24,14 +24,12 @@ const databases = [
   }
 ];
 
+const closeHandlerMock = jest.fn();
+
 describe("CreateGroup component", () => {
-  let component, closeHandlerMock;
+  let component;
 
   beforeEach(async () => {
-    jest.resetAllMocks();
-
-    closeHandlerMock = jest.fn();
-
     fetch.mockImplementationOnce(() =>
       Promise.resolve({
         ok: true,
@@ -45,12 +43,11 @@ describe("CreateGroup component", () => {
     await flushPromises();
 
     component.update();
+
+    jest.clearAllMocks();
   });
 
   it("renders and lists all the users saved databases", () => {
-    // Check the API was called, only once.
-    expect(fetch).toHaveBeenCalledTimes(1);
-
     expect(component.state()).toEqual({
       list: databases,
       error: null,

@@ -23,21 +23,19 @@ const group = {
   ]
 };
 
+const closeHandlerMock = jest.fn();
+
+fetch.mockImplementation(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve(group)
+  })
+);
+
 describe("ManageGroup component", () => {
-  let component, closeHandlerMock;
+  let component;
 
   beforeEach(async () => {
-    jest.resetAllMocks();
-
-    closeHandlerMock = jest.fn();
-
-    fetch.mockImplementationOnce(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(group)
-      })
-    );
-
     component = shallow(
       <ManageGroup
         match={{ params: { id: 1 }, isExact: true, path: "", url: "" }}
@@ -49,6 +47,8 @@ describe("ManageGroup component", () => {
     await flushPromises();
 
     component.update();
+
+    jest.clearAllMocks();
   });
 
   it("renders and tries to get the group's information", () => {

@@ -6,14 +6,12 @@ import ManageIcon from "@material-ui/icons/Settings";
 
 import GroupItem from "../GroupItem";
 
+const joinGroupMock = jest.fn();
+const leaveCurrentGroupMock = jest.fn();
+
 describe("GroupItem component", () => {
-  let joinGroupMock, leaveCurrentGroupMock;
-
   beforeEach(() => {
-    jest.resetAllMocks();
-
-    joinGroupMock = jest.fn();
-    leaveCurrentGroupMock = jest.fn();
+    jest.clearAllMocks();
   });
 
   it("joins a group on click", () => {

@@ -9,15 +9,13 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
+const closeHandlerMock = jest.fn();
+const refreshHandlerMock = jest.fn();
+
 describe("SaveDatabase component", () => {
-  let component, refreshHandlerMock, closeHandlerMock;
+  let component;
 
   beforeEach(async () => {
-    jest.resetAllMocks();
-
-    closeHandlerMock = jest.fn();
-    refreshHandlerMock = jest.fn();
-
     const currentDatabaseMock = {
       export: jest.fn(() => {})
     };
@@ -35,6 +33,8 @@ describe("SaveDatabase component", () => {
     await flushPromises();
 
     component.update();
+
+    jest.clearAllMocks();
   });
 
   it("creates a new group", async () => {

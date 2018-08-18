@@ -3,28 +3,28 @@ import { shallow } from "enzyme";
 
 import Schema from "../index";
 
+const execMock = jest.fn();
+
+execMock.mockReturnValue([
+  {
+    values: [[10]]
+  }
+]);
+
+const currentDatabaseMock = { exec: execMock };
+const toggleSidebarHandlerMock = jest.fn();
+
+const flushPromises = () => new Promise(resolve => setImmediate(resolve));
+
 describe("Schema component", () => {
-  let component, toggleSidebarHandlerMock;
+  let component;
 
-  beforeEach(() => {
-    jest.resetAllMocks();
-
-    const execMock = jest.fn();
-    const currentDatabaseMock = { exec: execMock };
-
+  beforeEach(async () => {
     execMock.mockReturnValueOnce([
       {
         values: [["Test table 1"], ["Test table 2"], ["Test table 3"]]
       }
     ]);
-
-    execMock.mockReturnValue([
-      {
-        values: [[10]]
-      }
-    ]);
-
-    toggleSidebarHandlerMock = jest.fn();
 
     component = shallow(
       <Schema
@@ -32,6 +32,8 @@ describe("Schema component", () => {
         currentDatabase={currentDatabaseMock}
       />
     ).dive();
+
+    await flushPromises();
   });
 
   it("returns a loading div while the schema is loading", () => {

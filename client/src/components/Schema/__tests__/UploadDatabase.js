@@ -13,10 +13,10 @@ jest.mock("../../Auth/Context", () => ({
 
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
+const uploadDatabaseHandlerMock = jest.fn();
+
 describe("UploadDatabase component", () => {
   it("renders he UploadDatabase component", () => {
-    const uploadDatabaseHandlerMock = jest.fn();
-
     mockUserContext.mockReturnValueOnce({ user: {} });
 
     const component = shallow(
@@ -27,8 +27,6 @@ describe("UploadDatabase component", () => {
   });
 
   it("renders he UploadDatabase component as a disabled button", () => {
-    const uploadDatabaseHandlerMock = jest.fn();
-
     mockUserContext.mockReturnValueOnce({ user: { group: true } });
 
     const component = shallow(

@@ -71,23 +71,21 @@ const groups = [
 
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
+const loadDatabaseMock = jest.fn();
+const refreshUserContextMock = jest.fn();
+const closeHandlerMock = jest.fn();
+
+fetch.mockImplementation(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve(groups)
+  })
+);
+
 describe("ActiveGroups component (Initial loading)", () => {
-  let component, loadDatabaseMock, refreshUserContextMock, closeHandlerMock;
+  let component;
 
   beforeEach(async () => {
-    jest.resetAllMocks();
-
-    closeHandlerMock = jest.fn();
-    loadDatabaseMock = jest.fn();
-    refreshUserContextMock = jest.fn();
-
-    fetch.mockImplementationOnce(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(groups)
-      })
-    );
-
     // Disable lifecycle methods so the script can access the load promise directly.
     component = shallow(
       <GroupList
@@ -101,6 +99,8 @@ describe("ActiveGroups component (Initial loading)", () => {
     await flushPromises();
 
     component.update();
+
+    jest.clearAllMocks();
   });
 
   it("shows a list of groups", async () => {
@@ -109,14 +109,16 @@ describe("ActiveGroups component (Initial loading)", () => {
   });
 
   it("alters padding on count > 5", async () => {
-    // Expecting the component to be compact.
-    expect(component.find(List).prop("dense")).toEqual(true);
+    // Mock a response with 3 array length.
     fetch.mockImplementationOnce(() =>
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve(groups.splice(0, 3))
       })
     );
+
+    // Expecting the component to be compact.
+    expect(component.find(List).prop("dense")).toEqual(true);
 
     // Await for the mocked API call to finish.
     await component.instance().load();

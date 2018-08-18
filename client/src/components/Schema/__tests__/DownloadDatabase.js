@@ -6,15 +6,17 @@ import DownloadDatabase from "../DownloadDatabase";
 
 jest.mock("file-saver", () => ({ saveAs: jest.fn() }));
 
+const currentDatabaseMock = { export: jest.fn() };
+
 describe("DownloadDatabase component", () => {
-  let component, currentDatabaseMock;
+  let component;
 
   beforeEach(() => {
-    currentDatabaseMock = { export: jest.fn() };
-
     component = shallow(
       <DownloadDatabase currentDatabase={currentDatabaseMock} />
     );
+
+    jest.clearAllMocks();
   });
 
   it("exports the current database", () => {

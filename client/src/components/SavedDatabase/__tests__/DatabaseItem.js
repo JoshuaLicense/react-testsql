@@ -6,15 +6,13 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import DatabaseItem from "../DatabaseItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 
+const clickHandlerMock = jest.fn();
+const deleteHandlerMock = jest.fn();
+
 describe("DatabaseItem component", () => {
-  let component, clickHandlerMock, deleteHandlerMock;
+  let component;
 
   beforeEach(() => {
-    jest.resetAllMocks();
-
-    clickHandlerMock = jest.fn();
-    deleteHandlerMock = jest.fn();
-
     const database = {
       id: "5b11836cbc21661f106cdc93",
       createdAt: "2018-06-01T17:33:32.872Z",
@@ -28,6 +26,8 @@ describe("DatabaseItem component", () => {
         deleteHandler={deleteHandlerMock}
       />
     );
+
+    jest.clearAllMocks();
   });
 
   it("load a database on click", () => {
