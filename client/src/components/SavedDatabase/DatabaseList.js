@@ -63,7 +63,7 @@ export default class DatabaseList extends React.Component {
             Saved Databases
             <Button
               component={Link}
-              to="/database/create"
+              to="/database/save"
               color="primary"
               variant="raised"
               size="small"

@@ -55,23 +55,21 @@ export default class DatabaseManager extends React.Component {
           <Router>
             <Switch>
               <Route
-                exact
-                path="/"
+                path="/database/save"
                 render={() => (
-                  <DatabaseList
-                    list={list}
-                    loadDatabaseHandler={loadDatabaseHandler}
+                  <SaveDatabase
+                    currentDatabase={currentDatabase}
+                    currentSavedDatabaseCount={list.length}
                     refreshHandler={this.refreshSavedDatabaseList}
                     closeHandler={this.handleClose}
                   />
                 )}
               />
               <Route
-                path="/database/save"
                 render={() => (
-                  <SaveDatabase
-                    currentDatabase={currentDatabase}
-                    currentSavedDatabaseCount={list.length}
+                  <DatabaseList
+                    list={list}
+                    loadDatabaseHandler={loadDatabaseHandler}
                     refreshHandler={this.refreshSavedDatabaseList}
                     closeHandler={this.handleClose}
                   />

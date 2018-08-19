@@ -47,18 +47,6 @@ class GroupManager extends React.Component {
           <Router>
             <Switch>
               <Route
-                exact
-                path="/"
-                render={() => (
-                  <GroupList
-                    currentGroup={currentGroup}
-                    refreshUserContext={refreshUserContext}
-                    loadDatabaseHandler={loadDatabaseHandler}
-                    closeHandler={this.handleClose}
-                  />
-                )}
-              />
-              <Route
                 path="/group/create"
                 render={props => (
                   <CreateGroup {...props} closeHandler={this.handleClose} />
@@ -68,6 +56,16 @@ class GroupManager extends React.Component {
                 path="/group/manage/:id"
                 render={props => (
                   <ManageGroup {...props} closeHandler={this.handleClose} />
+                )}
+              />
+              <Route
+                render={() => (
+                  <GroupList
+                    currentGroup={currentGroup}
+                    refreshUserContext={refreshUserContext}
+                    loadDatabaseHandler={loadDatabaseHandler}
+                    closeHandler={this.handleClose}
+                  />
                 )}
               />
             </Switch>
