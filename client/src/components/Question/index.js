@@ -35,6 +35,9 @@ const styles = theme => ({
   stepperLabel: {
     padding: 0
   },
+  completedStep: {
+    color: "green !important"
+  },
   divider: {
     marginBottom: `${theme.spacing.unit * 2}px`
   },
@@ -187,7 +190,15 @@ class QuestionManager extends React.Component {
                   completed={Boolean(question.completed)}
                 >
                   <StepLabel
-                    classes={{ iconContainer: classes.stepperLabel }}
+                    classes={{
+                      iconContainer: classes.stepperLabel
+                    }}
+                    StepIconProps={{
+                      classes: {
+                        active: classes.activeStep,
+                        completed: classes.completedStep
+                      }
+                    }}
                     error={Boolean(question.error)}
                   />
                 </StepButton>
