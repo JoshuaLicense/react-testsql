@@ -21,6 +21,7 @@ import Button from "@material-ui/core/Button";
 import MenuItem from "@material-ui/core/MenuItem";
 
 import Select from "@material-ui/core/Select";
+import { Hidden } from "@material-ui/core";
 
 const styles = theme => ({
   innerPadding: {
@@ -223,15 +224,22 @@ class QuestionManager extends React.Component {
                 size="small"
                 onClick={this.handlePrev}
               >
-                <PreviousIcon /> Previous
+                <PreviousIcon />
+                <Hidden xsDown implementation="css">
+                  Previous
+                </Hidden>
               </Button>
               <Button
+                className={classes.nextButton}
                 variant="raised"
                 size="small"
                 color="primary"
                 onClick={this.handleNext}
               >
-                Next <NextIcon />
+                <Hidden xsDown implementation="css">
+                  Next
+                </Hidden>
+                <NextIcon />
               </Button>
             </div>
           </div>

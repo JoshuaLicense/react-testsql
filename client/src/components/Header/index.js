@@ -27,7 +27,7 @@ const styles = {
 const Header = props => (
   <AppBar position="static">
     <Toolbar variant="dense">
-      <Hidden mdUp>
+      <Hidden implementation="css" mdUp>
         <IconButton
           color="inherit"
           style={styles.sidebarToggleIcon}

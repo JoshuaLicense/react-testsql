@@ -125,13 +125,16 @@ class Schema extends React.Component {
       <div className={classes.container}>
         <Hidden mdUp>
           <Drawer
+            anchor="left"
+            open={open}
+            onClose={this.handleToggleSidebar}
             classes={{
               docked: classes.drawerDocked,
               paper: classes.drawerPaper
             }}
-            anchor="left"
-            open={open}
-            onClose={this.handleToggleSidebar}
+            ModalProps={{
+              keepMounted: true // Better open performance on mobile.
+            }}
           >
             {schemaList}
             {schemaActions}
