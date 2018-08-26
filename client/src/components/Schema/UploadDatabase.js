@@ -53,7 +53,7 @@ class UploadDatabase extends React.Component {
               />
 
               <Tooltip title="Upload Database">
-                <label htmlFor="uploadfile">
+                <label htmlFor="uploadFile">
                   <IconButton component="span" aria-label="Upload Database">
                     <UploadIcon />
                   </IconButton>
