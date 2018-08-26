@@ -1,3 +1,5 @@
+import shuffle from "lodash/shuffle";
+
 const COLUMN_ID = 0; // eslint-disable-line no-unused-vars
 const COLUMN_NAME = 1;
 const COLUMN_TYPE = 2; // eslint-disable-line no-unused-vars
@@ -15,19 +17,25 @@ const getColumns = (
   for (let i = 0; i < tables.length && x > result.length; ++i) {
     const [{ values: columns }] = db.exec(`PRAGMA table_info(${tables[i]})`);
 
-    for (let j = 0; j < columns.length && x > result.length; ++j) {
+    // Shuffle the columns for improved randomness.
+    const shuffledColumns = shuffle(columns);
+
+    for (let j = 0; j < shuffledColumns.length && x > result.length; ++j) {
       if (
         typeof notnull !== "undefined" &&
-        columns[j][COLUMN_NOT_NULL] !== +notnull
+        shuffledColumns[j][COLUMN_NOT_NULL] !== +notnull
       ) {
         continue;
       }
 
-      if (type && columns[j][COLUMN_TYPE].indexOf(type) === -1) {
+      if (type && shuffledColumns[j][COLUMN_TYPE].indexOf(type) === -1) {
         continue;
       }
 
-      result.push({ table: tables[i], column: columns[j][COLUMN_NAME] });
+      result.push({
+        table: tables[i],
+        column: shuffledColumns[j][COLUMN_NAME]
+      });
     }
 
     // If we need 'x' columns from this table, but it doesn't have that many, remove all and try again
