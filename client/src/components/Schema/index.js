@@ -67,6 +67,8 @@ class Schema extends React.Component {
     // Destructure the response to get only the values (the real schema data)
     let [{ values: tableNames }] = currentDatabase.exec(sql);
 
+    this.setState({ schema: [] });
+
     // tableNames are returned as [[0] => "Tbl_name", [1] => "Tbl_name"]]
     // Promisify it in an attempt to make this faster.
     tableNames.map(([tableName]) =>
