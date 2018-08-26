@@ -99,11 +99,12 @@ export default class SaveDatabase extends React.Component {
             variant="raised"
             color="primary"
             onClick={this.handleSaveDatabase}
-            disabled={
+            disabled={Boolean(
               currentSavedDatabaseCount && currentSavedDatabaseCount > 4
-            }
+            )}
           >
-            Save ({currentSavedDatabaseCount}/5)
+            Save ({currentSavedDatabaseCount}
+            /5)
           </Button>
           <Button onClick={this.handleClose} color="primary">
             Cancel

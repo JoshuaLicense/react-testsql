@@ -124,15 +124,22 @@ class CreateGroup extends React.Component {
                     id: "selectedDatabase"
                   }}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  {list &&
-                    list.map(database => (
-                      <MenuItem key={database._id} value={database._id}>
-                        {database.title}
+                  {list && list.length ? (
+                    <React.Fragment>
+                      <MenuItem value="">
+                        <em>None</em>
                       </MenuItem>
-                    ))}
+                      {list.map(database => (
+                        <MenuItem key={database._id} value={database._id}>
+                          {database.title}
+                        </MenuItem>
+                      ))}
+                    </React.Fragment>
+                  ) : (
+                    <MenuItem value="" disabled>
+                      <em>No saved databases!</em>
+                    </MenuItem>
+                  )}
                 </Select>
               </FormControl>
             </Grid>

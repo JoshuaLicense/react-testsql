@@ -15,7 +15,8 @@ import { loadDatabase, deleteDatabase } from "./API";
 
 import DatabaseItem from "./DatabaseItem";
 
-import { Link } from "react-router-dom";
+import Link from "react-router-dom/Link";
+import ListItem from "@material-ui/core/ListItem";
 
 const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
@@ -79,19 +80,22 @@ export default class DatabaseList extends React.Component {
           </DialogContentText>
         </DialogContent>
 
-        <List>
-          {list.map(database => (
-            <DatabaseItem
-              key={database._id}
-              database={database}
-              clickHandler={this.handleLoadDatabase}
-              deleteHandler={this.handleDeleteDatabase}
-            />
-          ))}
-        </List>
-        {list.length === 0 && (
-          <Typography variant="secondary">No saved databases yet!</Typography>
-        )}
+        <DialogContent>
+          <List>
+            {list && list.length ? (
+              list.map(database => (
+                <DatabaseItem
+                  key={database._id}
+                  database={database}
+                  clickHandler={this.handleLoadDatabase}
+                  deleteHandler={this.handleDeleteDatabase}
+                />
+              ))
+            ) : (
+              <ListItem disabled>No saved databases yet!</ListItem>
+            )}
+          </List>
+        </DialogContent>
         <DialogActions>
           <Button onClick={this.handleClose} color="primary">
             Cancel

@@ -30,7 +30,9 @@ export default class GroupItem extends React.Component {
 
     return (
       <ListItem onClick={this.handleJoinGroup} disabled={isCurrent} button>
-        <Typography color="textSecondary">{`${completedQuestions}/${totalQuestions}`}</Typography>
+        {totalQuestions && (
+          <Typography color="textSecondary">{`${completedQuestions}/${totalQuestions}`}</Typography>
+        )}
         <ListItemText inset primary={title} />
         <ListItemSecondaryAction>
           {canManage && (
