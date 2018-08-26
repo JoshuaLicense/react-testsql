@@ -13,7 +13,7 @@ const whereIn = {
 
     return {
       question: `Display all the **${table}** where **${column_1}** is **${row_1}** or **${row_2}** or **${row_3}**, using the \`IN()\` operator`,
-      answer: `SELECT * FROM ${table} WHERE ${column_1} IN("${row_1}", "${row_2}", ${row_3})`
+      answer: `SELECT * FROM ${table} WHERE ${column_1} IN("${row_1}", "${row_2}", "${row_3}")`
     };
   }
 };
