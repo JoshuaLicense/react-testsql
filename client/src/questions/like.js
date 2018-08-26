@@ -9,7 +9,7 @@ const like = {
   func: db => {
     const tables = getTables(db, 3);
 
-    const [{ table, column }] = getColumns(db, tables, { type: "VARCHAR" });
+    const [{ table, column }] = getColumns(db, tables, 1, "VARCHAR");
 
     let [row] = getRows(db, table, column, 1);
 

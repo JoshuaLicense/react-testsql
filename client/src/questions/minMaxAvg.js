@@ -8,10 +8,7 @@ const minMaxAvg = {
   func: db => {
     const tables = getTables(db);
 
-    const [{ table, column }] = getColumns(db, tables, {
-      x: 1,
-      type: "INT"
-    });
+    const [{ table, column }] = getColumns(db, tables, 1, "INT");
 
     const { textual, func } = [
       { textual: "largest", func: "MAX" },

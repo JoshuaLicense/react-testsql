@@ -11,9 +11,7 @@ const basicWhere = {
       { table, column: column_1 },
       { column: column_2 },
       { column: column_3 }
-    ] = getColumns(db, tables, {
-      x: 3
-    });
+    ] = getColumns(db, tables, 3);
 
     const [row] = getRows(db, table, column_3, 1);
 

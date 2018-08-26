@@ -141,6 +141,9 @@ describe("The question configurations", async () => {
     db = new SQL.Database();
 
     db.exec(defaultDatabaseSQL);
+
+    // Reset the question cache.
+    window.questionCache = {};
   });
 
   it("renders all the questions successfully", () => {

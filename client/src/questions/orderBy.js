@@ -6,10 +6,7 @@ const orderBy = {
   func: db => {
     const tables = getTables(db);
 
-    const [{ table, column: column_1 }] = getColumns(db, tables, {
-      x: 1,
-      type: "INT"
-    });
+    const [{ table, column: column_1 }] = getColumns(db, tables, 1, "INT");
 
     return {
       question: `Display the **${table}** showing the largest **${column_1}** first.`,

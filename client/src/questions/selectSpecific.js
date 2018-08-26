@@ -9,9 +9,7 @@ const selectSpecific = {
     const [{ table, column: column_1 }, { column: column_2 }] = getColumns(
       db,
       tables,
-      {
-        x: 2
-      }
+      2
     );
 
     return {

@@ -11,10 +11,13 @@ const selectNull = {
 
     const tables = getTables(db);
 
-    const [{ table, column: column_1 }] = getColumns(db, tables, {
-      x: 1,
-      notnull: false
-    });
+    const [{ table, column: column_1 }] = getColumns(
+      db,
+      tables,
+      1,
+      undefined,
+      false
+    );
 
     return {
       question: `Get a list of all the **${table}** where the **${column_1}** is **${null_text}** a null value`,

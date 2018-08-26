@@ -12,10 +12,8 @@ const whereConjunction = {
     const [{ table, column: column_1 }, { column: column_2 }] = getColumns(
       db,
       tables,
-      {
-        x: 3,
-        type: "VARCHAR"
-      }
+      3,
+      "VARCHAR"
     );
 
     const [row_1] = getRows(db, table, column_1, 1);

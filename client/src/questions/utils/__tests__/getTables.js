@@ -4,6 +4,8 @@ const mockDB = {
   exec: jest.fn()
 };
 
+window.questionCache = {};
+
 describe("getTables()", () => {
   it("fails lack of available tables", () => {
     mockDB.exec.mockReturnValueOnce([
@@ -26,11 +28,8 @@ describe("getTables()", () => {
       }
     ]);
 
-    expect(getTables(mockDB, 4)).toEqual([
-      "Orders",
-      "Customers",
-      "OrderDetails",
-      "Shippers"
-    ]);
+    expect(["Orders", "Customers", "OrderDetails", "Shippers"]).toEqual(
+      expect.arrayContaining(getTables(mockDB, 3))
+    );
   });
 });

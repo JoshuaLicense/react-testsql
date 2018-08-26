@@ -50,7 +50,7 @@ export default class Main extends React.Component {
       feedback: { ...feedback, timestamp: new Date().getTime() }
     });
 
-  componentDidMount = async () => {
+  async componentDidMount() {
     let allQuestions;
     // Load the group questions that have come from the server,
     //if the user is in a group and has saved question progress.
@@ -82,7 +82,7 @@ export default class Main extends React.Component {
     }
 
     return this.setState({ allQuestions, activeQuestion: allQuestions[0] });
-  };
+  }
 
   componentDidUpdate(prevProps) {
     // If the database has changed, reconstruct the questions

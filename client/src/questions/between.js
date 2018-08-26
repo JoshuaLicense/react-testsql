@@ -7,7 +7,7 @@ const between = {
   func: db => {
     const tables = getTables(db, 1);
 
-    const [{ table, column }] = getColumns(db, tables, { type: "INT" });
+    const [{ table, column }] = getColumns(db, tables, 1, "INT");
 
     let [row1, row2] = getRows(db, table, column, 2);
 

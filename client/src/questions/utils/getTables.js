@@ -1,26 +1,33 @@
-import shuffle from "lodash/shuffle";
-import flatten from "lodash/flatten";
+import sampleSize from "lodash/sampleSize";
 
 const getTables = (db, x = null) => {
-  const [{ values: tables }] = db.exec(
-    `SELECT "tbl_name" FROM "sqlite_master" WHERE "type" = 'table' AND "tbl_name" != "ts-questions" ORDER BY RANDOM() ${
-      x ? `LIMIT ${x}` : ""
-    }`
-  );
+  // If no cache currently exists, populate one.
+  if (Object.keys(window.questionCache).length === 0) {
+    const [{ values: tables }] = db.exec(
+      `SELECT "tbl_name" FROM "sqlite_master" WHERE "type" = 'table' AND "tbl_name" != "ts-questions"`
+    );
+
+    tables.forEach(([table]) => (window.questionCache[table] = []));
+  }
+
+  const tableArray = Object.keys(window.questionCache);
+
+  // If no count is specified just return all the tables.
+  if (!x) {
+    return tableArray;
+  }
 
   // Did we recieve the wanted number of tables back?
-  if (x && tables.length !== x) {
+  if (tableArray.length < x) {
     throw new Error(`Not enough tables found in the database.`);
   }
 
-  // Flatten the array of tables.
-  // Could use multiple flatten-ing methods;
-  // however my (brief) tests show the lodash methods beats ES5 and ES6 flattens by over 100%.
-  // [].concat(...rows);
-  // rows.reduce((acc, val) => acc.concat(val), []);
-  const flattenedTables = flatten(tables);
+  // If only 1 table was requested, return a random element.
+  if (x === 1) {
+    return [tableArray[Math.floor(Math.random() * tableArray.length)]];
+  }
 
-  return shuffle(flattenedTables);
+  return sampleSize(tableArray, x);
 };
 
 export default getTables;

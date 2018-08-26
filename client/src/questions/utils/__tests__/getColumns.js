@@ -7,7 +7,12 @@ const mockDB = {
 describe("getColumns()", () => {
   const tables = ["Employees", "Customers", "OrderDetails", "Orders"];
 
-  it("returns a column", () => {
+  beforeEach(() => {
+    // Reset the question cache.
+    window.questionCache = {};
+  });
+
+  it("returns a single column", () => {
     mockDB.exec.mockReturnValueOnce([
       {
         columns: ["cid", "name", "type", "notnull", "dflt_value", "pk"],
@@ -25,7 +30,7 @@ describe("getColumns()", () => {
     expect(getColumns(mockDB, tables)).toEqual([
       {
         table: "Employees",
-        column: "EmployeeID"
+        column: expect.any(String)
       }
     ]);
   });
@@ -49,7 +54,7 @@ describe("getColumns()", () => {
       }
     ]);
 
-    expect(getColumns(mockDB, tables, { x: 2 })).toEqual([
+    expect([
       {
         table: "Customers",
         column: "CustomerID"
@@ -57,8 +62,12 @@ describe("getColumns()", () => {
       {
         table: "Customers",
         column: "CustomerName"
+      },
+      {
+        table: "Customers",
+        column: "CustomerAddress"
       }
-    ]);
+    ]).toEqual(expect.arrayContaining(getColumns(mockDB, tables, 2)));
   });
 
   it("returns any 3 columns", () => {
@@ -76,20 +85,7 @@ describe("getColumns()", () => {
       }
     ]);
 
-    expect(getColumns(mockDB, tables, { x: 3 })).toEqual([
-      {
-        table: "Employees",
-        column: "EmployeeID"
-      },
-      {
-        table: "Employees",
-        column: "LastName"
-      },
-      {
-        table: "Employees",
-        column: "FirstName"
-      }
-    ]);
+    expect(getColumns(mockDB, tables, 3).length).toEqual(3);
   });
 
   it("returns 3 not-null columns", () => {
@@ -107,20 +103,11 @@ describe("getColumns()", () => {
       }
     ]);
 
-    expect(getColumns(mockDB, tables, { x: 3, notnull: true })).toEqual([
-      {
-        table: "Employees",
-        column: "EmployeeID"
-      },
-      {
-        table: "Employees",
-        column: "LastName"
-      },
-      {
-        table: "Employees",
-        column: "HireDate"
-      }
-    ]);
+    const recieved = getColumns(mockDB, tables, 2, undefined, true);
+
+    recieved.forEach(obj =>
+      expect(["EmployeeID", "LastName", "HireDate"]).toContain(obj.column)
+    );
   });
 
   it("returns 3 null columns", () => {
@@ -138,23 +125,14 @@ describe("getColumns()", () => {
       }
     ]);
 
-    expect(getColumns(mockDB, tables, { x: 3, notnull: false })).toEqual([
-      {
-        table: "Employees",
-        column: "FirstName"
-      },
-      {
-        table: "Employees",
-        column: "Title"
-      },
-      {
-        table: "Employees",
-        column: "Address"
-      }
-    ]);
+    const recieved = getColumns(mockDB, tables, 2, undefined, false);
+
+    recieved.forEach(obj =>
+      expect(["FirstName", "Title", "Address"]).toContain(obj.column)
+    );
   });
 
-  it("returns an int column", () => {
+  it("returns a varchar column", () => {
     mockDB.exec.mockReturnValueOnce([
       {
         columns: ["cid", "name", "type", "notnull", "dflt_value", "pk"],
@@ -169,12 +147,17 @@ describe("getColumns()", () => {
       }
     ]);
 
-    expect(getColumns(mockDB, tables, { type: "INTEGER" })).toEqual([
-      {
-        table: "Employees",
-        column: "EmployeeID"
-      }
-    ]);
+    const received = getColumns(mockDB, tables, 1, "VARCHAR");
+
+    received.forEach(obj =>
+      expect([
+        "LastName",
+        "FirstName",
+        "Title",
+        "Address",
+        "HireDate"
+      ]).toContain(obj.column)
+    );
   });
 
   it("doesn't find enough columns in the database", () => {
@@ -192,7 +175,7 @@ describe("getColumns()", () => {
       }
     ]);
 
-    expect(() => getColumns(mockDB, tables, { x: 7 })).toThrowError(
+    expect(() => getColumns(mockDB, tables, 7)).toThrowError(
       /^Not enough columns found in the database.$/
     );
   });

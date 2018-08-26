@@ -1,21 +1,16 @@
 const buildQuestions = async database =>
   new Promise((resolve, reject) => {
+    // Setup the caching.
+    window.questionCache = {};
+
     return import("../").then(({ default: _questions }) => {
       const questions = _questions.map(questionConfig => {
         const { func } = questionConfig;
 
-        // Try running the question callable
         try {
-          // Have two attempts at generating a question.
-          try {
-            const { question, answer } = func(database);
+          const { question, answer } = func(database);
 
-            return { ...questionConfig, question, answer };
-          } catch (Error) {
-            const { question, answer } = func(database);
-
-            return { ...questionConfig, question, answer };
-          }
+          return { ...questionConfig, question, answer };
         } catch (Error) {
           // Mark as error question, tried twice can't generate this question.
           return {
