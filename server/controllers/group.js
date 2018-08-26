@@ -86,26 +86,13 @@ exports.saveProgress = (req, res, next) => {
     });
   }
 
-  UserGroup.findOne(
+  UserGroup.updateOne(
     { group: req.session.group._id, user: req.user.id },
-    (err, usergroup) => {
-      if (err) return next(err);
+    { questions: req.body.questions },
+    err => {
+      if (err) next(err);
 
-      usergroup.set({ questions: req.body.questions });
-
-      usergroup.save((err, updatedUserGroup) => {
-        if (err) return next(err);
-
-        // Update the session
-        const newGroup = {
-          ...req.session.group,
-          questions: req.body.questions
-        };
-
-        req.session.group = newGroup;
-
-        res.send(updatedUserGroup);
-      });
+      return res.sendStatus(200);
     }
   );
 };
@@ -142,17 +129,29 @@ exports.list = (req, res, next) => {
         .exec((err, userGroups) => {
           if (err) return next(err);
 
-          return res.json(
+          if (userGroups.length === 0) {
+            return res.send(groups);
+          }
+
+          return res.send(
             groups.map(group => {
-              // Loop each group checking for any user progress, if so, add it to the group array object (key: progress).
-              const groupProgress = userGroups.find(userGroup =>
+              // Find any user progress for this group.
+              const findUserGroup = userGroups.filter(userGroup =>
                 userGroup.group.equals(group._id)
-              )["questions"];
+              );
+
+              // If no progress, early out!
+              if (findUserGroup.length === 0) {
+                return group;
+              }
+
+              const groupProgress = findUserGroup[0]["questions"];
 
               // Get the number of completed questions + total
               const completedQuestions = groupProgress.filter(
                 question => question.completed
               ).length;
+
               const totalQuestions = groupProgress.length;
 
               return {

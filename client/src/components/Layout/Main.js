@@ -126,7 +126,7 @@ export default class Main extends React.Component {
 
         // Only save progress if in a group.
         if (this.props.user && this.props.user.group) {
-          return saveProgress(sql, allQuestions);
+          return saveProgress(allQuestions);
         } else {
           return saveQuestions(allQuestions, this.props.user);
         }

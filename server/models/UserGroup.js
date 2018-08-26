@@ -18,7 +18,8 @@ const userGroupSchema = new mongoose.Schema(
       {
         question: String,
         answer: String,
-        set: String
+        set: String,
+        completed: Boolean
       }
     ]
   },
