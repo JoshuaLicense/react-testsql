@@ -1,7 +1,7 @@
 import React from "react";
 
 import IconButton from "@material-ui/core/IconButton";
-import GroupIcon from "@material-ui/icons/GroupWork";
+import GroupIcon from "@material-ui/icons/GroupWorkTwoTone";
 
 import Dialog from "@material-ui/core/Dialog";
 

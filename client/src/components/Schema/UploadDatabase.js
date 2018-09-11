@@ -3,7 +3,7 @@ import React from "react";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 
-import UploadIcon from "@material-ui/icons/FileUpload";
+import UploadIcon from "@material-ui/icons/CloudUploadTwoTone";
 
 import UserContext from "../Auth/Context";
 

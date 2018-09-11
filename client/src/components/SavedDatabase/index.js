@@ -6,7 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 
 import Dialog from "@material-ui/core/Dialog";
 
-import DatabaseIcon from "@material-ui/icons/Storage";
+import DatabaseIcon from "@material-ui/icons/StorageTwoTone";
 
 import DatabaseList from "./DatabaseList";
 import SaveDatabase from "./SaveDatabase";
@@ -34,7 +34,11 @@ export default class DatabaseManager extends React.Component {
     const { open, list } = this.state;
 
     if (!list) {
-      return <div>Loading your saved databases...</div>;
+      return (
+        <IconButton color="inherit" aria-label="Saved Database Actions">
+          <DatabaseIcon />
+        </IconButton>
+      );
     }
 
     const { currentDatabase, loadDatabaseHandler, disabled } = this.props;

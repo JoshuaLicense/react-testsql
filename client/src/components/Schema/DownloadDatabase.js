@@ -3,7 +3,7 @@ import React from "react";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 
-import DownloadIcon from "@material-ui/icons/FileDownload";
+import DownloadIcon from "@material-ui/icons/CloudDownloadTwoTone";
 
 import FileSaver from "file-saver";
 
