@@ -1,6 +1,6 @@
 import React from "react";
 
-import Markdown from "markdown-to-jsx";
+import marked from "marked";
 
 import { withStyles } from "@material-ui/core/styles";
 
@@ -21,7 +21,7 @@ import Button from "@material-ui/core/Button";
 import MenuItem from "@material-ui/core/MenuItem";
 
 import Select from "@material-ui/core/Select";
-import { Hidden } from "@material-ui/core";
+import Hidden from "@material-ui/core/Hidden";
 
 const styles = theme => ({
   innerPadding: {
@@ -215,7 +215,11 @@ class QuestionManager extends React.Component {
               color={activeQuestion.error ? "error" : "inherit"}
               gutterBottom
             >
-              <Markdown>{activeQuestion.question}</Markdown>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: marked(activeQuestion.question)
+                }}
+              />
             </Typography>
           )}
           <div className={classes.bottomActions}>
