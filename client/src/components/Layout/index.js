@@ -17,8 +17,7 @@ export default class Layout extends React.Component {
     openSidebar: false
   };
 
-  handleToggleSidebar = () =>
-    this.setState(state => ({ openSidebar: !state.openSidebar }));
+  handleToggleSidebar = open => this.setState({ openSidebar: Boolean(open) });
 
   render() {
     const { openSidebar } = this.state;

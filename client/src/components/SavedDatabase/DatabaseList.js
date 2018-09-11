@@ -17,6 +17,7 @@ import DatabaseItem from "./DatabaseItem";
 
 import Link from "react-router-dom/Link";
 import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 
 const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
@@ -92,7 +93,9 @@ export default class DatabaseList extends React.Component {
                 />
               ))
             ) : (
-              <ListItem disabled>No saved databases yet!</ListItem>
+              <ListItem disabled>
+                <ListItemText>No saved databases yet!</ListItemText>
+              </ListItem>
             )}
           </List>
         </DialogContent>

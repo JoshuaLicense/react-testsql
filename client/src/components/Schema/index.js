@@ -91,7 +91,7 @@ class Schema extends React.Component {
     );
   };
 
-  handleToggleSidebar = () => this.props.toggleSidebarHandler();
+  handleToggleSidebar = () => this.props.toggleSidebarHandler(false);
 
   render() {
     const { schema } = this.state;

@@ -16,7 +16,8 @@ import UserContext from "../Auth/Context";
 
 const styles = {
   sidebarToggleIcon: {
-    marginRight: "16px"
+    marginRight: "8px",
+    marginLeft: "-16px"
   },
   userActionsContainer: {
     display: "flex",
