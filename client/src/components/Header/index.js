@@ -14,16 +14,21 @@ import Typography from "@material-ui/core/Typography";
 import Hidden from "@material-ui/core/Hidden";
 import UserContext from "../Auth/Context";
 
-const styles = {
+import withStyles from "@material-ui/core/styles/withStyles";
+
+const styles = theme => ({
   sidebarToggleIcon: {
     marginRight: "8px",
-    marginLeft: "-16px"
+    marginLeft: "-8px",
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: "-16px"
+    }
   },
   userActionsContainer: {
     display: "flex",
     marginLeft: "auto"
   }
-};
+});
 
 const Header = props => (
   <AppBar position="static">
@@ -31,7 +36,7 @@ const Header = props => (
       <Hidden implementation="css" mdUp>
         <IconButton
           color="inherit"
-          style={styles.sidebarToggleIcon}
+          className={props.classes.sidebarToggleIcon}
           onClick={props.sidebarToggleHandler}
           aria-label="Open drawer"
         >
@@ -41,7 +46,7 @@ const Header = props => (
       <Typography variant="title" color="inherit" noWrap>
         testSQL
       </Typography>
-      <div style={styles.userActionsContainer}>
+      <div className={props.classes.userActionsContainer}>
         <UserContext.Consumer>
           {({ user, refresh }) =>
             user ? (
@@ -56,4 +61,4 @@ const Header = props => (
   </AppBar>
 );
 
-export default Header;
+export default withStyles(styles)(Header);
