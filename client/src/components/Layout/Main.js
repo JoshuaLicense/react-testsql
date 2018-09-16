@@ -16,7 +16,6 @@ import Schema from "../Schema";
 import Loadable from "react-loadable";
 import buildQuestions from "../../questions/utils/buildQuestions";
 import saveQuestions from "../../questions/utils/saveQuestions";
-import CssBaseline from "@material-ui/core/CssBaseline";
 
 const LoadableInputForm = Loadable({
   loader: () => import("../Database/Input" /* webpackChunkName: "inputForm" */),
@@ -193,44 +192,38 @@ export default class Main extends React.Component {
     } = this.props;
 
     return (
-      <React.Fragment>
-        <CssBaseline />
-        <div style={containerStyle}>
-          <Schema
-            open={openSidebar}
-            currentDatabase={currentDatabase}
-            uploadDatabaseHandler={loadDatabase}
-            showSchemaHandler={this.displaySchema}
-            toggleSidebarHandler={sidebarToggleHandler}
-          />
-          <main style={innerContainerStyle}>
-            <Section title="Questions">
-              {allQuestions && (
-                <Question
-                  activeQuestion={activeQuestion}
-                  allQuestions={allQuestions}
-                  changeQuestionHandler={this.changeQuestion}
-                />
-              )}
-            </Section>
+      <div style={containerStyle}>
+        <Schema
+          open={openSidebar}
+          currentDatabase={currentDatabase}
+          uploadDatabaseHandler={loadDatabase}
+          showSchemaHandler={this.displaySchema}
+          toggleSidebarHandler={sidebarToggleHandler}
+        />
+        <main style={innerContainerStyle}>
+          <Section title="Questions">
+            {allQuestions && (
+              <Question
+                activeQuestion={activeQuestion}
+                allQuestions={allQuestions}
+                changeQuestionHandler={this.changeQuestion}
+              />
+            )}
+          </Section>
 
-            <Section title="Statement" padding="16px">
-              <LoadableInputForm submitHandler={this.runQuery} />
-            </Section>
+          <Section title="Statement" padding="16px">
+            <LoadableInputForm submitHandler={this.runQuery} />
+          </Section>
 
-            {results &&
-              results.map((result, i) => (
-                <Section title="Results (Max. 10)" key={i} padding="16px">
-                  <OutputTable
-                    columns={result.columns}
-                    values={result.values}
-                  />
-                </Section>
-              ))}
-            <Feedback {...feedback} changeHandler={this.changeFeedback} />
-          </main>
-        </div>
-      </React.Fragment>
+          {results &&
+            results.map((result, i) => (
+              <Section title="Results (Max. 10)" key={i} padding="16px">
+                <OutputTable columns={result.columns} values={result.values} />
+              </Section>
+            ))}
+          <Feedback {...feedback} changeHandler={this.changeFeedback} />
+        </main>
+      </div>
     );
   }
 }

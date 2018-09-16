@@ -5,6 +5,7 @@ import UserProvider from "./components/Auth/Provider";
 import Layout from "./components/Layout";
 
 import Loadable from "react-loadable";
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 // Code splitting as sql.js is big! Load the Database provider dynamically
 const LoadableDatabaseProvider = Loadable({
@@ -17,6 +18,7 @@ const App = () => {
   return (
     <UserProvider>
       <LoadableDatabaseProvider>
+        <CssBaseline />
         <Layout />
       </LoadableDatabaseProvider>
     </UserProvider>
