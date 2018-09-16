@@ -3,7 +3,7 @@ import React from "react";
 import "./input.css";
 
 import "codemirror/lib/codemirror.css";
-import "codemirror/theme/mdn-like.css";
+import "codemirror/theme/neat.css";
 
 import "codemirror/mode/sql/sql.js";
 
@@ -38,7 +38,7 @@ const styles = theme => ({
 
 const codeMirrorOptions = {
   mode: "text/x-sql",
-  theme: "mdn-like",
+  theme: "neat",
   lineNumbers: true
 };
 
