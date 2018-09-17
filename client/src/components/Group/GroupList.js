@@ -18,6 +18,7 @@ import { loadDatabase } from "../SavedDatabase/API";
 import GroupItem from "./GroupItem";
 
 import { listGroups, joinGroup, leaveCurrentGroup } from "./API";
+import clearQuestions from "../../questions/utils/clearQuestions";
 
 const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
@@ -60,13 +61,18 @@ class GroupList extends React.Component {
 
         return group;
       })
-      .then(group => loadDatabase(group.database))
-      .then(fileBuffer => {
+      .then(async group => {
+        // Update the user first. Any group questions already generated will be loaded first.
+        // Otherwise <Main> will generate the questions twice; once for the detected database change, then the detected group change.
+        await this.props.refreshUserContext();
+
+        // Then load the database to the client side sql.js.
+        const fileBuffer = await loadDatabase(group.database);
+
         const typedArray = new Uint8Array(fileBuffer);
 
         return this.props.loadDatabaseHandler(typedArray);
       })
-      .then(() => this.props.refreshUserContext())
       .catch(error => {
         error.json().then(json => this.setState({ error: json.message }));
       });
@@ -75,21 +81,27 @@ class GroupList extends React.Component {
   handleLeaveCurrentGroup = () => {
     this.setState({ error: null });
 
-    return leaveCurrentGroup()
-      .then(() => {
-        // Update the isCurrent for all the groups in the list to false
-        const updatedGroupList = this.state.list.map(listGroup => {
-          listGroup.isCurrent = false;
+    return (
+      leaveCurrentGroup()
+        .then(() => {
+          // Update the isCurrent for all the groups in the list to false
+          const updatedGroupList = this.state.list.map(listGroup => {
+            listGroup.isCurrent = false;
 
-          return listGroup;
-        });
+            return listGroup;
+          });
 
-        this.setState({ list: updatedGroupList });
-      })
-      .then(() => this.props.refreshUserContext())
-      .catch(error => {
-        error.json().then(json => this.setState({ error: json.message }));
-      });
+          this.setState({ list: updatedGroupList });
+        })
+        // Clear all the questions from the localStorage.
+        // This makes the next update of the questions, regenerate them from scratch.
+        .then(() => clearQuestions())
+        // Send the update to the server.
+        .then(() => this.props.refreshUserContext())
+        .catch(error => {
+          error.json().then(json => this.setState({ error: json.message }));
+        })
+    );
   };
 
   render() {

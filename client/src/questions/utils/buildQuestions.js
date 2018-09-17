@@ -1,5 +1,5 @@
 const buildQuestions = async database =>
-  new Promise((resolve, reject) => {
+  new Promise(resolve => {
     // Setup the caching.
     window.questionCache = {};
 

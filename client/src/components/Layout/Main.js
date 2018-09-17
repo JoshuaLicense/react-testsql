@@ -49,24 +49,31 @@ export default class Main extends React.Component {
       feedback: { ...feedback, timestamp: new Date().getTime() }
     });
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.getQuestions();
+  }
+
+  getQuestions = async () => {
     let allQuestions;
-    // Load the group questions that have come from the server,
-    //if the user is in a group and has saved question progress.
 
     const { user } = this.props;
 
-    const userGroup = user && user.group;
+    const group = (user && user.group) || null;
 
-    if (userGroup && userGroup.questions && userGroup.questions.length > 0) {
-      allQuestions = this.props.user.group.questions;
+    // Has the group already have generated questions.
+    // Joining a group SHOULD remove all questions so they are rebuilt with the new group database.
+    if (group && group.questions && group.questions.length > 0) {
+      allQuestions = group.questions;
     } else {
       // Check the localStorage for any cached question sets
       const cachedQuestions = localStorage.getItem("__testSQL_Questions__");
 
-      if (cachedQuestions && !userGroup) {
+      if (cachedQuestions && !group) {
+        // Cached questions, and the user is not in a group.
         allQuestions = JSON.parse(cachedQuestions);
       } else {
+        // Cached questions, but the user is in a group that doesn't have questions.
+        // Rebuild the questions for this group.
         allQuestions = await buildQuestions(this.props.currentDatabase);
 
         // No group, no cache, so the questions got built, now save them locally.
@@ -75,25 +82,29 @@ export default class Main extends React.Component {
 
       // If the user has no saved questions, then send all the generated questions up to the server.
       // If the user is in a group. Save the progress.
-      if (userGroup) {
+      if (group) {
         saveProgress(allQuestions);
       }
     }
 
     return this.setState({ allQuestions, activeQuestion: allQuestions[0] });
-  }
+  };
 
   componentDidUpdate(prevProps) {
-    // If the database has changed, reconstruct the questions
+    // Update the questions if:
+    // - The user is logged in, and they left a group;
+    // - The database has changed.
+    const hasLeftGroup =
+      this.props.user &&
+      prevProps.user &&
+      Boolean(!this.props.user.group) &&
+      prevProps.user.group;
+
     if (
+      hasLeftGroup ||
       prevProps.currentDatabase.filename !== this.props.currentDatabase.filename
     ) {
-      buildQuestions(this.props.currentDatabase).then(allQuestions => {
-        // Save the questions locally.
-        saveQuestions(allQuestions);
-        // and alter the state.
-        this.setState({ allQuestions, activeQuestion: allQuestions[0] });
-      });
+      this.getQuestions();
     }
   }
 
