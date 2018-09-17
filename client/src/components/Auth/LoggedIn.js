@@ -45,7 +45,7 @@ class LoggedIn extends React.Component {
             aria-label="Logout"
             onClick={this.handleLogout}
           >
-            <LogoutIcon />
+            <LogoutIcon fontSize="small" />
           </IconButton>
         </Tooltip>
       </React.Fragment>

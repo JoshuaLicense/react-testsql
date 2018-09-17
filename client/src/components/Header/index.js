@@ -25,7 +25,6 @@ const styles = theme => ({
     }
   },
   userActionsContainer: {
-    display: "flex",
     marginLeft: "auto"
   }
 });
@@ -40,7 +39,7 @@ const Header = props => (
           onClick={props.sidebarToggleHandler}
           aria-label="Open drawer"
         >
-          <MenuIcon />
+          <MenuIcon fontSize="small" />
         </IconButton>
       </Hidden>
       <Typography variant="title" color="inherit" noWrap>

@@ -39,7 +39,7 @@ class GroupManager extends React.Component {
             aria-label="Group List"
             onClick={this.handleOpen}
           >
-            <GroupIcon />
+            <GroupIcon fontSize="small" />
           </IconButton>
         </Tooltip>
 

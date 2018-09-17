@@ -52,7 +52,7 @@ export default class DatabaseManager extends React.Component {
             aria-label="Saved Database Actions"
             disabled={disabled}
           >
-            <DatabaseIcon />
+            <DatabaseIcon fontSize="small" />
           </IconButton>
         </Tooltip>
         <Dialog onClose={this.handleClose} open={open} fullWidth>
