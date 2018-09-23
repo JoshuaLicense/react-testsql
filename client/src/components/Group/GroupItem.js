@@ -41,7 +41,7 @@ export default class GroupItem extends React.Component {
               to={`/group/manage/${id}`}
               aria-label="Manage group"
             >
-              <ManageIcon />
+              <ManageIcon fontSize="small" />
             </IconButton>
           )}
           {isCurrent && (
@@ -50,7 +50,7 @@ export default class GroupItem extends React.Component {
               onClick={this.handleLeaveCurrentGroup}
               aria-label="Leave current group"
             >
-              <LeaveIcon />
+              <LeaveIcon fontSize="small" />
             </IconButton>
           )}
         </ListItemSecondaryAction>

@@ -36,7 +36,7 @@ export default class DatabaseManager extends React.Component {
     if (!list) {
       return (
         <IconButton color="inherit" aria-label="Saved Database Actions">
-          <DatabaseIcon />
+          <DatabaseIcon fontSize="small" />
         </IconButton>
       );
     }
