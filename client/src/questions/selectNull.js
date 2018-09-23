@@ -20,7 +20,7 @@ const selectNull = {
     );
 
     return {
-      question: `Get a list of all the **${table}** where the **${column_1}** is **${null_text}** a null value`,
+      question: `Get a list of all the **${table}** where the **${column_1}** is ${null_text} a null value`,
       answer: `SELECT * FROM ${table} WHERE ${column_1} IS ${null_code} NULL`
     };
   }
