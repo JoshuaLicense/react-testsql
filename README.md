@@ -16,7 +16,9 @@ Make sure you have **git**, and **yarn** or **npm** installed.
     `yarn`
 1.  Start testSQL.  
     `yarn start`
-1.  Open `localhost:3000` in your browser.
+1.  Open `localhost:3001` in your browser.
+
+##### [See a full list of commands here](https://github.com/JoshuaLicense/react-testsql/wiki/Package-scripts)
 
 ## Built using
 
