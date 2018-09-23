@@ -89,7 +89,7 @@ class CreateGroup extends React.Component {
         <DialogContent>
           <Grid container spacing={24}>
             <Grid item xs={3}>
-              <Typography align="right">Name</Typography>
+              <Typography align="right">Group Name</Typography>
             </Grid>
             <Grid item xs={9}>
               <FormControl
@@ -112,10 +112,10 @@ class CreateGroup extends React.Component {
               </FormControl>
             </Grid>
             <Grid item xs={3}>
-              <Typography align="right">Group Database</Typography>
+              <Typography align="right">Shared Database</Typography>
             </Grid>
             <Grid item xs={9}>
-              <FormControl style={{ width: "100%" }}>
+              <FormControl fullWidth>
                 <Select
                   value={selectedDatabase}
                   onChange={this.handleChange}
@@ -123,24 +123,23 @@ class CreateGroup extends React.Component {
                     name: "selectedDatabase",
                     id: "selectedDatabase"
                   }}
+                  fullWidth
                 >
                   {list && list.length ? (
-                    <React.Fragment>
-                      <MenuItem value="">
-                        <em>None</em>
+                    list.map(database => (
+                      <MenuItem key={database._id} value={database._id}>
+                        {database.title}
                       </MenuItem>
-                      {list.map(database => (
-                        <MenuItem key={database._id} value={database._id}>
-                          {database.title}
-                        </MenuItem>
-                      ))}
-                    </React.Fragment>
+                    ))
                   ) : (
-                    <MenuItem value="" disabled>
+                    <MenuItem disabled>
                       <em>No saved databases!</em>
                     </MenuItem>
                   )}
                 </Select>
+                <FormHelperText>
+                  This will list all of your saved databases.
+                </FormHelperText>
               </FormControl>
             </Grid>
           </Grid>
