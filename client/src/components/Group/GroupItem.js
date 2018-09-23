@@ -29,7 +29,12 @@ export default class GroupItem extends React.Component {
     } = this.props.group;
 
     return (
-      <ListItem onClick={this.handleJoinGroup} disabled={isCurrent} button>
+      <ListItem
+        onClick={this.handleJoinGroup}
+        disabled={isCurrent}
+        selected={isCurrent}
+        button
+      >
         {totalQuestions && (
           <Typography color="textSecondary">{`${completedQuestions}/${totalQuestions}`}</Typography>
         )}
