@@ -11,7 +11,9 @@ import Typography from "@material-ui/core/Typography";
 import LeaveIcon from "@material-ui/icons/ExitToApp";
 import ManageIcon from "@material-ui/icons/Settings";
 
-import { Link } from "react-router-dom";
+import Link from "react-router-dom/Link";
+
+const progressStyle = { flex: "0 0 40px" };
 
 export default class GroupItem extends React.Component {
   handleJoinGroup = () => this.props.joinGroupHandler(this.props.group._id);
@@ -22,8 +24,8 @@ export default class GroupItem extends React.Component {
     const {
       _id: id,
       title,
-      completedQuestions,
-      totalQuestions,
+      completedQuestions = "-",
+      totalQuestions = "-",
       canManage,
       isCurrent
     } = this.props.group;
@@ -33,32 +35,35 @@ export default class GroupItem extends React.Component {
         onClick={this.handleJoinGroup}
         disabled={isCurrent}
         selected={isCurrent}
+        component="li"
         button
       >
-        {totalQuestions && (
-          <Typography color="textSecondary">{`${completedQuestions}/${totalQuestions}`}</Typography>
+        <Typography color="textSecondary" style={progressStyle}>
+          {`${completedQuestions}/${totalQuestions}`}
+        </Typography>
+        <ListItemText primary={title} />
+        {(canManage || isCurrent) && (
+          <ListItemSecondaryAction>
+            {canManage && (
+              <IconButton
+                component={Link}
+                to={`/group/manage/${id}`}
+                aria-label="Manage group"
+              >
+                <ManageIcon fontSize="small" />
+              </IconButton>
+            )}
+            {isCurrent && (
+              <IconButton
+                color="secondary"
+                onClick={this.handleLeaveCurrentGroup}
+                aria-label="Leave current group"
+              >
+                <LeaveIcon fontSize="small" />
+              </IconButton>
+            )}
+          </ListItemSecondaryAction>
         )}
-        <ListItemText inset primary={title} />
-        <ListItemSecondaryAction>
-          {canManage && (
-            <IconButton
-              component={Link}
-              to={`/group/manage/${id}`}
-              aria-label="Manage group"
-            >
-              <ManageIcon fontSize="small" />
-            </IconButton>
-          )}
-          {isCurrent && (
-            <IconButton
-              color="secondary"
-              onClick={this.handleLeaveCurrentGroup}
-              aria-label="Leave current group"
-            >
-              <LeaveIcon fontSize="small" />
-            </IconButton>
-          )}
-        </ListItemSecondaryAction>
       </ListItem>
     );
   }
