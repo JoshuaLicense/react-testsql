@@ -39,9 +39,17 @@ class UploadDatabase extends React.Component {
       <UserContext.Consumer>
         {({ user }) =>
           user && user.group ? (
-            <IconButton component="span" aria-label="Upload Database" disabled>
-              <UploadIcon />
-            </IconButton>
+            <Tooltip title="Disabled while in a group">
+              <span>
+                <IconButton
+                  component="span"
+                  aria-label="Upload Database"
+                  disabled
+                >
+                  <UploadIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
           ) : (
             <React.Fragment>
               <input

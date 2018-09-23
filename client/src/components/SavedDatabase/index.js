@@ -43,17 +43,23 @@ export default class DatabaseManager extends React.Component {
 
     const { currentDatabase, loadDatabaseHandler, disabled } = this.props;
 
+    const tooltipText = disabled
+      ? "Disabled while in a group"
+      : "Saved Databases";
+
     return (
       <React.Fragment>
-        <Tooltip title="Saved Databases">
-          <IconButton
-            onClick={this.handleOpen}
-            color="inherit"
-            aria-label="Saved Database Actions"
-            disabled={disabled}
-          >
-            <DatabaseIcon fontSize="small" />
-          </IconButton>
+        <Tooltip title={tooltipText}>
+          <span style={{ display: "inline-block" }}>
+            <IconButton
+              onClick={this.handleOpen}
+              color="inherit"
+              aria-label="Saved Database Actions"
+              disabled={disabled}
+            >
+              <DatabaseIcon fontSize="small" />
+            </IconButton>
+          </span>
         </Tooltip>
         <Dialog onClose={this.handleClose} open={open} fullWidth>
           <Router>
