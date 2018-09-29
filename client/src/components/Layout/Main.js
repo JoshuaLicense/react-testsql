@@ -228,7 +228,7 @@ export default class Main extends React.Component {
 
           {results &&
             results.map((result, i) => (
-              <Section title="Results (Max. 10)" key={i} padding="16px">
+              <Section title="Results" key={i} padding="16px">
                 <OutputTable columns={result.columns} values={result.values} />
               </Section>
             ))}

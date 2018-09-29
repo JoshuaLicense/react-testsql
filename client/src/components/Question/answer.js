@@ -45,9 +45,9 @@ const checkAnswer = (db, sql, question) => {
   // 2. Check the same amount of columns exists in both the submitted query and the model query
   if (modelColumns.length !== userColumns.length) {
     throw new IncorrectAnswer(
-      `Expected a total of ${
-        modelColumns.length
-      } column(s) to be returned, instead got ${userColumns.length}!`
+      `Expected only the following column(s) to be selected: ${modelColumns.join(
+        ", "
+      )}!`
     );
   }
 
@@ -71,7 +71,7 @@ const checkAnswer = (db, sql, question) => {
       throw new IncorrectAnswer(
         `Expected only the following column(s) to be selected: ${modelColumns.join(
           ", "
-        )}`
+        )}!`
       );
     }
 
@@ -89,7 +89,7 @@ const checkAnswer = (db, sql, question) => {
         throw new IncorrectAnswer(
           `The column value ${value} was not found in the column ${
             modelColumns[modelColumnIndex]
-          }`
+          }!`
         );
       }
 
