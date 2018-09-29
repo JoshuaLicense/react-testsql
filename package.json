@@ -20,6 +20,10 @@
     "server": "cd server && yarn start-dev",
     "client": "cd client && yarn start",
     "test": "cd client && yarn test",
+    "build": "cd client && yarn build",
+    "clean": "cd server && shx rm -rf build",
+    "move": "cd client && shx mv build ../server",
+    "deploy": "yarn clean && yarn build && yarn move && cd server && yarn openode deploy",
     "heroku-postbuild": "cd client && yarn install --production && yarn build"
   },
   "cacheDirectories": [
@@ -29,7 +33,8 @@
   "devDependencies": {
     "@types/enzyme": "^3.1.11",
     "@types/jest": "^23.1.4",
-    "concurrently": "^3.5.1"
+    "concurrently": "^3.5.1",
+    "shx": "^0.3.2"
   },
   "workspaces": [
     "client",
