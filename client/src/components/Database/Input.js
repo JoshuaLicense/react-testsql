@@ -1,14 +1,5 @@
 import React from "react";
 
-import "./input.css";
-
-import { Controlled as CodeMirror } from "react-codemirror2";
-
-import "codemirror/lib/codemirror.css";
-import "codemirror/theme/neat.css";
-
-import "codemirror/mode/sql/sql.js";
-
 import PropTypes from "prop-types";
 
 import { withStyles } from "@material-ui/core/styles";
@@ -16,6 +7,12 @@ import Button from "@material-ui/core/Button";
 
 import RunIcon from "@material-ui/icons/Done";
 import ClearIcon from "@material-ui/icons/Clear";
+
+import brace from "brace";
+import AceEditor from "react-ace";
+
+import "brace/mode/sql";
+import "brace/theme/tomorrow";
 
 const styles = theme => ({
   button: {
@@ -36,19 +33,14 @@ const styles = theme => ({
   }
 });
 
-const codeMirrorOptions = {
-  mode: "text/x-sql",
-  theme: "neat"
-};
-
 class DatabaseInput extends React.Component {
   state = {
-    statement: null
+    statement: ""
   };
 
-  handleChange = (editor, data, statement) => this.setState({ statement });
+  handleChange = statement => this.setState({ statement });
 
-  handleClear = () => this.setState({ statement: null });
+  handleClear = () => this.setState({ statement: "" });
 
   handleSubmit = () => this.props.submitHandler(this.state.statement);
 
@@ -59,11 +51,15 @@ class DatabaseInput extends React.Component {
 
     return (
       <React.Fragment>
-        <CodeMirror
+        <AceEditor
+          mode="sql"
+          theme="tomorrow"
+          showPrintMargin={false}
+          focus
+          height="9rem"
+          width="100%"
+          onChange={this.handleChange}
           value={statement}
-          options={codeMirrorOptions}
-          onBeforeChange={this.handleChange}
-          className={classes.codemirror}
         />
 
         <Button
