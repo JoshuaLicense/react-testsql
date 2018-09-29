@@ -3,8 +3,7 @@ import React from "react";
 import SnackBar from "@material-ui/core/Snackbar";
 import SnackBarContent from "@material-ui/core/SnackbarContent";
 
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
+import Button from "@material-ui/core/Button";
 
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
@@ -142,14 +141,14 @@ class Feedback extends React.Component {
             </span>
           }
           action={
-            <IconButton
+            <Button
               key="close"
-              aria-label="Close"
-              color="inherit"
+              aria-label="Dismiss"
+              size="small"
               onClick={this.handleClose}
             >
-              <CloseIcon className={classes.icon} />
-            </IconButton>
+              Dismiss
+            </Button>
           }
         />
       </SnackBar>
