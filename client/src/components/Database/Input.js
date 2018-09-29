@@ -2,6 +2,8 @@ import React from "react";
 
 import "./input.css";
 
+import { Controlled as CodeMirror } from "react-codemirror2";
+
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/neat.css";
 
@@ -14,8 +16,6 @@ import Button from "@material-ui/core/Button";
 
 import RunIcon from "@material-ui/icons/Done";
 import ClearIcon from "@material-ui/icons/Clear";
-
-import { Controlled as CodeMirror } from "react-codemirror2";
 
 const styles = theme => ({
   button: {
@@ -38,8 +38,7 @@ const styles = theme => ({
 
 const codeMirrorOptions = {
   mode: "text/x-sql",
-  theme: "neat",
-  lineNumbers: true
+  theme: "neat"
 };
 
 class DatabaseInput extends React.Component {
