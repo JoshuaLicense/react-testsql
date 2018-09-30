@@ -211,16 +211,13 @@ class QuestionManager extends React.Component {
           {activeQuestion && (
             <Typography
               variant="subheading"
-              component="span"
+              component="div"
               color={activeQuestion.error ? "error" : "inherit"}
+              dangerouslySetInnerHTML={{
+                __html: marked(activeQuestion.question)
+              }}
               gutterBottom
-            >
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: marked(activeQuestion.question)
-                }}
-              />
-            </Typography>
+            />
           )}
           <div className={classes.bottomActions}>
             {activeSet && (
