@@ -87,9 +87,15 @@ class QuestionManager extends React.Component {
    * The props passed is the full question set.
    */
   componentDidUpdate = prevProps => {
-    // Only update if the current active queston isn't identical (meaning the question is now completed).
+    // Only update if the current active queston isn't identical (meaning the question is now completed perhaps).
     if (!Object.is(prevProps.activeQuestion, this.props.activeQuestion)) {
       const { allQuestions, activeQuestion } = this.props;
+
+      const allSetNames = [
+        ...new Set(allQuestions.map(question => question.set))
+      ];
+
+      const activeSet = allSetNames[0];
 
       // Means that the component has to rebuild the active set, as we created a brand new completed question object.
       const activeQuestionSet = [
@@ -99,6 +105,8 @@ class QuestionManager extends React.Component {
       ];
 
       this.setState({
+        allSetNames,
+        activeSet,
         activeQuestionSet,
         activeQuestionIndex: activeQuestionSet.indexOf(activeQuestion)
       });
