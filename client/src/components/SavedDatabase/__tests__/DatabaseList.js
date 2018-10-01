@@ -5,7 +5,7 @@ import DatabaseItem from "../DatabaseItem";
 
 import DatabaseList from "../DatabaseList";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core";
+import ListItemText from "@material-ui/core/ListItemText";
 
 const loadDatabaseMock = jest.fn();
 const refreshHandlerMock = jest.fn();

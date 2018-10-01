@@ -102,7 +102,9 @@ export default class Main extends React.Component {
 
     if (
       hasLeftGroup ||
-      prevProps.currentDatabase.filename !== this.props.currentDatabase.filename
+      (prevProps.currentDatabase &&
+        prevProps.currentDatabase.filename !==
+          this.props.currentDatabase.filename)
     ) {
       this.getQuestions();
     }
