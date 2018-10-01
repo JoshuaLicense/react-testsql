@@ -6,6 +6,10 @@ import GroupItem from "../GroupItem";
 
 import List from "@material-ui/core/List";
 
+import clearQuestions from "../../../questions/utils/clearQuestions";
+
+jest.mock("../../../questions/utils/clearQuestions");
+
 const groups = [
   {
     _id: "31c286f9064f4d92911419783a7b299d",
@@ -74,6 +78,8 @@ const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 const loadDatabaseMock = jest.fn();
 const refreshUserContextMock = jest.fn();
 const closeHandlerMock = jest.fn();
+
+clearQuestions.mockImplementation(() => Promise.resolve());
 
 fetch.mockImplementation(() =>
   Promise.resolve({

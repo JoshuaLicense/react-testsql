@@ -3,8 +3,7 @@ import { shallow } from "enzyme";
 import QuestionManager from "../index";
 import Typography from "@material-ui/core/Typography";
 
-import Markdown from "markdown-to-jsx";
-import { StepLabel } from "@material-ui/core";
+import StepLabel from "@material-ui/core/StepLabel";
 
 const questions = [
   { set: "Test set 1", question: "Test question 1", completed: true },
@@ -140,9 +139,9 @@ it("shows the active question", () => {
   expect(
     component
       .find(Typography)
-      .find(Markdown)
-      .dive()
+      .render()
       .text()
+      .trim()
   ).toEqual("Test question 1");
 });
 

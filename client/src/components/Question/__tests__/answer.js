@@ -67,7 +67,7 @@ describe("test checkAnswer passes", () => {
     mockDB.exec.mockReturnValueOnce(mockAnswer);
 
     expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
-      /^Expected a total of 4 column\(s\) to be returned, instead got 3!$/
+      /^Expected only the following column\(s\) to be selected: ID, FirstName, LastName, Phone!$/
     );
   });
 
@@ -101,7 +101,7 @@ describe("test checkAnswer passes", () => {
     mockDB.exec.mockReturnValueOnce(mockAnswer);
 
     expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
-      /^Expected only the following column\(s\) to be selected: ID, FirstName, LastName, Phone$/
+      /^Expected only the following column\(s\) to be selected: ID, FirstName, LastName, Phone!$/
     );
   });
 
@@ -116,7 +116,7 @@ describe("test checkAnswer passes", () => {
     mockDB.exec.mockReturnValueOnce(mockAnswer);
 
     expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
-      /^The column value 2 was not found in the column ID$/
+      /^The column value 2 was not found in the column ID!$/
     );
 
     mockDB.exec.mockReturnValueOnce([
@@ -129,7 +129,7 @@ describe("test checkAnswer passes", () => {
     mockDB.exec.mockReturnValueOnce(mockAnswer);
 
     expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
-      /^The column value 021312 was not found in the column Phone$/
+      /^The column value 021312 was not found in the column Phone!$/
     );
   });
 

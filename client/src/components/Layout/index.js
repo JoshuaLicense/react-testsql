@@ -17,7 +17,12 @@ export default class Layout extends React.Component {
     openSidebar: false
   };
 
-  handleToggleSidebar = open => this.setState({ openSidebar: Boolean(open) });
+  handleToggleSidebar = open =>
+    // If the open parameter is not passed it will toggle the previous state.
+    this.setState(prevState => ({
+      openSidebar:
+        typeof open === "undefined" ? !prevState.openSidebar : Boolean(open)
+    }));
 
   render() {
     const { openSidebar } = this.state;

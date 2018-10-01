@@ -8,7 +8,7 @@ import Button from "@material-ui/core/Button";
 import RunIcon from "@material-ui/icons/Done";
 import ClearIcon from "@material-ui/icons/Clear";
 
-import brace from "brace";
+//import brace from "brace";
 import AceEditor from "react-ace";
 
 import "brace/mode/sql";

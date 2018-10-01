@@ -12,6 +12,7 @@ import { Switch } from "react-router-dom";
 
 import SaveDatabase from "../SaveDatabase";
 import DatabaseList from "../DatabaseList";
+import Tooltip from "@material-ui/core/Tooltip";
 
 jest.mock("../SaveDatabase.js");
 jest.mock("../DatabaseList.js");
@@ -98,7 +99,7 @@ describe("DatabaseManager component", () => {
   });
 });
 
-it("displays loading the saved databases while waiting for promise to resolve", () => {
+it("displays an icon with no tooltip (signifies loading)", () => {
   fetch.mockImplementationOnce(() =>
     Promise.resolve({
       ok: true,
@@ -108,7 +109,7 @@ it("displays loading the saved databases while waiting for promise to resolve", 
 
   const component = shallow(<DatabaseManager />);
 
-  expect(
-    component.contains(<div>Loading your saved databases...</div>)
-  ).toBeTruthy();
+  expect(component.find(Tooltip).length).toEqual(0);
+
+  expect(component.find(IconButton).length).toEqual(1);
 });

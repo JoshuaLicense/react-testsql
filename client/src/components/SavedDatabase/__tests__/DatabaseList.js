@@ -4,7 +4,8 @@ import { shallow } from "enzyme";
 import DatabaseItem from "../DatabaseItem";
 
 import DatabaseList from "../DatabaseList";
-import Typography from "@material-ui/core/Typography";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core";
 
 const loadDatabaseMock = jest.fn();
 const refreshHandlerMock = jest.fn();
@@ -135,5 +136,12 @@ it("displays an empty placeholder when the user has no saved databases", () => {
 
   const component = shallow(<DatabaseList list={list} />);
 
-  expect(component.find(Typography).prop("variant")).toEqual("secondary");
+  expect(
+    component
+      .find(ListItem)
+      .findWhere(elem => elem.props().disabled === true)
+      .find(ListItemText)
+      .render()
+      .text()
+  ).toEqual("No saved databases yet!");
 });

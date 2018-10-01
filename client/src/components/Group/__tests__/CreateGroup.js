@@ -82,7 +82,11 @@ describe("CreateGroup component", () => {
 
   it("sets an error while creating a new group", async () => {
     // Error text to be hidden initially.
-    expect(component.find(FormHelperText).length).toEqual(0);
+    expect(
+      component
+        .find(FormHelperText)
+        .findWhere(elem => elem.props().id === "name-error-text").length
+    ).toEqual(0);
 
     fetch.mockImplementationOnce(() =>
       Promise.resolve({
@@ -102,7 +106,11 @@ describe("CreateGroup component", () => {
 
     component.update();
 
-    expect(component.find(FormHelperText).length).toEqual(1);
+    expect(
+      component
+        .find(FormHelperText)
+        .findWhere(elem => elem.props().id === "name-error-text").length
+    ).toEqual(1);
   });
 
   it("updates the state onChange input, controlled input", () => {

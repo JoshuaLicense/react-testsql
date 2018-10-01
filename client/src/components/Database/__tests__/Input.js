@@ -16,7 +16,7 @@ describe("Database Input component", () => {
   });
 
   it("Controls the input when a change is detected", () => {
-    component.instance().handleChange(null, null, "Test input");
+    component.instance().handleChange("Test input");
 
     component.update();
 
@@ -28,7 +28,7 @@ describe("Database Input component", () => {
 
     component.instance().handleClear();
 
-    expect(component.state("statement")).toEqual(null);
+    expect(component.state("statement")).toEqual("");
   });
 
   it("Submits the current statement to the submit handler prop", () => {

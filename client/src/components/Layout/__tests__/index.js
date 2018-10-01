@@ -24,7 +24,10 @@ describe("the Layout component", () => {
 
     expect(component.state("openSidebar")).toBeTruthy();
 
-    component.instance().handleToggleSidebar();
+    // Force close the sidebar.
+    component.instance().handleToggleSidebar(false);
+    // Twice for good measure.
+    component.instance().handleToggleSidebar(false);
 
     // Update the component.
     component.update();
