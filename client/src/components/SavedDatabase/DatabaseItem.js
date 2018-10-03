@@ -26,7 +26,7 @@ export default class DatabaseItem extends React.Component {
       <ListItem onClick={this.handleClick} button>
         <ListItemText primary={title} secondary={date} />
         {this.props.deleteHandler && (
-          <ListItemSecondaryAction component onClick={this.handleDelete}>
+          <ListItemSecondaryAction onClick={this.handleDelete}>
             <IconButton aria-label="Delete">
               <DeleteIcon />
             </IconButton>
