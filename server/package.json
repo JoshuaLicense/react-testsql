@@ -8,6 +8,7 @@
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.18.2",
+    "chalk": "^2.4.1",
     "connect-mongo": "^2.0.1",
     "crypto": "^1.0.1",
     "dotenv": "^6.0.0",

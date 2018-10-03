@@ -6,6 +6,8 @@
 
 Make sure you have **git**, and **yarn** or **npm** installed.
 
+A MongoDB container is **required**, the URI should be set inside `.env`. See [here](https://mongolab.com/) for a free alternative from mLab.
+
 ## Getting started
 
 1.  Clone this repository locally.  

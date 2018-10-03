@@ -15,6 +15,8 @@ const { matchedData, sanitize } = require("express-validator/filter");
 const path = require("path");
 const multer = require("multer");
 
+const chalk = require("chalk");
+
 const upload = multer({ dest: path.join(__dirname, "saves") });
 
 const dotenv = require("dotenv");
@@ -39,11 +41,16 @@ const passportConfig = require("./config/passport");
 const app = express();
 
 // Connect to the database
-mongoose.Promise = global.Promise;
+mongoose.set("useFindAndModify", false);
+mongoose.set("useCreateIndex", true);
+mongoose.set("useNewUrlParser", true);
 mongoose.connect(process.env.MONGODB_URI);
 mongoose.connection.on("error", err => {
   console.error(err);
-  console.log("MongoDB connection error. Please make sure MongoDB is running.");
+  console.log(
+    "%s MongoDB connection error. Please make sure MongoDB is running.",
+    chalk.red("✗")
+  );
   process.exit();
 });
 
@@ -304,9 +311,11 @@ if (process.env.NODE_ENV === "development") {
 
 app.listen(app.get("port"), () => {
   console.log(
-    "App is running at http://localhost:%d in %s mode",
+    "%s App is running at http://localhost:%d in %s mode",
+    chalk.green("✓"),
     app.get("port"),
     app.get("env")
   );
-  console.log("Press CTRL-C to stop\n");
+
+  console.log("  Press CTRL-C to stop\n");
 });
