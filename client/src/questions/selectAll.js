@@ -2,7 +2,7 @@ import getTables from "./utils/getTables";
 
 const selectAll = {
   set: "Easy",
-  func: db => {
+  build: db => {
     let [table] = getTables(db, 1);
 
     return {

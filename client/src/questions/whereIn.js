@@ -4,7 +4,7 @@ import getRows from "./utils/getRows";
 
 const whereIn = {
   set: "Easy",
-  func: db => {
+  build: db => {
     const tables = getTables(db);
 
     const [{ table, column: column_1 }] = getColumns(db, tables);

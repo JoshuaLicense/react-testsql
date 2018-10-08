@@ -3,7 +3,7 @@ import getColumns from "./utils/getColumns";
 
 const orderByMultiple = {
   set: "Intermediate",
-  func: db => {
+  build: db => {
     const tables = getTables(db);
 
     const [{ table, column: column_1 }, { column: column_2 }] = getColumns(

@@ -3,7 +3,7 @@ import getColumns from "./utils/getColumns";
 
 const selectUnique = {
   set: "Easy",
-  func: db => {
+  build: db => {
     const tables = getTables(db, 1);
 
     const [{ table, column }] = getColumns(db, tables);

@@ -6,7 +6,7 @@ import getRandomInt from "lodash/random";
 
 const like = {
   set: "Hard",
-  func: db => {
+  build: db => {
     const tables = getTables(db, 3);
 
     const [{ table, column }] = getColumns(db, tables, 1, "VARCHAR");

@@ -4,7 +4,7 @@ import getColumns from "./utils/getColumns";
 
 const selectNull = {
   set: "Intermediate",
-  func: db => {
+  build: db => {
     const nullOrNot = [["NOT", "not"], ["", ""]];
     // Random "NOT". Otherwise blank.
     const [null_code, null_text] = nullOrNot[getRandomInt(nullOrNot.lenth)];

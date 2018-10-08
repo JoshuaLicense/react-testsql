@@ -1,26 +1,35 @@
-const buildQuestions = async database =>
+const buildQuestions = async (database, availableQuestions) =>
   new Promise(resolve => {
     // Setup the caching.
     window.questionCache = {};
 
-    return import("../").then(({ default: _questions }) => {
-      const questions = _questions.map(questionConfig => {
-        const { func } = questionConfig;
+    return import("../index").then(({ default: allQuestions }) => {
+      const questions = allQuestions.reduce((acc, cur, i) => {
+        // If the current index is included in the array.
+        if (availableQuestions && availableQuestions.indexOf(i) === -1) {
+          return acc;
+        }
+
+        const { build } = cur;
 
         try {
-          const { question, answer } = func(database);
+          const { question, answer } = build(database);
 
-          return { ...questionConfig, question, answer };
+          acc.push({ ...cur, question, answer });
+
+          return acc;
         } catch (Error) {
           // Mark as error question, tried twice can't generate this question.
-          return {
-            ...questionConfig,
+          acc.push({
+            ...cur,
             question: `Error: ${Error.message}`,
             answer: null,
             error: true
-          };
+          });
+
+          return acc;
         }
-      });
+      }, []);
 
       return resolve(questions);
     });

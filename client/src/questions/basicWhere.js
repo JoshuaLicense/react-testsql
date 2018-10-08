@@ -4,7 +4,8 @@ import getRows from "./utils/getRows";
 
 const basicWhere = {
   set: "Easy",
-  func: db => {
+  title: "Basic WHERE clause",
+  build: db => {
     const tables = getTables(db);
 
     const [

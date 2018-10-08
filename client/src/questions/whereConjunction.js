@@ -6,7 +6,7 @@ import getRandomConjunction from "./utils/getRandomConjunction";
 
 const whereConjunction = {
   set: "Easy",
-  func: db => {
+  build: db => {
     const tables = getTables(db);
 
     const [{ table, column: column_1 }, { column: column_2 }] = getColumns(

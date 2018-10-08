@@ -4,7 +4,7 @@ import getColumns from "./utils/getColumns";
 
 const limitAndOrder = {
   set: "Intermediate",
-  func: db => {
+  build: db => {
     // Get a random limit number between 5-10
     const randomInt = getRandomInt(5, 10);
 

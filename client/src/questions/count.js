@@ -2,7 +2,7 @@ import getTables from "./utils/getTables";
 
 const count = {
   set: "Intermediate",
-  func: db => {
+  build: db => {
     const table = getTables(db, 1);
 
     return {
