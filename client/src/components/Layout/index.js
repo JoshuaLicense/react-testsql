@@ -5,6 +5,8 @@ import Main from "./Main";
 import DatabaseContext from "../Database/Context";
 import UserContext from "../Auth/Context";
 
+import Container from "./Container";
+
 const containerStyle = {
   height: "100vh",
   overflow: "hidden",
@@ -37,7 +39,7 @@ export default class Layout extends React.Component {
               <DatabaseContext.Consumer>
                 {({ database, loadDatabase }) =>
                   database ? (
-                    <Main
+                    <Container
                       user={user}
                       currentDatabase={database}
                       loadDatabase={loadDatabase}

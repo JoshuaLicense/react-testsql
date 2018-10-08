@@ -2,7 +2,7 @@ import React from "react";
 import { shallow } from "enzyme";
 
 import FileSaver from "file-saver";
-import DownloadDatabase from "../DownloadDatabase";
+import DownloadDatabase from "../Download";
 
 jest.mock("file-saver", () => ({ saveAs: jest.fn() }));
 

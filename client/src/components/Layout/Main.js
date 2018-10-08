@@ -100,12 +100,12 @@ export default class Main extends React.Component {
       Boolean(!this.props.user.group) &&
       prevProps.user.group;
 
-    if (
-      hasLeftGroup ||
-      (prevProps.currentDatabase &&
-        prevProps.currentDatabase.filename !==
-          this.props.currentDatabase.filename)
-    ) {
+    const hasDatabaseChanged =
+      prevProps.currentDatabase &&
+      prevProps.currentDatabase.filename !==
+        this.props.currentDatabase.filename;
+
+    if (hasLeftGroup || hasDatabaseChanged) {
       this.getQuestions();
     }
   }
@@ -117,20 +117,17 @@ export default class Main extends React.Component {
 
     const { activeQuestion, allQuestions } = this.state;
 
-    // Defaultly set the results to blank.
-    // setState() are grouped so calling this shouldn't update,
-    // the actual state if called further in the function.
-    this.setState({ results: null });
+    let results = [];
 
     try {
-      const results = currentDatabase.exec(sql);
+      const output = currentDatabase.exec(sql);
 
       // Check if any database actions were ran, if so only update the database.
       if (currentDatabase.getRowsModified()) {
         // TODO: Make this function name a saveDatabase()...
         loadDatabase(currentDatabase);
       } else {
-        this.setState({ results });
+        results = output;
       }
 
       if (checkAnswer(currentDatabase, sql, activeQuestion)) {
@@ -138,14 +135,17 @@ export default class Main extends React.Component {
 
         // Only save progress if in a group.
         if (this.props.user && this.props.user.group) {
-          return saveProgress(allQuestions);
+          saveProgress(allQuestions);
         } else {
-          return saveQuestions(allQuestions, this.props.user);
+          saveQuestions(allQuestions, this.props.user);
         }
       }
     } catch (Error) {
-      return this.changeFeedback({ message: Error.message, variant: "error" });
+      this.changeFeedback({ message: Error.message, variant: "error" });
     }
+
+    // Update the results array in the Container component.
+    this.props.updateResultsHandler(results);
   };
 
   completeCurrentQuestion = sql => {
@@ -178,65 +178,39 @@ export default class Main extends React.Component {
     });
   };
 
-  displaySchema = name => {
-    const { currentDatabase } = this.props;
-
-    const results = currentDatabase.exec(`SELECT * FROM ${name} LIMIT 10`);
-
-    this.setState({ results });
-
-    return this.props.sidebarToggleHandler();
-  };
-
   render() {
     const {
       allQuestions,
       activeQuestion,
 
-      feedback,
-      results
+      feedback
     } = this.state;
 
-    const {
-      currentDatabase,
-      loadDatabase,
-      openSidebar,
-      sidebarToggleHandler
-    } = this.props;
+    const { results } = this.props;
 
     return (
-      <div style={containerStyle}>
-        <Schema
-          open={openSidebar}
-          currentDatabase={currentDatabase}
-          uploadDatabaseHandler={loadDatabase}
-          showSchemaHandler={this.displaySchema}
-          toggleSidebarHandler={sidebarToggleHandler}
-        />
-        <main style={innerContainerStyle}>
-          <Section title="Questions">
-            {allQuestions && (
-              <Question
-                activeQuestion={activeQuestion}
-                allQuestions={allQuestions}
-                changeQuestionHandler={this.changeQuestion}
-              />
-            )}
-          </Section>
+      <main style={innerContainerStyle}>
+        <Section title="Questions">
+          {allQuestions && (
+            <Question
+              activeQuestion={activeQuestion}
+              allQuestions={allQuestions}
+              changeQuestionHandler={this.changeQuestion}
+            />
+          )}
+        </Section>
 
-          <Section title="Statement" padding="16px">
-            <LoadableInputForm submitHandler={this.runQuery} />
-          </Section>
+        <Section title="Statement" padding="16px">
+          <LoadableInputForm submitHandler={this.runQuery} />
+        </Section>
 
-          {results &&
-            results.map((result, i) => (
-              <Section title="Results" key={i} padding="16px">
-                <OutputTable columns={result.columns} values={result.values} />
-              </Section>
-            ))}
-          <Feedback {...feedback} changeHandler={this.changeFeedback} />
-        </main>
-      </div>
+        {results.map((result, i) => (
+          <Section title="Results" key={i} padding="16px">
+            <OutputTable columns={result.columns} values={result.values} />
+          </Section>
+        ))}
+        <Feedback {...feedback} changeHandler={this.changeFeedback} />
+      </main>
     );
   }
 }

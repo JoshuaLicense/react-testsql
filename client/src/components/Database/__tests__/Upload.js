@@ -1,7 +1,7 @@
 import React from "react";
 import { shallow } from "enzyme";
 
-import UploadDatabase from "../UploadDatabase";
+import UploadDatabase from "../Upload";
 
 import IconButton from "@material-ui/core/IconButton";
 
