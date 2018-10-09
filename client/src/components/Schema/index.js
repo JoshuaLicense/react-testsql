@@ -43,6 +43,8 @@ class Schema extends React.Component {
 
     // tableNames are returned as [[0] => "Tbl_name", [1] => "Tbl_name"]]
     const schema = tableNames.map(([tableName]) => {
+      // Extra the row count from each table.
+      // Expensive operation!
       const [
         {
           values: [[count]]
