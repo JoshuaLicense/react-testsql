@@ -1,9 +1,7 @@
 import React from "react";
 
 import Header from "../Header";
-import Main from "./Main";
 import DatabaseContext from "../Database/Context";
-import UserContext from "../Auth/Context";
 
 import Container from "./Container";
 
@@ -33,29 +31,20 @@ export default class Layout extends React.Component {
       <div style={containerStyle}>
         <Header sidebarToggleHandler={this.handleToggleSidebar} />
 
-        <UserContext.Consumer>
-          {({ user, isLoaded }) =>
-            isLoaded ? (
-              <DatabaseContext.Consumer>
-                {({ database, loadDatabase }) =>
-                  database ? (
-                    <Container
-                      user={user}
-                      currentDatabase={database}
-                      loadDatabase={loadDatabase}
-                      sidebarToggleHandler={this.handleToggleSidebar}
-                      openSidebar={openSidebar}
-                    />
-                  ) : (
-                    <div>Loading...</div>
-                  )
-                }
-              </DatabaseContext.Consumer>
+        <DatabaseContext.Consumer>
+          {({ database, loadDatabase }) =>
+            database ? (
+              <Container
+                currentDatabase={database}
+                loadDatabase={loadDatabase}
+                sidebarToggleHandler={this.handleToggleSidebar}
+                openSidebar={openSidebar}
+              />
             ) : (
               <div>Loading...</div>
             )
           }
-        </UserContext.Consumer>
+        </DatabaseContext.Consumer>
       </div>
     );
   }

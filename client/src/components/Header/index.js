@@ -47,12 +47,17 @@ const Header = props => (
       </Typography>
       <div className={props.classes.userActionsContainer}>
         <UserContext.Consumer>
-          {({ user, refresh }) =>
-            user ? (
-              <LoggedIn user={user} refreshUserContext={refresh} />
+          {({ user, isLoaded, refresh, logout }) =>
+            isLoaded &&
+            (user ? (
+              <LoggedIn
+                user={user}
+                refreshUserContext={refresh}
+                logoutHandler={logout}
+              />
             ) : (
               <Guest refreshUserContext={refresh} />
-            )
+            ))
           }
         </UserContext.Consumer>
       </div>

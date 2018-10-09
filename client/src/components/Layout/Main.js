@@ -11,8 +11,6 @@ import checkAnswer from "../Question/answer";
 
 import { saveProgress } from "../Group/API";
 
-import Schema from "../Schema";
-
 import Loadable from "react-loadable";
 import buildQuestions from "../../questions/utils/buildQuestions";
 import saveQuestions from "../../questions/utils/saveQuestions";
@@ -21,13 +19,6 @@ const LoadableInputForm = Loadable({
   loader: () => import("../Database/Input" /* webpackChunkName: "inputForm" */),
   loading: () => <div>Loading...</div>
 });
-
-const containerStyle = {
-  display: "flex",
-  flexDirection: "row",
-  zIndex: 0, // The header shadow will overlap.
-  height: "100%"
-};
 
 const innerContainerStyle = {
   overflow: "auto",

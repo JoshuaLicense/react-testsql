@@ -37,8 +37,9 @@ class UploadDatabase extends React.Component {
   render() {
     return (
       <UserContext.Consumer>
-        {({ user }) =>
-          user && user.group ? (
+        {({ user, isLoaded }) =>
+          isLoaded &&
+          (user && user.group ? (
             <Tooltip title="Disabled while in a group">
               <span>
                 <IconButton
@@ -68,7 +69,7 @@ class UploadDatabase extends React.Component {
                 </label>
               </Tooltip>
             </React.Fragment>
-          )
+          ))
         }
       </UserContext.Consumer>
     );

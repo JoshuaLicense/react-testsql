@@ -16,16 +16,13 @@ const styles = theme => ({
   drawerPaper: {
     height: "100%", // Overwrite the 100vh default!
     width: "16rem",
+    paddingTop: "16px",
     [theme.breakpoints.up("md")]: {
       position: "relative"
     }
   },
   container: {
-    display: "flex",
-    paddingTop: "16px"
-  },
-  heading: {
-    marginTop: "16px"
+    display: "flex"
   },
   drawerBottomActions: {
     display: "flex",

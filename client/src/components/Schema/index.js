@@ -67,7 +67,7 @@ class Schema extends React.Component {
       return <div>Loading...</div>;
     }
 
-    const { classes, showSchemaHandler } = this.props;
+    const { showSchemaHandler } = this.props;
 
     return (
       <React.Fragment>

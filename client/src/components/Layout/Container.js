@@ -1,30 +1,15 @@
 import React from "react";
 
-import Section from "./Section";
-import Question from "../Question";
-
-import OutputTable from "../Database/Output";
-
-import Feedback from "../Feedback";
-
-import checkAnswer from "../Question/answer";
-
-import { saveProgress } from "../Group/API";
-
 import Main from "./Main";
-import Schema from "../Schema";
 import Sidebar from "./Sidebar";
+
+import UserContext from "../Auth/Context";
 
 const containerStyle = {
   display: "flex",
   flexDirection: "row",
   zIndex: 0, // The header shadow will overlap.
   height: "100%"
-};
-
-const innerContainerStyle = {
-  overflow: "auto",
-  flexGrow: 1
 };
 
 export default class Container extends React.Component {
@@ -65,12 +50,19 @@ export default class Container extends React.Component {
           showSchemaHandler={this.displaySchema}
           toggleSidebarHandler={sidebarToggleHandler}
         />
-        <Main
-          results={results}
-          updateResultsHandler={this.handleUpdateResults}
-          currentDatabase={currentDatabase}
-          uploadDatabaseHandler={loadDatabase}
-        />
+        <UserContext.Consumer>
+          {({ isLoaded, user }) =>
+            isLoaded && (
+              <Main
+                user={user}
+                results={results}
+                updateResultsHandler={this.handleUpdateResults}
+                currentDatabase={currentDatabase}
+                uploadDatabaseHandler={loadDatabase}
+              />
+            )
+          }
+        </UserContext.Consumer>
       </div>
     );
   }

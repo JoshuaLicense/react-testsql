@@ -5,23 +5,28 @@ import UserContext from "./Context";
 import { getCurrentUser } from "./API";
 
 export default class Provider extends React.Component {
-  refresh = () => {
-    return getCurrentUser()
-      .then(data => {
-        this.setState({ user: data, isLoaded: true });
-      })
-      .catch(err => {
-        this.setState({ user: null, isLoaded: true });
-      });
+  logout = () => this.setState({ user: null });
+
+  refresh = async () => {
+    try {
+      const user = await getCurrentUser();
+
+      this.setState({ user, isLoaded: true });
+    } catch (e) {
+      this.setState({ user: null, isLoaded: true });
+    }
   };
 
   state = {
     user: null,
     isLoaded: false,
-    refresh: this.refresh
+    refresh: this.refresh,
+    logout: this.logout
   };
 
-  componentDidMount = () => this.refresh();
+  componentDidMount() {
+    this.refresh();
+  }
 
   render() {
     return (
