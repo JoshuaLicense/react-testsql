@@ -27,23 +27,32 @@ export default class SaveDatabase extends React.Component {
     error: null
   };
 
-  handleSaveDatabase = () => {
+  handleSaveDatabase = async () => {
     const { title } = this.state;
-    const { refreshHandler, currentDatabase } = this.props;
 
+    const { refreshSavedDatabaseList, currentDatabase } = this.props;
+
+    // Export the current database into a array buffer.
     const database = currentDatabase.export();
 
-    return saveDatabase(title, database)
-      .then(refreshHandler)
-      .then(() => this.setState({ title: "", error: null, redirect: true }))
-      .catch(error => {
-        error.json().then(json => this.setState({ error: json.message }));
-      });
+    // Try to save the database on the server.
+    try {
+      await saveDatabase(title, database);
+    } catch (response) {
+      const error = await response.json();
+
+      this.setState({ error });
+    }
+
+    // Refresh the database list so the newly deleted databases goes.
+    // This could be replaced with a client-side removal of the node, if you're a stickler for optimization.
+    refreshSavedDatabaseList();
+
+    // Redirect back to the database list.
+    return this.props.history.push("/");
   };
 
-  handleChange = e => {
-    this.setState({ title: e.target.value });
-  };
+  handleChange = e => this.setState({ title: e.target.value });
 
   handleClose = () => this.props.closeHandler();
 

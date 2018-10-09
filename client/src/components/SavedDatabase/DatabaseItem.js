@@ -9,13 +9,9 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 export default class DatabaseItem extends React.Component {
-  handleClick = () => {
-    this.props.clickHandler(this.props.database._id);
-  };
+  handleClick = () => this.props.clickHandler(this.props.database._id);
 
-  handleDelete = () => {
-    this.props.deleteHandler(this.props.database._id);
-  };
+  handleDelete = () => this.props.deleteHandler(this.props.database._id);
 
   render() {
     const { title, createdAt } = this.props.database;

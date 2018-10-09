@@ -26,23 +26,40 @@ export default class DatabaseList extends React.Component {
     error: null
   };
 
-  handleLoadDatabase = id => {
+  handleLoadDatabase = async id => {
     const { loadDatabaseHandler, closeHandler } = this.props;
 
-    return loadDatabase(id)
-      .then(fileBuffer => loadDatabaseHandler(new Uint8Array(fileBuffer)))
-      .then(() => closeHandler())
-      .catch(error => {
-        error.json().then(json => this.setState({ error: json.message }));
-      });
+    let fileBuffer;
+
+    // Try to fetch the database from the server.
+    try {
+      fileBuffer = await loadDatabase(id);
+    } catch (response) {
+      const error = await response.json();
+
+      this.setState({ error });
+    }
+
+    // Load the database into the client.
+    loadDatabaseHandler(new Uint8Array(fileBuffer));
+
+    return closeHandler();
   };
 
-  handleDeleteDatabase = id =>
-    deleteDatabase(id)
-      .then(this.props.refreshHandler)
-      .catch(error => {
-        error.json().then(json => this.setState({ error: json.message }));
-      });
+  handleDeleteDatabase = async id => {
+    // Try to delete the database from the server.
+    try {
+      await deleteDatabase(id);
+    } catch (response) {
+      const error = await response.json();
+
+      this.setState({ error });
+    }
+
+    // Refresh the database list so the newly deleted databases goes.
+    // This could be replaced with a client-side removal of the node, if you're a stickler for optimization.
+    return this.props.refreshSavedDatabaseList();
+  };
 
   handleClose = () => this.props.closeHandler();
 
@@ -76,29 +93,27 @@ export default class DatabaseList extends React.Component {
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Allows you to save your current database in a more permanent
-            location, the server.
+            Allows you to save your current database in a more{" "}
+            <em>permanent</em> location, on the server.
           </DialogContentText>
         </DialogContent>
 
-        <DialogContent>
-          <List>
-            {list && list.length ? (
-              list.map(database => (
-                <DatabaseItem
-                  key={database._id}
-                  database={database}
-                  clickHandler={this.handleLoadDatabase}
-                  deleteHandler={this.handleDeleteDatabase}
-                />
-              ))
-            ) : (
-              <ListItem disabled>
-                <ListItemText>No saved databases yet!</ListItemText>
-              </ListItem>
-            )}
-          </List>
-        </DialogContent>
+        <List>
+          {list && list.length ? (
+            list.map(database => (
+              <DatabaseItem
+                key={database._id}
+                database={database}
+                clickHandler={this.handleLoadDatabase}
+                deleteHandler={this.handleDeleteDatabase}
+              />
+            ))
+          ) : (
+            <ListItem disabled>
+              <ListItemText>No saved databases yet!</ListItemText>
+            </ListItem>
+          )}
+        </List>
         <DialogActions>
           <Button onClick={this.handleClose} color="primary">
             Cancel

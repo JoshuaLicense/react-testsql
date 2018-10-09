@@ -1,93 +1,72 @@
 import React from "react";
 
-import { listDatabases } from "./API";
-
 import IconButton from "@material-ui/core/IconButton";
-
-import Dialog from "@material-ui/core/Dialog";
 
 import DatabaseIcon from "@material-ui/icons/StorageTwoTone";
 
-import DatabaseList from "./DatabaseList";
-import SaveDatabase from "./SaveDatabase";
-
 import Tooltip from "@material-ui/core/Tooltip";
 
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Loadable from "react-loadable";
+
+const LoadableDatabaseManager = Loadable({
+  loader: () =>
+    import("./DatabaseManager" /* webpackChunkName: "saved-databases" */),
+  loading: <div>Loading...</div>
+});
 
 export default class DatabaseManager extends React.Component {
   state = {
-    list: null,
     open: false
   };
-
-  componentDidMount = () => this.refreshSavedDatabaseList();
-
-  refreshSavedDatabaseList = () =>
-    listDatabases().then(list => this.setState({ list }));
 
   handleOpen = () => this.setState({ open: true });
 
   handleClose = () => this.setState({ open: false });
 
-  render() {
-    const { open, list } = this.state;
+  handleMouseOver = () => LoadableDatabaseManager.preload();
 
-    if (!list) {
-      return (
-        <IconButton color="inherit" aria-label="Saved Database Actions">
-          <DatabaseIcon fontSize="small" />
-        </IconButton>
-      );
-    }
+  render() {
+    const { open } = this.state;
 
     const { currentDatabase, loadDatabaseHandler, disabled } = this.props;
 
-    const tooltipText = disabled
-      ? "Disabled while in a group"
-      : "Saved Databases";
-
-    return (
-      <React.Fragment>
-        <Tooltip title={tooltipText}>
+    if (disabled) {
+      return (
+        <Tooltip title="Disabled while in a group">
           <span style={{ display: "inline-block" }}>
             <IconButton
-              onClick={this.handleOpen}
               color="inherit"
               aria-label="Saved Database Actions"
-              disabled={disabled}
+              disabled
             >
               <DatabaseIcon fontSize="small" />
             </IconButton>
           </span>
         </Tooltip>
-        <Dialog onClose={this.handleClose} open={open} fullWidth>
-          <Router>
-            <Switch>
-              <Route
-                path="/database/save"
-                render={() => (
-                  <SaveDatabase
-                    currentDatabase={currentDatabase}
-                    currentSavedDatabaseCount={list.length}
-                    refreshHandler={this.refreshSavedDatabaseList}
-                    closeHandler={this.handleClose}
-                  />
-                )}
-              />
-              <Route
-                render={() => (
-                  <DatabaseList
-                    list={list}
-                    loadDatabaseHandler={loadDatabaseHandler}
-                    refreshHandler={this.refreshSavedDatabaseList}
-                    closeHandler={this.handleClose}
-                  />
-                )}
-              />
-            </Switch>
-          </Router>
-        </Dialog>
+      );
+    }
+
+    return (
+      <React.Fragment>
+        <Tooltip title="Saved Databases">
+          <span style={{ display: "inline-block" }}>
+            <IconButton
+              onClick={this.handleOpen}
+              onMouseOver={this.handleMouseOver}
+              color="inherit"
+              aria-label="Saved Database Actions"
+            >
+              <DatabaseIcon fontSize="small" />
+            </IconButton>
+          </span>
+        </Tooltip>
+        {open && (
+          <LoadableDatabaseManager
+            closeHander={this.handleClose}
+            currentDatabase={currentDatabase}
+            loadDatabaseHandler={loadDatabaseHandler}
+          />
+        )}
       </React.Fragment>
     );
   }
