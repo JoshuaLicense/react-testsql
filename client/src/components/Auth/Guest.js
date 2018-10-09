@@ -20,12 +20,12 @@ class Guest extends React.Component {
     password: ""
   };
 
-  handleLogin = () => {
+  handleLogin = async () => {
     const { username, password } = this.state;
 
-    return login(username, password).then(() =>
-      this.props.refreshUserContext()
-    );
+    const user = await login(username, password);
+
+    return this.props.loginHandler(user);
   };
 
   handleChange = event =>

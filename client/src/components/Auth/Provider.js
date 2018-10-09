@@ -5,6 +5,8 @@ import UserContext from "./Context";
 import { getCurrentUser } from "./API";
 
 export default class Provider extends React.Component {
+  login = user => this.setState({ user });
+
   logout = () => this.setState({ user: null });
 
   refresh = async () => {
@@ -20,6 +22,7 @@ export default class Provider extends React.Component {
   state = {
     user: null,
     isLoaded: false,
+    login: this.login,
     refresh: this.refresh,
     logout: this.logout
   };

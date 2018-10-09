@@ -34,7 +34,13 @@ exports.login = (req, res, next) => {
         return next(err);
       }
 
-      return res.json({ user: req.user });
+      const user = {
+        id: req.user.id,
+        username: req.user.username,
+        group: req.session.group || null
+      };
+
+      return res.json(user);
     });
   })(req, res, next);
 };
