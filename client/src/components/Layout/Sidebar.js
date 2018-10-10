@@ -33,6 +33,8 @@ const styles = theme => ({
 });
 
 class Sidebar extends React.Component {
+  handleToggleSidebar = () => this.props.toggleSidebarHandler(false);
+
   render() {
     const {
       classes,
