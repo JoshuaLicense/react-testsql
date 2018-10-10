@@ -19,6 +19,16 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DeleteIcon from "@material-ui/icons/Delete";
 import UpdateIcon from "@material-ui/icons/Edit";
 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend
+} from "recharts";
+
 import Typography from "@material-ui/core/Typography";
 
 import { Link } from "react-router-dom";
@@ -27,15 +37,25 @@ import { getGroup, updateGroup, removeUserFromGroup } from "./API";
 
 import Divider from "@material-ui/core/Divider";
 
+import CloseIcon from "@material-ui/icons/Close";
+
 import GroupUser from "./GroupUser";
+import { AppBar, Toolbar, IconButton, Paper } from "@material-ui/core";
+import Section from "../Layout/Section";
+
+import "./manageGroup.css";
 
 const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
-class ManageGroup extends React.Component {
+const style = {
+  closeButton: { marginRight: 16 },
+  flex: { flex: 1 }
+};
+
+export default class ManageGroup extends React.Component {
   state = {
     group: null,
-    controlledTitle: null,
-    error: null
+    activeQuestionIndex: null
   };
 
   componentDidMount = () => this.loadGroup();
@@ -74,95 +94,119 @@ class ManageGroup extends React.Component {
   };
 
   render() {
-    const { controlledTitle, group, error } = this.state;
+    const { id, title } = this.props.match.params;
+
+    const { group } = this.state;
 
     if (!group) {
       return <div>Loading group information...</div>;
     }
 
-    const { title, users } = group;
+    const { users } = group;
+
+    const allUsernames = users.map(user => user.username);
+
+    const data = [
+      { name: "Page A", uv: 4000, pv: 2400, amt: 2400 },
+      { name: "Page B", uv: 3000, pv: 1398, amt: 2210 },
+      { name: "Page C", uv: 2000, pv: 9800, amt: 2290 },
+      { name: "Page D", uv: 2780, pv: 3908, amt: 2000 },
+      { name: "Page E", uv: 1890, pv: 4800, amt: 2181 },
+      { name: "Page F", uv: 2390, pv: 3800, amt: 2500 },
+      { name: "Page G", uv: 3490, pv: 4300, amt: 2100 }
+    ];
 
     return (
-      <div>
-        <DialogTitle
-          id="dialog-title"
-          style={flexSpaceBetween}
-          disableTypography
-        >
-          <Typography variant="subheading" color="textSecondary">
-            Managing: {title}
-          </Typography>
-          <Button
-            component={Link}
-            color="secondary"
-            variant="raised"
-            size="small"
-            to="/"
-          >
-            &laquo; Back
-          </Button>
-        </DialogTitle>
-        <DialogContent>
-          <Grid container spacing={24}>
-            <Grid item xs={3}>
-              <Typography align="right">Title</Typography>
+      <React.Fragment>
+        <AppBar position="sticky">
+          <Toolbar>
+            <IconButton
+              component={Link}
+              color="inherit"
+              to="/"
+              style={style.closeButton}
+              aria-label="Close"
+            >
+              <CloseIcon />
+            </IconButton>
+            <Typography variant="title" color="inherit" style={style.flex}>
+              Managing Group - {title}
+            </Typography>
+            <Button color="inherit" onClick={this.handleClose}>
+              save
+            </Button>
+          </Toolbar>
+        </AppBar>
+
+        <div style={{ padding: 16 }}>
+          <Grid container spacing={16}>
+            <Grid item xs={6} sm={4} md={3} lg={2}>
+              <Paper elevation={2} className="tile">
+                <div className="content">
+                  <Typography variant="display4">4</Typography>
+                  <Typography variant="title">Active Users</Typography>
+                </div>
+              </Paper>
             </Grid>
-            <Grid item xs={9}>
-              <FormControl
-                error={Boolean(error)}
-                aria-describedby="title-error-text"
-                fullWidth
+            <Grid item xs={6} sm={4} md={3} lg={2}>
+              <Paper elevation={2} className="tile">
+                <div className="content">
+                  <Typography variant="display4">15</Typography>
+                  <Typography variant="title">Group Members</Typography>
+                </div>
+              </Paper>
+            </Grid>
+            <Grid item xs={6} sm={4} md={3} lg={2}>
+              <Paper elevation={2} className="tile">
+                <div className="content">
+                  <Typography variant="display4">22</Typography>
+                  <Typography variant="title">Total Questions</Typography>
+                </div>
+              </Paper>
+            </Grid>
+            <Grid item xs={6} sm={4} md={3} lg={2}>
+              <Paper elevation={2} className="tile">
+                <div className="content">
+                  <Typography variant="display4">
+                    11
+                    <small style={{ fontSize: "0.5em" }}>%</small>
+                  </Typography>
+                  <Typography variant="title">Average Completion</Typography>
+                </div>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} lg={6}>
+              <Typography variant="subheading">Chart</Typography>
+              <BarChart
+                width={600}
+                height={300}
+                data={data}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
               >
-                <Input
-                  id="title"
-                  name="title"
-                  value={controlledTitle}
-                  onChange={this.handleChange}
-                  margin="dense"
-                  autoFocus
-                  fullWidth
-                />
-                {error && (
-                  <FormHelperText id="title-error-text">{error}</FormHelperText>
-                )}
-              </FormControl>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="pv" fill="#8884d8" />
+                <Bar dataKey="uv" fill="#82ca9d" />
+              </BarChart>
+            </Grid>
+            <Grid item xs={12} lg={6}>
+              <Typography variant="subheading">Group Members</Typography>
+              <List>
+                {users.map(user => (
+                  <GroupUser
+                    key={user._id}
+                    user={user}
+                    removeHandler={this.handleRemoveUser}
+                  />
+                ))}
+              </List>
             </Grid>
           </Grid>
-
-          <DialogActions>
-            <Button
-              onClick={this.handleUpdateGroup}
-              size="small"
-              color="primary"
-              variant="raised"
-            >
-              Update
-              <UpdateIcon />
-            </Button>
-            <Button size="small" color="secondary" variant="raised">
-              Delete
-              <DeleteIcon />
-            </Button>
-          </DialogActions>
-        </DialogContent>
-        <Divider />
-        <List subheader={<ListSubheader>All group users</ListSubheader>}>
-          {users.map(user => (
-            <GroupUser
-              key={user._id}
-              user={user}
-              removeHandler={this.handleRemoveUser}
-            />
-          ))}
-        </List>
-        <DialogActions>
-          <Button onClick={this.props.closeHandler} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </div>
+        </div>
+      </React.Fragment>
     );
   }
 }
-
-export default ManageGroup;
