@@ -3,17 +3,16 @@ import React from "react";
 import IconButton from "@material-ui/core/IconButton";
 import GroupIcon from "@material-ui/icons/GroupWorkTwoTone";
 
-import Dialog from "@material-ui/core/Dialog";
-
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-
-import GroupList from "./GroupList";
-import CreateGroup from "./CreateGroup";
-import ManageGroup from "./ManageGroup";
-
 import Tooltip from "@material-ui/core/Tooltip";
 
-class GroupManager extends React.Component {
+import Loadable from "react-loadable";
+
+const LoadableGroupManager = Loadable({
+  loader: () => import("./GroupManager" /* webpackChunkName: "groups" */),
+  loading: () => <div>Loading...</div>
+});
+
+export default class Group extends React.Component {
   state = {
     open: false
   };
@@ -22,13 +21,16 @@ class GroupManager extends React.Component {
 
   handleClose = () => this.setState({ open: false });
 
+  handleMouseOver = () => LoadableGroupManager.preload();
+
   render() {
     const { open } = this.state;
 
     const {
       currentGroup,
-      loadDatabaseHandler,
-      refreshUserContext
+      joinGroupHandler,
+      leaveGroupHandler,
+      loadDatabaseHandler
     } = this.props;
 
     return (
@@ -38,42 +40,21 @@ class GroupManager extends React.Component {
             color={currentGroup ? "secondary" : "inherit"}
             aria-label="Group List"
             onClick={this.handleOpen}
+            onMouseOver={this.handleMouseOver}
           >
             <GroupIcon fontSize="small" />
           </IconButton>
         </Tooltip>
-
-        <Dialog fullWidth onClose={this.handleClose} open={open}>
-          <Router>
-            <Switch>
-              <Route
-                path="/group/create"
-                render={props => (
-                  <CreateGroup {...props} closeHandler={this.handleClose} />
-                )}
-              />
-              <Route
-                path="/group/manage/:id"
-                render={props => (
-                  <ManageGroup {...props} closeHandler={this.handleClose} />
-                )}
-              />
-              <Route
-                render={() => (
-                  <GroupList
-                    currentGroup={currentGroup}
-                    refreshUserContext={refreshUserContext}
-                    loadDatabaseHandler={loadDatabaseHandler}
-                    closeHandler={this.handleClose}
-                  />
-                )}
-              />
-            </Switch>
-          </Router>
-        </Dialog>
+        {open && (
+          <LoadableGroupManager
+            closeHandler={this.handleClose}
+            currentGroup={currentGroup}
+            loadDatabaseHandler={loadDatabaseHandler}
+            joinGroupHandler={joinGroupHandler}
+            leaveGroupHandler={leaveGroupHandler}
+          />
+        )}
       </React.Fragment>
     );
   }
 }
-
-export default GroupManager;

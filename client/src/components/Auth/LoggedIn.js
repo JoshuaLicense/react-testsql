@@ -5,7 +5,7 @@ import IconButton from "@material-ui/core/IconButton";
 
 import LogoutIcon from "@material-ui/icons/PowerSettingsNew";
 
-import ManageGroup from "../Group";
+import Group from "../Group";
 import SavedDatabase from "../SavedDatabase";
 
 import DatabaseContext from "../Database/Context";
@@ -30,7 +30,7 @@ class LoggedIn extends React.Component {
                 loadDatabaseHandler={loadDatabase}
                 disabled={Boolean(user.group)}
               />
-              <ManageGroup
+              <Group
                 loadDatabaseHandler={loadDatabase}
                 currentGroup={user && user.group}
                 refreshUserContext={refreshUserContext}
