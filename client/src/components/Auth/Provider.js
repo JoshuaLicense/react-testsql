@@ -7,7 +7,11 @@ import { getCurrentUser } from "./API";
 export default class Provider extends React.Component {
   login = user => this.setState({ user });
 
-  logout = () => this.setState({ user: null });
+  joinGroup = group =>
+    this.setState(prevState => ({ user: { ...prevState.user, group } }));
+
+  leaveGroup = () =>
+    this.setState(prevState => ({ user: { ...prevState.user, group: null } }));
 
   refresh = async () => {
     try {
@@ -19,10 +23,14 @@ export default class Provider extends React.Component {
     }
   };
 
+  logout = () => this.setState({ user: null });
+
   state = {
     user: null,
     isLoaded: false,
     login: this.login,
+    joinGroup: this.joinGroup,
+    leaveGroup: this.leaveGroup,
     refresh: this.refresh,
     logout: this.logout
   };

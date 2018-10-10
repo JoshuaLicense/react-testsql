@@ -18,7 +18,7 @@ const progressStyle = { flex: "0 0 40px" };
 export default class GroupItem extends React.Component {
   handleJoinGroup = () => this.props.joinGroupHandler(this.props.group._id);
 
-  handleLeaveCurrentGroup = () => this.props.leaveCurrentGroupHandler();
+  handleLeaveGroup = () => this.props.leaveGroupHandler();
 
   render() {
     const {
@@ -47,7 +47,7 @@ export default class GroupItem extends React.Component {
             {canManage && (
               <IconButton
                 component={Link}
-                to={`/group/manage/${id}`}
+                to={`/group/manage/${id}/${title}`}
                 aria-label="Manage group"
               >
                 <ManageIcon fontSize="small" />
@@ -56,7 +56,7 @@ export default class GroupItem extends React.Component {
             {isCurrent && (
               <IconButton
                 color="secondary"
-                onClick={this.handleLeaveCurrentGroup}
+                onClick={this.handleLeaveGroup}
                 aria-label="Leave current group"
               >
                 <LeaveIcon fontSize="small" />

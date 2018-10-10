@@ -18,7 +18,7 @@ class LoggedIn extends React.Component {
   handleLogout = () => logout().then(() => this.props.logoutHandler());
 
   render() {
-    const { user, refreshUserContext } = this.props;
+    const { user, joinGroup, leaveGroup } = this.props;
 
     return (
       <React.Fragment>
@@ -33,7 +33,8 @@ class LoggedIn extends React.Component {
               <Group
                 loadDatabaseHandler={loadDatabase}
                 currentGroup={user && user.group}
-                refreshUserContext={refreshUserContext}
+                joinGroupHandler={joinGroup}
+                leaveGroupHandler={leaveGroup}
               />
             </React.Fragment>
           )}

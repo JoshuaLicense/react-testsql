@@ -30,78 +30,76 @@ class GroupList extends React.Component {
 
   componentDidMount = () => this.load();
 
-  load = async () =>
-    listGroups()
-      .then(groups => this.setState({ list: groups }))
-      .catch(error => {
-        error.json().then(json => this.setState({ error: json.message }));
-      });
+  load = async () => {
+    // Attempt to load all the available groups.
+    try {
+      const groups = await listGroups();
 
-  handleClose = () => {
-    this.props.closeHandler();
+      this.setState({ list: groups });
+    } catch (e) {
+      const error = await e.json();
 
-    // Remove any errors from the modal.
-    this.setState({ error: null });
+      this.setState({ error: error.message });
+    }
   };
 
-  handleJoinGroup = id => {
-    this.setState({ error: null });
+  handleClose = () => this.props.closeHandler();
 
-    return joinGroup(id)
-      .then(group => {
-        // Find the group the user has just joined, and set it as active
-        const updatedGroupList = this.state.list.map(listGroup => {
-          // Update the isCurrent for all the groups in the list, leaving the last joined group as the active one.
-          listGroup.isCurrent = group._id === listGroup._id;
+  handleJoinGroup = async id => {
+    try {
+      const group = await joinGroup(id);
 
-          return listGroup;
-        });
+      // Find the group the user has just joined, and set it as active.
+      // This saves pinging the server again to reload the `list` prop.
+      const updatedGroupList = this.state.list.map(listGroup => {
+        // Update the isCurrent for all the groups in the list, leaving the last joined group as the active one.
+        listGroup.isCurrent = group._id === listGroup._id;
 
-        this.setState({ list: updatedGroupList });
-
-        return group;
-      })
-      .then(async group => {
-        // Update the user first. Any group questions already generated will be loaded first.
-        // Otherwise <Main> will generate the questions twice; once for the detected database change, then the detected group change.
-        await this.props.refreshUserContext();
-
-        // Then load the database to the client side sql.js.
-        const fileBuffer = await loadDatabase(group.database);
-
-        const typedArray = new Uint8Array(fileBuffer);
-
-        return this.props.loadDatabaseHandler(typedArray);
-      })
-      .catch(error => {
-        error.json().then(json => this.setState({ error: json.message }));
+        return listGroup;
       });
+
+      this.setState({ list: updatedGroupList });
+
+      // Update the user first. Any group questions already generated will be loaded first.
+      // Otherwise <Main> will generate the questions twice; once for the detected database change, then the detected group change.
+      this.props.joinGroupHandler(group);
+
+      // Once the user is marked as in this group, load the group database from the server.
+      const fileBuffer = await loadDatabase(group.database);
+
+      const typedArray = new Uint8Array(fileBuffer);
+
+      // Now load the database into the client-side sql.js.
+      this.props.loadDatabaseHandler(typedArray);
+    } catch (e) {
+      const error = await e.json();
+
+      this.setState({ error: error.message });
+    }
   };
 
-  handleLeaveCurrentGroup = () => {
-    this.setState({ error: null });
+  handleLeaveGroup = async () => {
+    try {
+      await leaveCurrentGroup();
 
-    return (
-      leaveCurrentGroup()
-        .then(() => {
-          // Update the isCurrent for all the groups in the list to false
-          const updatedGroupList = this.state.list.map(listGroup => {
-            listGroup.isCurrent = false;
+      // Update the isCurrent for all the groups in the list to false
+      const updatedGroupList = this.state.list.map(listGroup => {
+        listGroup.isCurrent = false;
 
-            return listGroup;
-          });
+        return listGroup;
+      });
 
-          this.setState({ list: updatedGroupList });
-        })
-        // Clear all the questions from the localStorage.
-        // This makes the next update of the questions, regenerate them from scratch.
-        .then(() => clearQuestions())
-        // Send the update to the server.
-        .then(() => this.props.refreshUserContext())
-        .catch(error => {
-          error.json().then(json => this.setState({ error: json.message }));
-        })
-    );
+      this.setState({ list: updatedGroupList });
+    } catch (e) {
+      const error = await e.json();
+
+      this.setState({ error: error.message });
+    }
+
+    // Clear all the cached questions, this will prompt the generation of a new set.
+    clearQuestions();
+
+    this.props.leaveGroupHandler();
   };
 
   render() {
@@ -143,7 +141,7 @@ class GroupList extends React.Component {
                 key={group._id}
                 group={group}
                 joinGroupHandler={this.handleJoinGroup}
-                leaveCurrentGroupHandler={this.handleLeaveCurrentGroup}
+                leaveGroupHandler={this.handleLeaveGroup}
               />
             ))}
           </List>
