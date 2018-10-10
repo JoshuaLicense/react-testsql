@@ -15,7 +15,7 @@
   "proxy": "http://localhost:3001/",
   "main": "server/index.js",
   "scripts": {
-    "start": "cd server && yarn start",
+    "start": "node server/index.js",
     "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
     "server": "cd server && yarn start-dev",
     "client": "cd client && yarn start",
@@ -23,7 +23,7 @@
     "build": "cd client && yarn build",
     "clean": "cd server && shx rm -rf build",
     "move": "cd client && shx mv build ../server",
-    "deploy": "yarn clean && yarn build && yarn move && cd server && yarn openode deploy",
+    "predeploy": "yarn build",
     "heroku-postbuild": "cd client && yarn install --production && yarn build"
   },
   "cacheDirectories": [
