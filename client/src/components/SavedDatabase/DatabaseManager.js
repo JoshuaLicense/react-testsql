@@ -19,7 +19,7 @@ export default class DatabaseManager extends React.Component {
   refreshSavedDatabaseList = () =>
     listDatabases().then(list => this.setState({ list }));
 
-  handleClose = () => this.props.closeHander();
+  handleClose = () => this.props.closeHandler();
 
   render() {
     const { list } = this.state;

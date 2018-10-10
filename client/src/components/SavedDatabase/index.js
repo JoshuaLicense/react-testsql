@@ -11,10 +11,10 @@ import Loadable from "react-loadable";
 const LoadableDatabaseManager = Loadable({
   loader: () =>
     import("./DatabaseManager" /* webpackChunkName: "saved-databases" */),
-  loading: <div>Loading...</div>
+  loading: () => <div>Loading...</div>
 });
 
-export default class DatabaseManager extends React.Component {
+export default class SavedDatabase extends React.Component {
   state = {
     open: false
   };
@@ -62,7 +62,7 @@ export default class DatabaseManager extends React.Component {
         </Tooltip>
         {open && (
           <LoadableDatabaseManager
-            closeHander={this.handleClose}
+            closeHandler={this.handleClose}
             currentDatabase={currentDatabase}
             loadDatabaseHandler={loadDatabaseHandler}
           />

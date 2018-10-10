@@ -6,7 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 import LogoutIcon from "@material-ui/icons/PowerSettingsNew";
 
 import ManageGroup from "../Group";
-import ManageDatabase from "../SavedDatabase";
+import SavedDatabase from "../SavedDatabase";
 
 import DatabaseContext from "../Database/Context";
 
@@ -25,7 +25,7 @@ class LoggedIn extends React.Component {
         <DatabaseContext.Consumer>
           {({ database: currentDatabase, loadDatabase }) => (
             <React.Fragment>
-              <ManageDatabase
+              <SavedDatabase
                 currentDatabase={currentDatabase}
                 loadDatabaseHandler={loadDatabase}
                 disabled={Boolean(user.group)}
