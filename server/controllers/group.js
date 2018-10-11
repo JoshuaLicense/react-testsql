@@ -15,30 +15,58 @@ exports.getGroup = (req, res, next) => {
     if (err) return next(err);
 
     UserGroup.find({ group: id })
-      .select("user questions")
+      .select("user questions updatedAt")
       .populate("user", "id username")
       .lean()
       .exec((err, allUsersInGroup) => {
         if (err) return next(err);
 
+        let allQuestionsCompleted = 0;
+
+        // I mean, this could change per uer, but the first user is the group owner,
+        // so this should be a pretty good guess.
+        const totalQuestionsInGroup = allUsersInGroup[0].questions.length;
+
+        const FIFTEEN_MINUTES = 60 * 15 * 1000;
+
         // Query returns { user: [{ user : { ... }}]}
         // Below removes the top level "user", resulting in just an array of users.
         // [{ username: ..., ... }, { username: ..., ... }]
         const allUsers = allUsersInGroup.map(userGroupObject => {
+          // Active is determined from an action in the last 15 minutes.
+          // An action constitutes a questions attempt or joined group.
+          const active =
+            new Date() - new Date(userGroupObject.updatedAt) < FIFTEEN_MINUTES;
+
+          const questionsCompleted = userGroupObject.questions.filter(
+            question => Boolean(question.completed)
+          ).length;
+
+          // Sum the total completed questions.
+          allQuestionsCompleted += questionsCompleted;
+
           return {
             ...userGroupObject.user,
+            active,
             canRemove: !group.creator.equals(userGroupObject.user._id),
             totalQuestions: userGroupObject.questions.length,
-            questionsCompleted: userGroupObject.questions.filter(question =>
-              Boolean(question.completed)
-            ).length
+            questionsCompleted
           };
         });
+
+        // Now we have a total numberof questions completed, work out the total.
+        const totalQuestions = allUsersInGroup.length * totalQuestionsInGroup;
+
+        // (Completed / Total) * 100 = Percentage complete.
+        const averagePercentageComplete =
+          (allQuestionsCompleted / totalQuestions) * 100;
 
         const populatedGroup = {
           id: group._id,
           title: group.title,
-          users: allUsers
+          users: allUsers,
+          totalQuestions: totalQuestionsInGroup,
+          averagePercentageComplete
         };
 
         return res.json(populatedGroup);
@@ -85,6 +113,8 @@ exports.saveProgress = (req, res, next) => {
       }
     });
   }
+
+  // If the group doesn't have the question number.
 
   UserGroup.updateOne(
     { group: req.session.group._id, user: req.user.id },
@@ -133,38 +163,38 @@ exports.list = (req, res, next) => {
             return res.send(groups);
           }
 
-          return res.send(
-            groups.map(group => {
-              // Find any user progress for this group.
-              const findUserGroup = userGroups.filter(userGroup =>
-                userGroup.group.equals(group._id)
-              );
+          const allGroups = groups.map(group => {
+            // Find any user progress for this group.
+            const findUserGroup = userGroups.filter(userGroup =>
+              userGroup.group.equals(group._id)
+            );
 
-              // If no progress, early out!
-              if (findUserGroup.length === 0) {
-                return group;
-              }
+            // If no progress, early out!
+            if (findUserGroup.length === 0) {
+              return group;
+            }
 
-              const groupProgress = findUserGroup[0]["questions"];
+            const groupProgress = findUserGroup[0]["questions"];
 
-              // Get the number of completed questions + total
-              const completedQuestions = groupProgress.filter(
-                question => question.completed
-              ).length;
+            // Get the number of completed questions + total
+            const completedQuestions = groupProgress.filter(
+              question => question.completed
+            ).length;
 
-              const totalQuestions = groupProgress.length;
+            const totalQuestions = groupProgress.length;
 
-              return {
-                ...group,
-                isCurrent: Boolean(
-                  req.session.group && group._id.equals(req.session.group._id)
-                ),
-                canManage: group.creator.equals(req.user.id),
-                completedQuestions,
-                totalQuestions
-              };
-            })
-          );
+            return {
+              ...group,
+              isCurrent: Boolean(
+                req.session.group && group._id.equals(req.session.group._id)
+              ),
+              canManage: group.creator.equals(req.user.id),
+              completedQuestions,
+              totalQuestions
+            };
+          });
+
+          return res.send(allGroups);
         });
     });
 };
@@ -197,7 +227,10 @@ exports.joinGroup = (req, res, next) => {
     .exec((err, group) => {
       if (err) return next(err);
 
-      UserGroup.findOne({ user: req.user.id, group: id })
+      UserGroup.findOneAndUpdate(
+        { user: req.user.id, group: id },
+        { updatedAt: new Date() }
+      )
         .select("questions")
         .lean()
         .exec((err, existingUserGroup) => {
