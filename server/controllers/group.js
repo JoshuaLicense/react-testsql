@@ -47,6 +47,7 @@ exports.getGroup = (req, res, next) => {
 
           return {
             ...userGroupObject.user,
+            updatedAt: userGroupObject.updatedAt,
             active,
             canRemove: !group.creator.equals(userGroupObject.user._id),
             totalQuestions: userGroupObject.questions.length,
