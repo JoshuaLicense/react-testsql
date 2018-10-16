@@ -38,7 +38,11 @@ export default class GroupItem extends React.Component {
         component="li"
         button
       >
-        <Typography color="textSecondary" style={progressStyle}>
+        <Typography
+          color="textSecondary"
+          style={progressStyle}
+          title={`You have completed ${completedQuestions} out of ${totalQuestions} questions in this group.`}
+        >
           {`${completedQuestions}/${totalQuestions}`}
         </Typography>
         <ListItemText primary={title} />
@@ -48,6 +52,7 @@ export default class GroupItem extends React.Component {
               <IconButton
                 component={Link}
                 to={`/group/manage/${id}/${title}`}
+                title="Manage this group"
                 aria-label="Manage group"
               >
                 <ManageIcon fontSize="small" />
@@ -57,6 +62,7 @@ export default class GroupItem extends React.Component {
               <IconButton
                 color="secondary"
                 onClick={this.handleLeaveGroup}
+                title="Leave this group"
                 aria-label="Leave current group"
               >
                 <LeaveIcon fontSize="small" />
