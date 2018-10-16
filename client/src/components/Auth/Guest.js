@@ -37,7 +37,7 @@ class Guest extends React.Component {
 
   render() {
     return (
-      <div>
+      <React.Fragment>
         <Button color="inherit" onClick={this.handleOpen}>
           Login
         </Button>
@@ -77,7 +77,7 @@ class Guest extends React.Component {
             </Button>
           </DialogActions>
         </Dialog>
-      </div>
+      </React.Fragment>
     );
   }
 }

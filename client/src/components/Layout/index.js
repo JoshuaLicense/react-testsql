@@ -1,6 +1,6 @@
 import React from "react";
 
-import Header from "../Header";
+import Header from "../Auth";
 import DatabaseContext from "../Database/Context";
 
 import Container from "./Container";

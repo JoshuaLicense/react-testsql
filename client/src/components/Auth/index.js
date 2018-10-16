@@ -1,7 +1,7 @@
 import React from "react";
 
-import LoggedIn from "../Auth/LoggedIn";
-import Guest from "../Auth/Guest";
+import LoggedIn from "./LoggedIn";
+import Guest from "./Guest";
 
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -12,7 +12,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import Typography from "@material-ui/core/Typography";
 
 import Hidden from "@material-ui/core/Hidden";
-import UserContext from "../Auth/Context";
+import UserContext from "./Context";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 
