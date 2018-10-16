@@ -6,7 +6,7 @@ import { Route, Switch } from "react-router-dom";
 
 import GroupList from "./GroupList";
 import CreateGroup from "./CreateGroup";
-import ManageGroup from "./ManageGroup";
+import ManageGroup from "./Manage";
 
 import { BrowserRouter as Router } from "react-router-dom";
 
