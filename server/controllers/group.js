@@ -29,6 +29,17 @@ exports.getGroup = (req, res, next) => {
 
         const FIFTEEN_MINUTES = 60 * 15 * 1000;
 
+        const getQuestionKey = (question, i) =>
+          question.title || `${question.set} - Q${i + 1}`;
+
+        const questionMetrics = {
+          numberOfUsersCompleted: new Map()
+        };
+
+        const setMetrics = {
+          numberOfUsersCompleted: new Map()
+        };
+
         // Query returns { user: [{ user : { ... }}]}
         // Below removes the top level "user", resulting in just an array of users.
         // [{ username: ..., ... }, { username: ..., ... }]
@@ -38,9 +49,35 @@ exports.getGroup = (req, res, next) => {
           const active =
             new Date() - new Date(userGroupObject.updatedAt) < FIFTEEN_MINUTES;
 
-          const questionsCompleted = userGroupObject.questions.filter(
-            question => Boolean(question.completed)
-          ).length;
+          let questionsCompleted = 0;
+
+          userGroupObject.questions.forEach((question, i) => {
+            const questionKey = getQuestionKey(question, i);
+
+            // Make sure each questions exists in the map set.
+            if (!questionMetrics.numberOfUsersCompleted.has(questionKey)) {
+              questionMetrics.numberOfUsersCompleted.set(questionKey, 0);
+            }
+
+            if (!setMetrics.numberOfUsersCompleted.has(question.set)) {
+              setMetrics.numberOfUsersCompleted.set(question.set, 0);
+            }
+
+            // If the question is completed, update the various metrics.
+            if (Boolean(question.completed)) {
+              ++questionsCompleted;
+
+              questionMetrics.numberOfUsersCompleted.set(
+                questionKey,
+                questionMetrics.numberOfUsersCompleted.get(questionKey) + 1
+              );
+
+              setMetrics.numberOfUsersCompleted.set(
+                question.set,
+                setMetrics.numberOfUsersCompleted.get(question.set) + 1
+              );
+            }
+          });
 
           // Sum the total completed questions.
           allQuestionsCompleted += questionsCompleted;
@@ -62,10 +99,21 @@ exports.getGroup = (req, res, next) => {
         const averagePercentageComplete =
           (allQuestionsCompleted / totalQuestions) * 100;
 
+        // The sets now need converting to an array to send back as JSON.
+        questionMetrics.numberOfUsersCompleted = Array.from(
+          questionMetrics.numberOfUsersCompleted
+        );
+
+        setMetrics.numberOfUsersCompleted = Array.from(
+          setMetrics.numberOfUsersCompleted
+        );
+
         const populatedGroup = {
           id: group._id,
           title: group.title,
           users: allUsers,
+          questionMetrics,
+          setMetrics,
           totalQuestions: totalQuestionsInGroup,
           averagePercentageComplete
         };
