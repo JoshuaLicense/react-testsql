@@ -110,7 +110,13 @@ export default class ManageGroup extends React.Component {
       return <div>Loading group information...</div>;
     }
 
-    const { users, averagePercentageComplete, totalQuestions } = group;
+    const {
+      users,
+      averagePercentageComplete,
+      totalQuestions,
+      questionMetrics,
+      setMetrics
+    } = group;
 
     const numberOfUsers = users.length;
 
@@ -202,7 +208,10 @@ export default class ManageGroup extends React.Component {
                 Chart
               </Typography>
               <Paper elevation={2}>
-                <ChartManager />
+                <ChartManager
+                  questionMetrics={questionMetrics}
+                  setMetrics={setMetrics}
+                />
               </Paper>
             </Grid>
             <Grid item xs={12} md={6} lg={4}>

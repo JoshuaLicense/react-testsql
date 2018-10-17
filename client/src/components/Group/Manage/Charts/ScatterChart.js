@@ -1,40 +1,43 @@
 import React from "react";
 import ResponsiveContainer from "recharts/lib/component/ResponsiveContainer";
-import LineChart from "recharts/lib/chart/LineChart";
-import Line from "recharts/lib/cartesian/Line";
+import ScatterChart from "recharts/lib/chart/ScatterChart";
+import Scatter from "recharts/lib/cartesian/Scatter";
 import XAxis from "recharts/lib/cartesian/XAxis";
 import YAxis from "recharts/lib/cartesian/YAxis";
 import CartesianGrid from "recharts/lib/cartesian/CartesianGrid";
 import Tooltip from "recharts/lib/component/Tooltip";
-import Legend from "recharts/lib/component/Legend";
 
-const data = [
-  { name: "Mon", Visits: 2200, Orders: 3400 },
-  { name: "Tue", Visits: 1280, Orders: 2398 },
-  { name: "Wed", Visits: 5000, Orders: 4300 },
-  { name: "Thu", Visits: 4780, Orders: 2908 },
-  { name: "Fri", Visits: 5890, Orders: 4800 },
-  { name: "Sat", Visits: 4390, Orders: 3800 },
-  { name: "Sun", Visits: 4490, Orders: 4300 }
-];
-export default class ManageGroup extends React.Component {
-  render() {
+const CustomTooltip = props => {
+  if (props.active) {
+    const { payload } = props;
+
     return (
-      <ResponsiveContainer width="99%" height={320}>
-        <LineChart data={data}>
-          <XAxis dataKey="name" />
-          <YAxis />
-          <CartesianGrid vertical={false} strokeDasharray="3 3" />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="Visits" stroke="#82ca9d" />
-          <Line
-            type="monotone"
-            dataKey="Orders"
-            stroke="#8884d8"
-            activeDot={{ r: 8 }}
+      <div className="custom-tooltip">
+        <p className="label">{`${payload[1].value} : ${payload[0].value}`}</p>
+        <p className="desc">Anything you want can be displayed here.</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+export default class ScatterChartContainer extends React.PureComponent {
+  render() {
+    const { data } = this.props;
+
+    return (
+      <ResponsiveContainer width="99%" height={400}>
+        <ScatterChart margin={{ top: 20, right: 20, bottom: 70 }}>
+          <XAxis dataKey="0" angle={-45} textAnchor="end" />
+          <YAxis dataKey="1" type="number" />
+          <CartesianGrid />
+          <Tooltip
+            cursor={{ strokeDasharray: "3 3" }}
+            content={CustomTooltip}
           />
-        </LineChart>
+          <Scatter name="A school" data={data} fill="#8884d8" />
+        </ScatterChart>
       </ResponsiveContainer>
     );
   }

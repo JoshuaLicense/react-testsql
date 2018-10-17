@@ -8,7 +8,7 @@ import BubbleChartChartIcon from "@material-ui/icons/BubbleChart";
 import ScatterChartIcon from "@material-ui/icons/ShowChart";
 
 import BarChart from "./BarChart";
-import ScatterChart from "./ScatterChart";
+import ScatterChartContainer from "./ScatterChart";
 import BubbleChart from "./BubbleChart";
 import PieChart from "./PieChart";
 
@@ -22,12 +22,20 @@ export default class ChartManager extends React.Component {
   render() {
     const { index } = this.state;
 
+    const { questionMetrics, setMetrics } = this.props;
+
     return (
       <div>
-        {index === 0 && <BarChart />}
-        {index === 1 && <ScatterChart />}
+        {index === 0 && (
+          <BarChart data={questionMetrics.numberOfUsersCompleted} />
+        )}
+        {index === 1 && (
+          <ScatterChartContainer
+            data={questionMetrics.numberOfUsersCompleted}
+          />
+        )}
         {index === 2 && <BubbleChart />}
-        {index === 3 && <PieChart />}
+        {index === 3 && <PieChart data={setMetrics} />}
         <Tabs
           value={this.state.index}
           onChange={this.handleChange}
