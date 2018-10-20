@@ -1,9 +1,8 @@
 import React from "react";
-//import PropTypes from 'prop-types';
 
 import Button from "@material-ui/core/Button";
-
 import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -15,6 +14,7 @@ import { login } from "./API";
 class Guest extends React.Component {
   state = {
     open: false,
+    error: null,
 
     username: "",
     password: ""
@@ -23,9 +23,15 @@ class Guest extends React.Component {
   handleLogin = async () => {
     const { username, password } = this.state;
 
-    const user = await login(username, password);
+    try {
+      const user = await login(username, password);
 
-    return this.props.loginHandler(user);
+      return this.props.loginHandler(user);
+    } catch (response) {
+      const error = await response.json();
+
+      this.setState({ error });
+    }
   };
 
   handleChange = event =>
@@ -36,6 +42,8 @@ class Guest extends React.Component {
   handleClose = () => this.setState({ open: false });
 
   render() {
+    const { error } = this.state;
+
     return (
       <React.Fragment>
         <Button color="inherit" onClick={this.handleOpen}>
@@ -47,6 +55,11 @@ class Guest extends React.Component {
           aria-labelledby="form-dialog-title"
         >
           <DialogTitle id="form-dialog-title">Login</DialogTitle>
+          {error && (
+            <Typography color="error" align="center">
+              {error}
+            </Typography>
+          )}
           <DialogContent>
             <TextField
               type="text"

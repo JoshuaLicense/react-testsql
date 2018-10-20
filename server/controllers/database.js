@@ -1,5 +1,3 @@
-const passport = require("passport");
-
 const fs = require("fs");
 
 // Config
@@ -9,8 +7,9 @@ const config = require("../config/config");
 const Database = require("../models/Database");
 const Group = require("../models/Group");
 
-const { check, validationResult } = require("express-validator/check");
+const { validationResult } = require("express-validator/check");
 
+// The directory that the saved database files will be stored.
 const DIRECTORY = "./saves/";
 
 exports.listDatabase = (req, res, next) => {
@@ -84,43 +83,49 @@ exports.loadDatabase = (req, res, next) => {
       }
     };
 
-    const filepath = `${options.root}${filename}`;
+    const filepath = `${DIRECTORY}${filename}`;
 
     // Check the file actually exists.
     if (!fs.existsSync(filepath)) {
       return res.status(404).json("Database not found on the filesystem.");
     }
 
-    res.sendFile(filename, options, err => {
-      if (err) return next(err);
-    });
+    res.sendFile(filename, options);
   });
 };
 
 exports.deleteDatabase = (req, res, next) => {
   const { id } = req.params;
 
-  Group.findOne({ database: id }, (err, dependantGroup) => {
-    if (err) return next(err);
+  Group.findOne({ database: id })
+    .select("title")
+    .lean()
+    .exec((err, dependantGroup) => {
+      if (err) return next(err);
 
-    if (dependantGroup) {
-      return res
-        .status(400)
-        .json("Cannot delete a database that a group depends upon.");
-    }
-
-    Database.findOneAndRemove(
-      { _id: id, creator: req.user.id },
-      (err, database) => {
-        if (err) return next(err);
-
-        // The entry was removed from the database.
-        // Ignore if the unlink doesn't work. It's gone.
-        // Remove the file from the server too if it exists.
-        return fs.unlink(`${DIRECTORY}${database.path}`, () =>
-          res.sendStatus(200)
-        );
+      // Can't remove a database that a group depends on.
+      if (dependantGroup) {
+        return res
+          .status(400)
+          .json(
+            `Cannot delete this database as the group "${
+              dependantGroup.title
+            }" uses it.`
+          );
       }
-    );
-  });
+
+      Database.findOneAndRemove(
+        { _id: id, creator: req.user.id },
+        (err, database) => {
+          if (err) return next(err);
+
+          // The entry was removed from the database.
+          // Ignore if the unlink doesn't work. It's gone.
+          // Remove the file from the server too if it exists.
+          return fs.unlink(`${DIRECTORY}${database.path}`, () =>
+            res.sendStatus(200)
+          );
+        }
+      );
+    });
 };

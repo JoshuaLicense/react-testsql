@@ -348,11 +348,12 @@ exports.leaveCurrentGroup = (req, res) => {
 exports.leaveGroup = (req, res, next) => {
   const { id } = req.params;
 
-  Group.find({ _id: id, creator: req.user.id }, (err, ownedGroup) => {
+  Group.find({ _id: id, creator: req.user.id }, (err, userOwnsGroup) => {
     if (err) return next(err);
 
     // Cannot leave your own groups!
-    if (ownedGroup) {
+    // Must be deleted instead.
+    if (userOwnsGroup) {
       return res.status(403).json({
         error: {
           message: "You cannot leave a group that you are the owner of."

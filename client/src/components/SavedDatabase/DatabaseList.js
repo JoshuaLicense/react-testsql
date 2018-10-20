@@ -70,13 +70,6 @@ export default class DatabaseList extends React.Component {
 
     return (
       <React.Fragment>
-        {error && (
-          <DialogTitle disableTypography>
-            <Typography color="error" align="center">
-              {error}
-            </Typography>
-          </DialogTitle>
-        )}
         <DialogTitle id="dialog-title">
           <div style={flexSpaceBetween}>
             Saved Databases
@@ -91,6 +84,11 @@ export default class DatabaseList extends React.Component {
             </Button>
           </div>
         </DialogTitle>
+        {error && (
+          <Typography color="error" align="center">
+            {error}
+          </Typography>
+        )}
         <DialogContent>
           <DialogContentText>
             Allows you to save your current database in a more{" "}

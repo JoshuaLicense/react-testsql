@@ -6,6 +6,7 @@ const databaseSchema = new mongoose.Schema(
   {
     title: {
       type: String,
+      maxlength: 32,
       required: true
     },
 

@@ -103,11 +103,9 @@ app.post(
   [
     check("username")
       .exists()
-      .withMessage("Username field cannot be blank."),
+      .isLength({ max: 32 }),
 
-    check("password")
-      .exists()
-      .withMessage("Password field cannot be blank.")
+    check("password").exists()
   ],
   userController.login
 );

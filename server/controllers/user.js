@@ -5,34 +5,26 @@ const config = require("../config/config");
 
 // Models
 const User = require("../models/User");
-const Database = require("../models/Database");
 
-const { check, validationResult } = require("express-validator/check");
+const { validationResult } = require("express-validator/check");
 
-/**
- * POST /login
- * Sign in using username and password.
- */
 exports.login = (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.mapped() });
+    return res.status(422).json("Invalid username or password");
   }
 
   passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
+    if (err) return next(err);
 
+    // No user was found.
     if (!user) {
-      return res.status(400).json({ error: info });
+      return res.status(400).json("Invalid username or password");
     }
 
     req.login(user, err => {
-      if (err) {
-        return next(err);
-      }
+      if (err) return next(err);
 
       const user = {
         id: req.user.id,
@@ -45,17 +37,13 @@ exports.login = (req, res, next) => {
   })(req, res, next);
 };
 
-/**
- * GET /logout
- * Log out.
- */
 exports.logout = (req, res) => {
   // Destroy the session
   req.session.destroy();
 
   req.logout();
 
-  return res.json({ msg: "Good" });
+  return res.sendStatus(200);
 };
 
 exports.info = (req, res) => {
@@ -72,10 +60,6 @@ exports.info = (req, res) => {
   return res.sendStatus(403);
 };
 
-/**
- * POST /signup
- * Create a new local account.
- */
 exports.register = (req, res, next) => {
   const errors = validationResult(req);
 
