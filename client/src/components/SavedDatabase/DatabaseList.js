@@ -34,31 +34,31 @@ export default class DatabaseList extends React.Component {
     // Try to fetch the database from the server.
     try {
       fileBuffer = await loadDatabase(id);
+
+      // Load the database into the client.
+      loadDatabaseHandler(new Uint8Array(fileBuffer));
+
+      return closeHandler();
     } catch (response) {
       const error = await response.json();
 
       this.setState({ error });
     }
-
-    // Load the database into the client.
-    loadDatabaseHandler(new Uint8Array(fileBuffer));
-
-    return closeHandler();
   };
 
   handleDeleteDatabase = async id => {
     // Try to delete the database from the server.
     try {
       await deleteDatabase(id);
+
+      // Refresh the database list so the newly deleted databases goes.
+      // This could be replaced with a client-side removal of the node, if you're a stickler for optimization.
+      return this.props.refreshSavedDatabaseList();
     } catch (response) {
       const error = await response.json();
 
       this.setState({ error });
     }
-
-    // Refresh the database list so the newly deleted databases goes.
-    // This could be replaced with a client-side removal of the node, if you're a stickler for optimization.
-    return this.props.refreshSavedDatabaseList();
   };
 
   handleClose = () => this.props.closeHandler();

@@ -38,18 +38,18 @@ export default class SaveDatabase extends React.Component {
     // Try to save the database on the server.
     try {
       await saveDatabase(title, database);
+
+      // Refresh the database list so the newly deleted databases goes.
+      // This could be replaced with a client-side removal of the node, if you're a stickler for optimization.
+      refreshSavedDatabaseList();
+
+      // Redirect back to the database list.
+      return this.props.history.push("/");
     } catch (response) {
       const error = await response.json();
 
       this.setState({ error });
     }
-
-    // Refresh the database list so the newly deleted databases goes.
-    // This could be replaced with a client-side removal of the node, if you're a stickler for optimization.
-    refreshSavedDatabaseList();
-
-    // Redirect back to the database list.
-    return this.props.history.push("/");
   };
 
   handleChange = e => this.setState({ title: e.target.value });
@@ -97,6 +97,8 @@ export default class SaveDatabase extends React.Component {
               margin="dense"
               autoFocus
               fullWidth
+              required
+              inputProps={{ maxLength: 32 }}
             />
             {error && (
               <FormHelperText id="name-error-text">{error}</FormHelperText>
