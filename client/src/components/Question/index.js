@@ -95,7 +95,7 @@ class QuestionManager extends React.Component {
         ...new Set(allQuestions.map(question => question.set))
       ];
 
-      const activeSet = allSetNames[0];
+      const activeSet = this.props.activeQuestion.set;
 
       // Means that the component has to rebuild the active set, as we created a brand new completed question object.
       const activeQuestionSet = [
