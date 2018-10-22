@@ -29,16 +29,11 @@ exports.getGroup = (req, res, next) => {
 
         const FIFTEEN_MINUTES = 60 * 15 * 1000;
 
+        const questionMetrics = {};
+        const setMetrics = {};
+
         const getQuestionKey = (question, i) =>
           question.title || `${question.set} - Q${i + 1}`;
-
-        const questionMetrics = {
-          numberOfUsersCompleted: new Map()
-        };
-
-        const setMetrics = {
-          numberOfUsersCompleted: new Map()
-        };
 
         // Query returns { user: [{ user : { ... }}]}
         // Below removes the top level "user", resulting in just an array of users.
@@ -54,29 +49,33 @@ exports.getGroup = (req, res, next) => {
           userGroupObject.questions.forEach((question, i) => {
             const questionKey = getQuestionKey(question, i);
 
-            // Make sure each questions exists in the map set.
-            if (!questionMetrics.numberOfUsersCompleted.has(questionKey)) {
-              questionMetrics.numberOfUsersCompleted.set(questionKey, 0);
+            // Check if this question has been recorded before.
+            if (!questionMetrics[questionKey]) {
+              // If not make the blank metrics detail.
+              questionMetrics[questionKey] = {
+                index: i + 1,
+                title: questionKey,
+                set: question.set,
+                completed: Number(Boolean(question.completed))
+              };
+            } else if (Boolean(question.completed)) {
+              // If it already exists, increment the completed key.
+              questionMetrics[questionKey].completed++;
             }
 
-            if (!setMetrics.numberOfUsersCompleted.has(question.set)) {
-              setMetrics.numberOfUsersCompleted.set(question.set, 0);
+            // Now do the same to build the set metrics.
+            if (!setMetrics[question.set]) {
+              setMetrics[question.set] = {
+                index: setMetrics.length + 1,
+                set: question.set,
+                completed: Number(Boolean(question.completed)),
+                total: 1
+              };
+            } else if (Boolean(question.completed)) {
+              setMetrics[question.set].completed++;
             }
 
-            // If the question is completed, update the various metrics.
-            if (Boolean(question.completed)) {
-              ++questionsCompleted;
-
-              questionMetrics.numberOfUsersCompleted.set(
-                questionKey,
-                questionMetrics.numberOfUsersCompleted.get(questionKey) + 1
-              );
-
-              setMetrics.numberOfUsersCompleted.set(
-                question.set,
-                setMetrics.numberOfUsersCompleted.get(question.set) + 1
-              );
-            }
+            setMetrics[question.set].total++;
           });
 
           // Sum the total completed questions.
@@ -99,21 +98,12 @@ exports.getGroup = (req, res, next) => {
         const averagePercentageComplete =
           (allQuestionsCompleted / totalQuestions) * 100;
 
-        // The sets now need converting to an array to send back as JSON.
-        questionMetrics.numberOfUsersCompleted = Array.from(
-          questionMetrics.numberOfUsersCompleted
-        );
-
-        setMetrics.numberOfUsersCompleted = Array.from(
-          setMetrics.numberOfUsersCompleted
-        );
-
         const populatedGroup = {
           id: group._id,
           title: group.title,
           users: allUsers,
-          questionMetrics,
-          setMetrics,
+          questionMetrics: Object.values(questionMetrics),
+          setMetrics: Object.values(setMetrics),
           totalQuestions: totalQuestionsInGroup,
           averagePercentageComplete
         };
