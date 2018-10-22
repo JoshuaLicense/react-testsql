@@ -1,39 +1,87 @@
 import React from "react";
-
 import ResponsiveContainer from "recharts/lib/component/ResponsiveContainer";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend
-} from "recharts";
+import PieChart from "recharts/lib/chart/PieChart";
+import Pie from "recharts/lib/polar/Pie";
+import Cell from "recharts/lib/component/Cell";
+import Tooltip from "recharts/lib/component/Tooltip";
 
-const data = [
-  { name: "Page A", uv: 4000, pv: 2400, amt: 2400 },
-  { name: "Page B", uv: 3000, pv: 1398, amt: 2210 },
-  { name: "Page C", uv: 2000, pv: 9800, amt: 2290 },
-  { name: "Page D", uv: 2780, pv: 3908, amt: 2000 },
-  { name: "Page E", uv: 1890, pv: 4800, amt: 2181 },
-  { name: "Page F", uv: 2390, pv: 3800, amt: 2500 },
-  { name: "Page G", uv: 3490, pv: 4300, amt: 2100 }
-];
+import Typography from "@material-ui/core/Typography";
 
-export default class ManageGroup extends React.Component {
-  render() {
+import stringToColor from "../stringToColor";
+
+const style = {
+  tooltip: {
+    padding: ".5rem .75rem",
+    backgroundColor: "rgba(255, 255, 255)",
+    border: "2px solid rgba(0, 0, 0)"
+  }
+};
+
+const CustomTooltip = props => {
+  if (props.active) {
+    const { payload } = props;
+
+    console.log(props);
+
     return (
-      <ResponsiveContainer width="99%" height={320}>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="pv" fill="#8884d8" />
-          <Bar dataKey="uv" fill="#82ca9d" />
-        </BarChart>
+      <div style={style.tooltip}>
+        <Typography variant="body2" color="textPrimary">
+          {payload[0].name}
+        </Typography>
+        <Typography>
+          {`${payload[0].payload.label}:`} <strong>{payload[0].value}</strong>
+        </Typography>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+export default class PieChartContainer extends React.Component {
+  render() {
+    const { data } = this.props;
+
+    return (
+      <ResponsiveContainer width="99%" height={500}>
+        <PieChart>
+          <Pie
+            isAnimationActive={false}
+            data={data}
+            nameKey="set"
+            dataKey="total"
+            cx="30%"
+            outerRadius="40%"
+            fill="#8884d8"
+          >
+            {data.map((entry, index) => (
+              <Cell
+                key={index}
+                label="Total Questions"
+                fill={stringToColor(entry.set)}
+              />
+            ))}
+          </Pie>
+
+          <Pie
+            data={data}
+            cx="70%"
+            outerRadius="40%"
+            nameKey="set"
+            dataKey="completed"
+            fill="#82ca9d"
+            isAnimationActive={false}
+          >
+            {data.map((entry, index) => (
+              <Cell
+                key={index}
+                label="Completed Questions"
+                fill={stringToColor(entry.set)}
+              />
+            ))}
+          </Pie>
+          <Tooltip content={CustomTooltip} />
+        </PieChart>
       </ResponsiveContainer>
     );
   }

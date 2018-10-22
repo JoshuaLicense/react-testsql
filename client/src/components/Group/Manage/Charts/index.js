@@ -26,14 +26,8 @@ export default class ChartManager extends React.Component {
 
     return (
       <div>
-        {index === 0 && (
-          <BarChart data={questionMetrics.numberOfUsersCompleted} />
-        )}
-        {index === 1 && (
-          <ScatterChartContainer
-            data={questionMetrics.numberOfUsersCompleted}
-          />
-        )}
+        {index === 0 && <BarChart data={questionMetrics} />}
+        {index === 1 && <ScatterChartContainer data={questionMetrics} />}
         {index === 2 && <BubbleChart />}
         {index === 3 && <PieChart data={setMetrics} />}
         <Tabs

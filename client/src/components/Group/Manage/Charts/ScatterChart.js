@@ -6,15 +6,37 @@ import XAxis from "recharts/lib/cartesian/XAxis";
 import YAxis from "recharts/lib/cartesian/YAxis";
 import CartesianGrid from "recharts/lib/cartesian/CartesianGrid";
 import Tooltip from "recharts/lib/component/Tooltip";
+import Cell from "recharts/lib/component/Cell";
+
+import Typography from "@material-ui/core/Typography";
+
+import stringToColor from "../stringToColor";
+
+const style = {
+  tooltip: {
+    padding: ".5rem .75rem",
+    backgroundColor: "rgba(255, 255, 255)",
+    border: "2px solid rgba(0, 0, 0)"
+  }
+};
+
+const CustomXTick = label => `Q${label}`;
 
 const CustomTooltip = props => {
   if (props.active) {
     const { payload } = props;
 
     return (
-      <div className="custom-tooltip">
-        <p className="label">{`${payload[1].value} : ${payload[0].value}`}</p>
-        <p className="desc">Anything you want can be displayed here.</p>
+      <div style={style.tooltip}>
+        <Typography variant="body2" color="textPrimary">{`Question ${
+          payload[0].value
+        }`}</Typography>
+        <Typography color="textSecondary" gutterBottom>
+          {payload[0].payload.title}
+        </Typography>
+        <Typography>
+          {`Total Completed:`} <strong>{payload[1].value}</strong>
+        </Typography>
       </div>
     );
   }
@@ -27,16 +49,29 @@ export default class ScatterChartContainer extends React.PureComponent {
     const { data } = this.props;
 
     return (
-      <ResponsiveContainer width="99%" height={400}>
-        <ScatterChart margin={{ top: 20, right: 20, bottom: 70 }}>
-          <XAxis dataKey="0" angle={-45} textAnchor="end" />
-          <YAxis dataKey="1" type="number" />
-          <CartesianGrid />
-          <Tooltip
-            cursor={{ strokeDasharray: "3 3" }}
-            content={CustomTooltip}
+      <ResponsiveContainer width="99%" height={500}>
+        <ScatterChart margin={{ top: 20, right: 20 }}>
+          <XAxis dataKey="index" tickFormatter={CustomXTick} />
+          <YAxis
+            dataKey="completed"
+            type="number"
+            allowDecimals={false}
+            label={{
+              value: "# of Completed",
+              angle: -90,
+              position: "center"
+            }}
           />
-          <Scatter name="A school" data={data} fill="#8884d8" />
+          <CartesianGrid />
+          <Tooltip content={CustomTooltip} />
+          <Scatter name="Question" data={data} shape="cross">
+            {data.map((entry, index) => {
+              console.log(entry);
+              return (
+                <Cell key={`cell-${index}`} fill={stringToColor(entry.title)} />
+              );
+            })}
+          </Scatter>
         </ScatterChart>
       </ResponsiveContainer>
     );

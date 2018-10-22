@@ -162,42 +162,6 @@ export default class ManageGroup extends React.Component {
 
         <div style={{ margin: 16 }}>
           <Grid container spacing={16}>
-            <Grid item xs={6} sm={4} md={3} lg={2}>
-              <Tile
-                number={numberOfActiveUsers}
-                title="Active Users"
-                className="tile"
-              />
-            </Grid>
-            <Grid item xs={6} sm={4} md={3} lg={2}>
-              <Tile
-                number={numberOfUsers}
-                title="Group Members"
-                className="tile"
-              />
-            </Grid>
-            <Grid item xs={6} sm={4} md={3} lg={2}>
-              <Tile
-                number={totalQuestions}
-                title="Total Questions"
-                className="tile"
-              />
-            </Grid>
-            <Grid item xs={6} sm={4} md={3} lg={2}>
-              <Tile
-                number={
-                  <span>
-                    {roundedAverage}
-                    <small style={{ fontSize: "0.5em" }}>%</small>
-                  </span>
-                }
-                title="Average Completion"
-                color={colorCodedAverageText}
-                backgroundColor={colorCodedAverageBackground}
-              />
-            </Grid>
-          </Grid>
-          <Grid container spacing={16}>
             <Grid item xs={12} md={6} lg={8}>
               <Typography
                 variant="body2"
