@@ -12,6 +12,7 @@ import like from "./like";
 import between from "./between";
 import minMaxAvg from "./minMaxAvg";
 import count from "./count";
+import columnAlias from "./alias";
 
 export default [
   selectAll,
@@ -27,5 +28,6 @@ export default [
   like,
   between,
   minMaxAvg,
-  count
+  count,
+  columnAlias
 ];
