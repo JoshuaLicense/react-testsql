@@ -47,6 +47,7 @@ const styles = theme => ({
   bottomActions: {
     display: "flex",
     justifyContent: "space-between",
+    alignItems: "center",
     marginTop: theme.spacing.unit * 2
   }
 });
@@ -229,13 +230,15 @@ class QuestionManager extends React.Component {
           )}
           <div className={classes.bottomActions}>
             {activeSet && (
-              <Select value={activeSet} onChange={this.handleSetChange}>
-                {allSetNames.map(name => (
-                  <MenuItem key={name} value={name}>
-                    {name}
-                  </MenuItem>
-                ))}
-              </Select>
+              <div>
+                <Select value={activeSet} onChange={this.handleSetChange}>
+                  {allSetNames.map(name => (
+                    <MenuItem key={name} value={name}>
+                      {name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </div>
             )}
             <div>
               <Button
