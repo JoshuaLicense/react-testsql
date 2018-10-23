@@ -34,7 +34,5 @@ export const logout = () => {
     headers: new Headers({
       "Content-Type": "application/json"
     })
-  })
-    .then(handleError)
-    .then(response => response.json());
+  }).then(handleError);
 };

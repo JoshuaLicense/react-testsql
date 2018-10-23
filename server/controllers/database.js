@@ -40,7 +40,7 @@ exports.canSaveDatabase = (req, res, next) => {
     if (databases.length >= config.database.limit) {
       return res
         .status(403)
-        .json("You have reached the limit of saved databases");
+        .send("You have reached the limit of saved databases");
     }
 
     return next();
@@ -69,7 +69,7 @@ exports.loadDatabase = (req, res, next) => {
     if (err) return next(err);
 
     if (!database) {
-      return res.status(404).json("Database not found in the database.");
+      return res.status(404).send("Database not found in the database.");
     }
 
     const filename = database.path;
@@ -87,10 +87,10 @@ exports.loadDatabase = (req, res, next) => {
 
     // Check the file actually exists.
     if (!fs.existsSync(filepath)) {
-      return res.status(404).json("Database not found on the filesystem.");
+      return res.status(404).send("Database not found on the filesystem.");
     }
 
-    res.sendFile(filename, options);
+    return res.sendFile(filename, options);
   });
 };
 

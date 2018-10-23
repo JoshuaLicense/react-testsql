@@ -46,7 +46,7 @@ export default class SaveDatabase extends React.Component {
       // Redirect back to the database list.
       return this.props.history.push("/");
     } catch (response) {
-      const error = await response.json();
+      const error = await response.text();
 
       this.setState({ error });
     }

@@ -12,7 +12,7 @@ exports.login = (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    return res.status(422).json("Invalid username or password");
+    return res.status(422).send("Invalid username or password");
   }
 
   passport.authenticate("local", (err, user, info) => {
@@ -20,7 +20,7 @@ exports.login = (req, res, next) => {
 
     // No user was found.
     if (!user) {
-      return res.status(400).json("Invalid username or password");
+      return res.status(400).send("Invalid username or password");
     }
 
     req.login(user, err => {
@@ -71,9 +71,7 @@ exports.register = (req, res, next) => {
     if (err) return next(err);
 
     if (existingUser) {
-      return res.status(400).json({
-        error: { message: "This username already exists." }
-      });
+      return res.status(400).send("This username already exists.");
     }
 
     const user = new User({

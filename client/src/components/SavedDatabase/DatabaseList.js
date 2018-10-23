@@ -9,8 +9,6 @@ import DialogActions from "@material-ui/core/DialogActions";
 
 import Button from "@material-ui/core/Button";
 
-import Typography from "@material-ui/core/Typography";
-
 import { loadDatabase, deleteDatabase } from "./API";
 
 import DatabaseItem from "./DatabaseItem";
@@ -40,7 +38,7 @@ export default class DatabaseList extends React.Component {
 
       return closeHandler();
     } catch (response) {
-      const error = await response.json();
+      const error = await response.text();
 
       this.setState({ error });
     }
@@ -55,7 +53,7 @@ export default class DatabaseList extends React.Component {
       // This could be replaced with a client-side removal of the node, if you're a stickler for optimization.
       return this.props.refreshSavedDatabaseList();
     } catch (response) {
-      const error = await response.json();
+      const error = await response.text();
 
       this.setState({ error });
     }
@@ -85,9 +83,11 @@ export default class DatabaseList extends React.Component {
           </div>
         </DialogTitle>
         {error && (
-          <Typography color="error" align="center">
-            {error}
-          </Typography>
+          <DialogContent>
+            <DialogContentText color="error" align="center">
+              {error}
+            </DialogContentText>
+          </DialogContent>
         )}
         <DialogContent>
           <DialogContentText>

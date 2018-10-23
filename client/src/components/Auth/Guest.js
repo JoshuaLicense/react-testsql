@@ -2,12 +2,12 @@ import React from "react";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
 
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
 
 import { login } from "./API";
 
@@ -28,7 +28,7 @@ class Guest extends React.Component {
 
       return this.props.loginHandler(user);
     } catch (response) {
-      const error = await response.json();
+      const error = await response.text();
 
       this.setState({ error });
     }
@@ -55,10 +55,13 @@ class Guest extends React.Component {
           aria-labelledby="form-dialog-title"
         >
           <DialogTitle id="form-dialog-title">Login</DialogTitle>
+
           {error && (
-            <Typography color="error" align="center">
-              {error}
-            </Typography>
+            <DialogContent>
+              <DialogContentText color="error" align="center">
+                {error}
+              </DialogContentText>
+            </DialogContent>
           )}
           <DialogContent>
             <TextField

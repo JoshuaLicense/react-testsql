@@ -15,7 +15,7 @@ exports.getGroup = (req, res, next) => {
 
   Group.findById(id, "title creator", { lean: true }, (err, group) => {
     if (!group) {
-      return res.status(404).json("Group not found in the database.");
+      return res.status(404).send("Group not found in the database.");
     }
 
     if (err) return next(err);
@@ -167,6 +167,12 @@ exports.saveProgress = (req, res, next) => {
     err => {
       if (err) next(err);
 
+      // Update the group session object.
+      req.session.group = {
+        ...req.session.group,
+        questions: req.body.questions
+      };
+
       return res.sendStatus(200);
     }
   );
@@ -281,6 +287,7 @@ exports.joinGroup = (req, res, next) => {
         .exec((err, existingUserGroup) => {
           if (err) return next(err);
 
+          // Check if this user has already been in this group or not.
           if (existingUserGroup) {
             // Construct a group object with the users question set.
             const userGroupObject = {

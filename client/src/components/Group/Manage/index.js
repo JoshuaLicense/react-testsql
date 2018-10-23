@@ -2,37 +2,13 @@ import React from "react";
 
 import Grid from "@material-ui/core/Grid";
 
-import Button from "@material-ui/core/Button";
-
-import Red from "@material-ui/core/colors/red";
-import Green from "@material-ui/core/colors/green";
-
-import Input from "@material-ui/core/Input";
-
-import FormControl from "@material-ui/core/FormControl";
-import FormHelperText from "@material-ui/core/FormHelperText";
-
 import List from "@material-ui/core/List";
-import ListSubheader from "@material-ui/core/ListSubheader";
-
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 
-import DeleteIcon from "@material-ui/icons/Delete";
-import UpdateIcon from "@material-ui/icons/Edit";
+// import DeleteIcon from "@material-ui/icons/Delete";
+// import UpdateIcon from "@material-ui/icons/Edit";
 
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend
-} from "recharts";
-
-import Tile from "./Tile";
+// import Tile from "./Tile";
 
 import Typography from "@material-ui/core/Typography";
 
@@ -40,19 +16,18 @@ import { Link } from "react-router-dom";
 
 import { getGroup, updateGroup, removeUserFromGroup } from "../API";
 
-import Divider from "@material-ui/core/Divider";
-
 import CloseIcon from "@material-ui/icons/Close";
 
 import GroupUser from "../GroupUser";
-import { AppBar, Toolbar, IconButton, Paper } from "@material-ui/core";
-import Section from "../../Layout/Section";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import Paper from "@material-ui/core/Paper";
+import DialogContentText from "@material-ui/core/DialogContentText";
 
 import ChartManager from "./Charts";
 
 import "./manageGroup.css";
-
-const flexSpaceBetween = { display: "flex", justifyContent: "space-between" };
 
 const style = {
   closeButton: { marginRight: 16 },
@@ -102,7 +77,7 @@ export default class ManageGroup extends React.Component {
 
       this.setState({ group, controlledTitle: group.title });
     } catch (response) {
-      const error = await response.json();
+      const error = await response.text();
 
       this.setState({ error });
     }
@@ -142,9 +117,11 @@ export default class ManageGroup extends React.Component {
       return (
         <React.Fragment>
           {header}
-          <Typography color="error" align="center">
-            {error}
-          </Typography>
+          <DialogContent>
+            <DialogContentText color="error" align="center">
+              {error}
+            </DialogContentText>
+          </DialogContent>
         </React.Fragment>
       );
     }
@@ -183,33 +160,14 @@ export default class ManageGroup extends React.Component {
               <Paper elevation={2}>
                 <List
                   style={{ maxHeight: 368, overflow: "auto" }}
+                  dense={users.length >= 5}
                   disablePadding
                 >
                   {users.map(user => (
                     <GroupUser
                       key={user._id}
                       user={user}
-                      removeHandler={this.handleRemoveUser}
-                    />
-                  ))}
-                  {users.map(user => (
-                    <GroupUser
-                      key={user._id}
-                      user={user}
-                      removeHandler={this.handleRemoveUser}
-                    />
-                  ))}
-                  {users.map(user => (
-                    <GroupUser
-                      key={user._id}
-                      user={user}
-                      removeHandler={this.handleRemoveUser}
-                    />
-                  ))}
-                  {users.map(user => (
-                    <GroupUser
-                      key={user._id}
-                      user={user}
+                      dense={users.length >= 5}
                       removeHandler={this.handleRemoveUser}
                     />
                   ))}

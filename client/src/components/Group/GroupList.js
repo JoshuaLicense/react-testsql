@@ -9,8 +9,6 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 
-import Typography from "@material-ui/core/Typography";
-
 import { Link } from "react-router-dom";
 
 import { loadDatabase } from "../SavedDatabase/API";
@@ -35,11 +33,11 @@ class GroupList extends React.Component {
     try {
       const groups = await listGroups();
 
-      this.setState({ list: groups });
-    } catch (e) {
-      const error = await e.json();
+      this.setState({ list: groups, error: null });
+    } catch (response) {
+      const error = await response.text();
 
-      this.setState({ error: error.message });
+      this.setState({ error });
     }
   };
 
@@ -48,17 +46,6 @@ class GroupList extends React.Component {
   handleJoinGroup = async id => {
     try {
       const group = await joinGroup(id);
-
-      // Find the group the user has just joined, and set it as active.
-      // This saves pinging the server again to reload the `list` prop.
-      const updatedGroupList = this.state.list.map(listGroup => {
-        // Update the isCurrent for all the groups in the list, leaving the last joined group as the active one.
-        listGroup.isCurrent = group._id === listGroup._id;
-
-        return listGroup;
-      });
-
-      this.setState({ list: updatedGroupList });
 
       // Update the user first. Any group questions already generated will be loaded first.
       // Otherwise <Main> will generate the questions twice; once for the detected database change, then the detected group change.
@@ -71,10 +58,25 @@ class GroupList extends React.Component {
 
       // Now load the database into the client-side sql.js.
       this.props.loadDatabaseHandler(typedArray);
-    } catch (e) {
-      const error = await e.json();
 
-      this.setState({ error: error.message });
+      // Find the group the user has just joined, and set it as active.
+      // This saves pinging the server again to reload the `list` prop.
+      const updatedGroupList = this.state.list.map(listGroup => {
+        // Update the isCurrent for all the groups in the list, leaving the last joined group as the active one.
+        listGroup.isCurrent = group._id === listGroup._id;
+
+        return listGroup;
+      });
+
+      this.setState({ list: updatedGroupList, error: null });
+    } catch (response) {
+      const error = await response.text();
+
+      this.setState({ error });
+
+      await leaveCurrentGroup();
+
+      this.props.leaveGroupHandler();
     }
   };
 
@@ -89,17 +91,19 @@ class GroupList extends React.Component {
         return listGroup;
       });
 
-      this.setState({ list: updatedGroupList });
-    } catch (e) {
-      const error = await e.json();
+      // Clear all the cached questions, this will prompt the generation of a new set.
+      clearQuestions();
 
-      this.setState({ error: error.message });
+      this.props.leaveGroupHandler();
+
+      this.setState({ list: updatedGroupList, error: null });
+    } catch (response) {
+      const error = await response.text();
+
+      this.setState({ error });
+
+      await leaveCurrentGroup();
     }
-
-    // Clear all the cached questions, this will prompt the generation of a new set.
-    clearQuestions();
-
-    this.props.leaveGroupHandler();
   };
 
   render() {
@@ -107,13 +111,6 @@ class GroupList extends React.Component {
 
     return (
       <React.Fragment>
-        {error && (
-          <DialogTitle disableTypography>
-            <Typography color="error" align="center">
-              {error}
-            </Typography>
-          </DialogTitle>
-        )}
         <DialogTitle id="dialog-title">
           <div style={flexSpaceBetween}>
             Groups
@@ -128,6 +125,13 @@ class GroupList extends React.Component {
             </Button>
           </div>
         </DialogTitle>
+        {error && (
+          <DialogContent>
+            <DialogContentText color="error" align="center">
+              {error}
+            </DialogContentText>
+          </DialogContent>
+        )}
         <DialogContent>
           <DialogContentText>
             Groups allow you to customize the experience and track the progress

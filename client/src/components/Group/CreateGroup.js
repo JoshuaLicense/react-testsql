@@ -49,7 +49,7 @@ class CreateGroup extends React.Component {
 
       this.setState({ redirect: true });
     } catch (response) {
-      const error = await response.json();
+      const error = await response.text();
 
       this.setState({ error });
     }
