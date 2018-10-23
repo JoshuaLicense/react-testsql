@@ -61,6 +61,7 @@ const style = {
 
 export default class ManageGroup extends React.Component {
   state = {
+    error: null,
     group: null,
     activeQuestionIndex: null
   };
@@ -96,69 +97,61 @@ export default class ManageGroup extends React.Component {
   loadGroup = async () => {
     const { id } = this.props.match.params;
 
-    const group = await getGroup(id);
+    try {
+      const group = await getGroup(id);
 
-    this.setState({ group, controlledTitle: group.title });
+      this.setState({ group, controlledTitle: group.title });
+    } catch (response) {
+      const error = await response.json();
+
+      this.setState({ error });
+    }
   };
 
   render() {
-    const { id, title } = this.props.match.params;
+    const { title } = this.props.match.params;
 
-    const { group } = this.state;
+    const { group, error } = this.state;
 
     if (!group) {
       return <div>Loading group information...</div>;
     }
 
-    const {
-      users,
-      averagePercentageComplete,
-      totalQuestions,
-      questionMetrics,
-      setMetrics
-    } = group;
+    const { users, questionMetrics, setMetrics } = group;
 
-    const numberOfUsers = users.length;
-
-    // Extract the number of active users in the group set.
-    const numberOfActiveUsers = users.reduce(
-      (acc, curr) => (acc += Number(curr.active || 0)),
-      0
+    const header = (
+      <AppBar position="sticky">
+        <Toolbar>
+          <IconButton
+            component={Link}
+            color="inherit"
+            to="/"
+            style={style.closeButton}
+            aria-label="Close"
+          >
+            <CloseIcon />
+          </IconButton>
+          <Typography variant="title" color="inherit" style={style.flex}>
+            {title}
+          </Typography>
+        </Toolbar>
+      </AppBar>
     );
 
-    const roundedAverage = Math.round(averagePercentageComplete);
-    const colorCodedAverageText =
-      roundedAverage < 20
-        ? Red[500]
-        : roundedAverage > 80
-          ? Green[500]
-          : "inherit";
-
-    const colorCodedAverageBackground =
-      roundedAverage < 20
-        ? Red[100]
-        : roundedAverage > 80
-          ? Green[100]
-          : "inherit";
+    if (error) {
+      return (
+        <React.Fragment>
+          {header}
+          <Typography color="error" align="center">
+            {error}
+          </Typography>
+        </React.Fragment>
+      );
+    }
 
     return (
       <React.Fragment>
-        <AppBar position="sticky">
-          <Toolbar>
-            <IconButton
-              component={Link}
-              color="inherit"
-              to="/"
-              style={style.closeButton}
-              aria-label="Close"
-            >
-              <CloseIcon />
-            </IconButton>
-            <Typography variant="title" color="inherit" style={style.flex}>
-              {title}
-            </Typography>
-          </Toolbar>
-        </AppBar>
+        {header}
 
         <div style={{ margin: 16 }}>
           <Grid container spacing={16}>

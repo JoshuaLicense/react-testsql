@@ -220,6 +220,13 @@ app.get(
 
 app.post(
   "/api/group/create",
+  [
+    check("title")
+      .exists()
+      .withMessage("Must specify a group title.")
+      .isLength({ max: 32 })
+      .withMessage("Group title must be within 32 characters.")
+  ],
   passportConfig.isAuthenticated,
   groupController.createGroup
 );

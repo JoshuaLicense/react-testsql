@@ -8,10 +8,16 @@ const Group = require("../models/Group");
 const UserGroup = require("../models/UserGroup");
 const Database = require("../models/Database");
 
+const { validationResult } = require("express-validator/check");
+
 exports.getGroup = (req, res, next) => {
   const { id } = req.params;
 
   Group.findById(id, "title creator", { lean: true }, (err, group) => {
+    if (!group) {
+      return res.status(404).json("Group not found in the database.");
+    }
+
     if (err) return next(err);
 
     UserGroup.find({ group: id })
@@ -307,6 +313,16 @@ exports.joinGroup = (req, res, next) => {
 };
 
 exports.createGroup = (req, res, next) => {
+  const errors = validationResult(req);
+
+  // If there are express errors, extract the error.
+  // As we only expect the title being invalid.
+  if (!errors.isEmpty()) {
+    const errorMessage = errors.mapped().title.msg;
+
+    return res.status(422).json(errorMessage);
+  }
+
   const { title, databaseID } = req.body;
 
   // Make sure the database chosen actually exists

@@ -41,14 +41,18 @@ class CreateGroup extends React.Component {
   componentDidMount = () =>
     listDatabases().then(list => this.setState({ list }));
 
-  handleSubmit = () => {
+  handleSubmit = async () => {
     const { name, selectedDatabase } = this.state;
 
-    return createGroup(name, selectedDatabase)
-      .then(() => this.setState({ redirect: true }))
-      .catch(error => {
-        error.json().then(json => this.setState({ error: json.message }));
-      });
+    try {
+      await createGroup(name, selectedDatabase);
+
+      this.setState({ redirect: true });
+    } catch (response) {
+      const error = await response.json();
+
+      this.setState({ error });
+    }
   };
 
   handleChange = event => {
