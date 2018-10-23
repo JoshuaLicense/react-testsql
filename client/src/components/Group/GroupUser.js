@@ -12,11 +12,15 @@ import Typography from "@material-ui/core/Typography";
 import Red from "@material-ui/core/colors/red";
 import Green from "@material-ui/core/colors/green";
 
+const styles = {
+  smallButton: { padding: 6 }
+};
+
 export default class GroupUser extends React.Component {
   handleRemoveUser = () => this.props.removeHandler(this.props.user._id);
 
   render() {
-    const { user } = this.props;
+    const { user, dense } = this.props;
 
     const {
       username,
@@ -48,11 +52,12 @@ export default class GroupUser extends React.Component {
         {canRemove && (
           <ListItemSecondaryAction>
             <IconButton
+              style={(dense && styles.smallButton) || {}}
               color="secondary"
               onClick={this.handleRemoveUser}
               aria-label="Remove User from the group"
             >
-              <RemoveUserIcon />
+              <RemoveUserIcon fontSize="small" />
             </IconButton>
           </ListItemSecondaryAction>
         )}

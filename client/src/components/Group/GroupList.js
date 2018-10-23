@@ -146,6 +146,7 @@ class GroupList extends React.Component {
                 group={group}
                 joinGroupHandler={this.handleJoinGroup}
                 leaveGroupHandler={this.handleLeaveGroup}
+                dense={list.length >= 5}
               />
             ))}
           </List>

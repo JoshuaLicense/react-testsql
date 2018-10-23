@@ -13,7 +13,10 @@ import ManageIcon from "@material-ui/icons/Settings";
 
 import Link from "react-router-dom/Link";
 
-const progressStyle = { flex: "0 0 40px" };
+const styles = {
+  progress: { flex: "0 0 40px" },
+  smallButton: { padding: 6 }
+};
 
 export default class GroupItem extends React.Component {
   handleJoinGroup = () => this.props.joinGroupHandler(this.props.group._id);
@@ -21,6 +24,8 @@ export default class GroupItem extends React.Component {
   handleLeaveGroup = () => this.props.leaveGroupHandler();
 
   render() {
+    const { group, dense } = this.props;
+
     const {
       _id: id,
       title,
@@ -28,7 +33,7 @@ export default class GroupItem extends React.Component {
       totalQuestions = "-",
       canManage,
       isCurrent
-    } = this.props.group;
+    } = group;
 
     return (
       <ListItem
@@ -40,7 +45,7 @@ export default class GroupItem extends React.Component {
       >
         <Typography
           color="textSecondary"
-          style={progressStyle}
+          style={styles.progress}
           title={`You have completed ${completedQuestions} out of ${totalQuestions} questions in this group.`}
         >
           {`${completedQuestions}/${totalQuestions}`}
@@ -50,6 +55,7 @@ export default class GroupItem extends React.Component {
           <ListItemSecondaryAction>
             {canManage && (
               <IconButton
+                style={(dense && styles.smallButton) || {}}
                 component={Link}
                 to={`/group/manage/${id}/${title}`}
                 title="Manage this group"
@@ -60,6 +66,7 @@ export default class GroupItem extends React.Component {
             )}
             {isCurrent && (
               <IconButton
+                style={(dense && styles.smallButton) || {}}
                 color="secondary"
                 onClick={this.handleLeaveGroup}
                 title="Leave this group"
