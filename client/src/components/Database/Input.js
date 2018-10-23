@@ -60,6 +60,7 @@ class DatabaseInput extends React.Component {
           width="100%"
           onChange={this.handleChange}
           value={statement}
+          wrapEnabled
         />
 
         <Button
