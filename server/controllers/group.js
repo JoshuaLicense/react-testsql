@@ -77,11 +77,12 @@ exports.getGroup = (req, res, next) => {
                 completed: Number(Boolean(question.completed)),
                 total: 1
               };
-            } else if (Boolean(question.completed)) {
-              setMetrics[question.set].completed++;
+            } else {
+              if (Boolean(question.completed)) {
+                setMetrics[question.set].completed++;
+              }
+              setMetrics[question.set].total++;
             }
-
-            setMetrics[question.set].total++;
           });
 
           // Sum the total completed questions.
@@ -160,7 +161,6 @@ exports.saveProgress = (req, res, next) => {
   }
 
   // If the group doesn't have the question number.
-
   UserGroup.updateOne(
     { group: req.session.group._id, user: req.user.id },
     { questions: req.body.questions },
