@@ -6,7 +6,7 @@ const orderBy = {
   build: db => {
     const tables = getTables(db);
 
-    const [{ table, column: column_1 }] = getColumns(db, tables, 1, "INT");
+    const [{ table, column: column_1 }] = getColumns(db, tables, 1, "INTEGER");
 
     return {
       question: `Display the **${table}** showing the largest **${column_1}** first.`,

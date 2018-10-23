@@ -10,11 +10,13 @@ const limitAndOrder = {
 
     const tables = getTables(db);
 
-    const [
-      { table, column: column_1 },
-      { column: column_2 },
-      { column: column_3 }
-    ] = getColumns(db, tables, 3);
+    const [{ table, column: column_1 }] = getColumns(db, tables, 1, "INTEGER");
+
+    const [{ column: column_2 }, { column: column_3 }] = getColumns(
+      db,
+      [table],
+      2
+    );
 
     return {
       question: `Find the top ${randomInt} **${table}** with the highest **${column_1}**, showing the **${column_1}**, **${column_2}**, and **${column_3}** of each ${table}.`,

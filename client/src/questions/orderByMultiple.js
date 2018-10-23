@@ -9,7 +9,8 @@ const orderByMultiple = {
     const [{ table, column: column_1 }, { column: column_2 }] = getColumns(
       db,
       tables,
-      2
+      2,
+      "INTEGER"
     );
 
     return {
