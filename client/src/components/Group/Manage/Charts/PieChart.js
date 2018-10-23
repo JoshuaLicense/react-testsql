@@ -17,11 +17,11 @@ const style = {
   }
 };
 
+const CustomLabel = props => props.name;
+
 const CustomTooltip = props => {
   if (props.active) {
     const { payload } = props;
-
-    console.log(props);
 
     return (
       <div style={style.tooltip}>
@@ -50,9 +50,11 @@ export default class PieChartContainer extends React.Component {
             data={data}
             nameKey="set"
             dataKey="total"
-            cx="30%"
-            outerRadius="40%"
             fill="#8884d8"
+            innerRadius="70%"
+            outerRadius="90%"
+            label={CustomLabel}
+            labelLine={false}
           >
             {data.map((entry, index) => (
               <Cell
@@ -65,11 +67,10 @@ export default class PieChartContainer extends React.Component {
 
           <Pie
             data={data}
-            cx="70%"
-            outerRadius="40%"
             nameKey="set"
             dataKey="completed"
             fill="#82ca9d"
+            outerRadius="60%"
             isAnimationActive={false}
           >
             {data.map((entry, index) => (
