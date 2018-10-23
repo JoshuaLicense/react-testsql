@@ -35,7 +35,7 @@ const checkAnswer = (db, sql, question) => {
   const userResults = db.exec(sql);
   const modelResults = db.exec(question.answer);
 
-  if (!userResults.length) {
+  if (!userResults.length && modelResults.length) {
     throw new IncorrectAnswer(`No rows returned!`);
   }
 
