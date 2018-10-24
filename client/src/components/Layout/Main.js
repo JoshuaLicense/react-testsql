@@ -54,15 +54,18 @@ export default class Main extends React.Component {
     // Has the group already have generated questions.
     // Joining a group SHOULD remove all questions so they are rebuilt with the new group database.
     if (group && group.questions && group.questions.length > 0) {
+      console.log("Used group questions");
       allQuestions = group.questions;
     } else {
       // Check the localStorage for any cached question sets
       const cachedQuestions = localStorage.getItem("__testSQL_Questions__");
 
       if (cachedQuestions && !group) {
+        console.log("Used cached questions");
         // Cached questions, and the user is not in a group.
         allQuestions = JSON.parse(cachedQuestions);
       } else {
+        console.log("Built new questions");
         // Cached questions, but the user is in a group that doesn't have questions.
         // Rebuild the questions for this group.
         allQuestions = await buildQuestions(this.props.currentDatabase);

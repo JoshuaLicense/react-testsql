@@ -33,7 +33,7 @@ const Section = props => {
       >
         {title}
       </Typography>
-      <Paper style={paperStyle} elevation={2}>
+      <Paper style={paperStyle} elevation={2} square>
         {children}
       </Paper>
     </div>

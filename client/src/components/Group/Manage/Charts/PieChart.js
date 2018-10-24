@@ -43,10 +43,9 @@ export default class PieChartContainer extends React.Component {
     const { data } = this.props;
 
     return (
-      <ResponsiveContainer width="99%" height={500}>
-        <PieChart>
+      <ResponsiveContainer width="99%" height={300}>
+        <PieChart margin={{ top: 50, right: 60, left: 60, bottom: 50 }}>
           <Pie
-            isAnimationActive={false}
             data={data}
             nameKey="set"
             dataKey="total"
@@ -55,6 +54,7 @@ export default class PieChartContainer extends React.Component {
             outerRadius="90%"
             label={CustomLabel}
             labelLine={false}
+            isAnimationActive={false}
           >
             {data.map((entry, index) => (
               <Cell
@@ -66,12 +66,12 @@ export default class PieChartContainer extends React.Component {
           </Pie>
 
           <Pie
+            isAnimationActive={false}
             data={data}
             nameKey="set"
             dataKey="completed"
             fill="#82ca9d"
             outerRadius="60%"
-            isAnimationActive={false}
           >
             {data.map((entry, index) => (
               <Cell

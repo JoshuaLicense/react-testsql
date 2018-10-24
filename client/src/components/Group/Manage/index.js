@@ -9,6 +9,9 @@ import DialogContent from "@material-ui/core/DialogContent";
 // import UpdateIcon from "@material-ui/icons/Edit";
 
 // import Tile from "./Tile";
+import BarChart from "./Charts/BarChart";
+import PieChart from "./Charts/PieChart";
+import Treemap from "./Charts/Treemap";
 
 import Typography from "@material-ui/core/Typography";
 
@@ -25,7 +28,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
 import DialogContentText from "@material-ui/core/DialogContentText";
 
-import ChartManager from "./Charts";
+import ChartManager from "./Charts/Tiles";
 
 import "./manageGroup.css";
 
@@ -88,15 +91,9 @@ export default class ManageGroup extends React.Component {
 
     const { group, error } = this.state;
 
-    if (!group) {
-      return <div>Loading group information...</div>;
-    }
-
-    const { users, questionMetrics, setMetrics } = group;
-
     const header = (
-      <AppBar position="sticky">
-        <Toolbar>
+      <AppBar position="static">
+        <Toolbar variant="dense">
           <IconButton
             component={Link}
             color="inherit"
@@ -104,7 +101,7 @@ export default class ManageGroup extends React.Component {
             style={style.closeButton}
             aria-label="Close"
           >
-            <CloseIcon />
+            <CloseIcon fontSize="small" />
           </IconButton>
           <Typography variant="title" color="inherit" style={style.flex}>
             {title}
@@ -112,6 +109,21 @@ export default class ManageGroup extends React.Component {
         </Toolbar>
       </AppBar>
     );
+
+    if (!group) {
+      return (
+        <React.Fragment>
+          {header}
+          <DialogContent>
+            <DialogContentText align="center">
+              Loading group information...
+            </DialogContentText>
+          </DialogContent>
+        </React.Fragment>
+      );
+    }
+
+    const { users, questionMetrics, setMetrics } = group;
 
     if (error) {
       return (
@@ -132,23 +144,7 @@ export default class ManageGroup extends React.Component {
 
         <div style={{ margin: 16 }}>
           <Grid container spacing={16}>
-            <Grid item xs={12} md={6} lg={8}>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                component="h3"
-                gutterBottom
-              >
-                Chart
-              </Typography>
-              <Paper elevation={2}>
-                <ChartManager
-                  questionMetrics={questionMetrics}
-                  setMetrics={setMetrics}
-                />
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid item xs={12} md={4}>
               <Typography
                 variant="body2"
                 color="textSecondary"
@@ -157,7 +153,7 @@ export default class ManageGroup extends React.Component {
               >
                 Members
               </Typography>
-              <Paper elevation={2}>
+              <Paper elevation={2} square>
                 <List
                   style={{ maxHeight: 368, overflow: "auto" }}
                   dense={users.length >= 5}
@@ -173,6 +169,44 @@ export default class ManageGroup extends React.Component {
                   ))}
                 </List>
               </Paper>
+            </Grid>
+            <Grid item xs={12} md={8}>
+              <Grid container>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="h3"
+                    gutterBottom
+                  >
+                    Group members progress
+                  </Typography>
+                  <BarChart data={users} />
+                </Grid>
+                <Grid item xs={12} sm={6} xl={3}>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="h3"
+                    gutterBottom
+                  >
+                    Comparison of question set ratio and their corresponding
+                    completed ratio
+                  </Typography>
+                  <PieChart data={setMetrics} />
+                </Grid>
+                <Grid item xs={12} sm={6} xl={3}>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="h3"
+                    gutterBottom
+                  >
+                    Comparison of question completion
+                  </Typography>
+                  <Treemap data={questionMetrics} />
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </div>

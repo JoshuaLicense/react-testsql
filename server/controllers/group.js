@@ -44,7 +44,7 @@ exports.getGroup = (req, res, next) => {
         // Query returns { user: [{ user : { ... }}]}
         // Below removes the top level "user", resulting in just an array of users.
         // [{ username: ..., ... }, { username: ..., ... }]
-        const allUsers = allUsersInGroup.map(userGroupObject => {
+        const allUsers = allUsersInGroup.map((userGroupObject, i) => {
           // Active is determined from an action in the last 15 minutes.
           // An action constitutes a questions attempt or joined group.
           const active =
@@ -52,21 +52,18 @@ exports.getGroup = (req, res, next) => {
 
           let questionsCompleted = 0;
 
-          userGroupObject.questions.forEach((question, i) => {
-            const questionKey = getQuestionKey(question, i);
+          userGroupObject.questions.forEach((question, j) => {
+            const questionKey = getQuestionKey(question, j);
 
             // Check if this question has been recorded before.
             if (!questionMetrics[questionKey]) {
               // If not make the blank metrics detail.
               questionMetrics[questionKey] = {
-                index: i + 1,
+                index: j + 1,
                 title: questionKey,
                 set: question.set,
-                completed: Number(Boolean(question.completed))
+                completed: 0
               };
-            } else if (Boolean(question.completed)) {
-              // If it already exists, increment the completed key.
-              questionMetrics[questionKey].completed++;
             }
 
             // Now do the same to build the set metrics.
@@ -77,10 +74,17 @@ exports.getGroup = (req, res, next) => {
                 completed: Number(Boolean(question.completed)),
                 total: 1
               };
-            } else {
-              if (Boolean(question.completed)) {
-                setMetrics[question.set].completed++;
-              }
+            }
+
+            if (Boolean(question.completed)) {
+              // If it already exists, increment the completed key.
+              questionMetrics[questionKey].completed++;
+              setMetrics[question.set].completed++;
+              questionsCompleted++;
+            }
+
+            // Only record total set questions on the first pass.
+            if (i === 0) {
               setMetrics[question.set].total++;
             }
           });

@@ -50,7 +50,7 @@ export default class ScatterChartContainer extends React.PureComponent {
 
     return (
       <ResponsiveContainer width="99%" height={500}>
-        <ScatterChart margin={{ top: 20, right: 20 }}>
+        <ScatterChart margin={{ top: 20, right: 20, bottom: 15 }}>
           <XAxis dataKey="index" tickFormatter={CustomXTick} />
           <YAxis
             dataKey="completed"
@@ -64,13 +64,15 @@ export default class ScatterChartContainer extends React.PureComponent {
           />
           <CartesianGrid />
           <Tooltip content={CustomTooltip} />
-          <Scatter name="Question" data={data} shape="cross">
-            {data.map((entry, index) => {
-              console.log(entry);
-              return (
-                <Cell key={`cell-${index}`} fill={stringToColor(entry.title)} />
-              );
-            })}
+          <Scatter
+            name="Question"
+            data={data}
+            shape="cross"
+            isAnimationActive={false}
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={stringToColor(entry.title)} />
+            ))}
           </Scatter>
         </ScatterChart>
       </ResponsiveContainer>
