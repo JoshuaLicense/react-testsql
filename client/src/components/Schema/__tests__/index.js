@@ -2,6 +2,7 @@ import React from "react";
 import { shallow } from "enzyme";
 
 import Schema from "../index";
+import SchemaItem from "../Item";
 
 const execMock = jest.fn();
 
@@ -14,15 +15,20 @@ execMock.mockReturnValue([
 const currentDatabaseMock = { exec: execMock };
 const toggleSidebarHandlerMock = jest.fn();
 
+const schemaList = [["Test table 1"], ["Test table 2"], ["Test table 3"]];
+
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
 describe("Schema component", () => {
   let component;
 
-  beforeEach(async () => {
+  beforeEach(() => {
+    // We mock the database tables once. As they are requested first!
+    // After the initial database call, the count is requested.
+    // Which is where the default return value on line 9 is returned.
     execMock.mockReturnValueOnce([
       {
-        values: [["Test table 1"], ["Test table 2"], ["Test table 3"]]
+        values: schemaList
       }
     ]);
 
@@ -31,17 +37,7 @@ describe("Schema component", () => {
         toggleSidebarHandler={toggleSidebarHandlerMock}
         currentDatabase={currentDatabaseMock}
       />
-    ).dive();
-
-    await flushPromises();
-  });
-
-  it("returns a loading div while the schema is loading", () => {
-    component.setState({ schema: null });
-
-    component.update();
-
-    expect(component.html()).toEqual("<div>Loading...</div>");
+    );
   });
 
   it("loads all the schema detail", () => {
@@ -54,9 +50,7 @@ describe("Schema component", () => {
     );
   });
 
-  it("calls the prop to toggle the sidebar", () => {
-    component.instance().handleToggleSidebar();
-
-    expect(toggleSidebarHandlerMock).toHaveBeenCalledTimes(1);
+  it("display a list of supplied schema tables", () => {
+    expect(component.find(SchemaItem).length).toEqual(schemaList.length);
   });
 });

@@ -26,7 +26,7 @@ describe("ActiveGroups component (Initial loading)", () => {
       <DatabaseList
         list={list}
         loadDatabaseHandler={loadDatabaseMock}
-        refreshHandler={refreshHandlerMock}
+        refreshSavedDatabaseList={refreshHandlerMock}
         closeHandler={closeHandlerMock}
       />
     );
@@ -60,7 +60,8 @@ describe("ActiveGroups component (Initial loading)", () => {
     fetch.mockImplementationOnce(() =>
       Promise.resolve({
         ok: true,
-        json: () => Promise.resolve({})
+        json: () => Promise.resolve({}),
+        text: () => Promise.resolve("OK")
       })
     );
     //deleteDatabase.mockImplementation(() => new Promise(resolve => resolve()));
@@ -81,7 +82,11 @@ describe("ActiveGroups component (Initial loading)", () => {
         json: () =>
           Promise.resolve({
             message: "A problem occured while trying to load this database."
-          })
+          }),
+        text: () =>
+          Promise.resolve(
+            "A problem occured while trying to load this database."
+          )
       })
     );
 
@@ -106,7 +111,11 @@ describe("ActiveGroups component (Initial loading)", () => {
         json: () =>
           Promise.resolve({
             message: "A problem occured while trying to delete this database."
-          })
+          }),
+        text: () =>
+          Promise.resolve(
+            "A problem occured while trying to delete this database."
+          )
       })
     );
 

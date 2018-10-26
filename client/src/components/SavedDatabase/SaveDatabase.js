@@ -59,10 +59,6 @@ export default class SaveDatabase extends React.Component {
   render() {
     const { title, error, redirect } = this.state;
 
-    if (redirect) {
-      return <Redirect to="/" />;
-    }
-
     const { currentSavedDatabaseCount } = this.props;
 
     return (

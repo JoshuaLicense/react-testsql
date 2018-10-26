@@ -42,9 +42,20 @@ describe("test checkAnswer passes", () => {
     );
   });
 
-  it("fails on lack of results returned", () => {
+  it("fails on lack of results returned if the model answer doesn't", () => {
     mockDB.exec.mockReturnValueOnce([]);
-    mockDB.exec.mockReturnValueOnce([]);
+    // The model result, returns an example dataset.
+    mockDB.exec.mockReturnValueOnce([
+      {
+        columns: ["ID", "FirstName", "LastName"],
+        values: [
+          [1, "Joe", "Bloggs"],
+          [2, "Jane", "Doe"],
+          [3, "John", "Doe"],
+          [4, "Josh", "Bloggs"]
+        ]
+      }
+    ]);
 
     expect(() => checkAnswer(mockDB, "", mockQuestion)).toThrowError(
       /^No rows returned!$/

@@ -15,30 +15,28 @@ class Schema extends React.Component {
     this.load();
   }
 
-  shouldComponentUpdate(nextProps) {
-    if (this.state.schema === null) {
-      return true;
-    }
-
-    const hasDatabaseChanged =
-      this.props.currentDatabase.lastModified !==
-      nextProps.currentDatabase.lastModified;
-
-    if (hasDatabaseChanged) {
-      return true;
-    }
-
-    return false;
+  shouldComponentUpdate(nextProps, nextState) {
+    // Update if the current schema is empty, or theres a new schema coming in.
+    return (
+      this.state.schema === null ||
+      (nextState.schema !== null && this.state.schema !== nextState.schema)
+    );
   }
 
-  componentDidUpdate() {
-    this.load();
+  componentDidUpdate(prevProps) {
+    const hasDatabaseChanged =
+      this.props.currentDatabase.lastModified !==
+      prevProps.currentDatabase.lastModified;
+
+    if (hasDatabaseChanged) {
+      this.load();
+    }
   }
 
   load = () => {
     const sql = 'SELECT `tbl_name` FROM `sqlite_master` WHERE `type` = "table"';
 
-    // Destructure the response to get only the values (the real schema data)
+    // Destructure the response to get only the values (the real schema data).
     let [{ values: tableNames }] = this.props.currentDatabase.exec(sql);
 
     // tableNames are returned as [[0] => "Tbl_name", [1] => "Tbl_name"]]

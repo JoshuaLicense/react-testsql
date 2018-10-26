@@ -12,19 +12,24 @@ const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 const closeHandlerMock = jest.fn();
 const refreshHandlerMock = jest.fn();
 
+const currentDatabaseMock = {
+  export: jest.fn(() => {})
+};
+
+const historyMock = {
+  push: jest.fn()
+};
+
 describe("SaveDatabase component", () => {
   let component;
 
   beforeEach(async () => {
-    const currentDatabaseMock = {
-      export: jest.fn(() => {})
-    };
-
     component = shallow(
       <SaveDatabase
+        history={historyMock}
         currentDatabase={currentDatabaseMock}
         currentSavedDatabaseCount={1}
-        refreshHandler={refreshHandlerMock}
+        refreshSavedDatabaseList={refreshHandlerMock}
         closeHandler={closeHandlerMock}
       />
     );
@@ -37,7 +42,7 @@ describe("SaveDatabase component", () => {
     jest.clearAllMocks();
   });
 
-  it("creates a new group", async () => {
+  it("stores a new saved database", async () => {
     component = component.setState({
       title: "Test database title"
     });
@@ -45,7 +50,8 @@ describe("SaveDatabase component", () => {
     fetch.mockImplementationOnce(() =>
       Promise.resolve({
         ok: true,
-        json: () => Promise.resolve({})
+        json: () => Promise.resolve({}),
+        text: () => Promise.resolve("OK")
       })
     );
 
@@ -58,9 +64,8 @@ describe("SaveDatabase component", () => {
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(refreshHandlerMock).toHaveBeenCalledTimes(1);
 
-    // Expect the redirect state flag to true, and a redirect is "rendered".
-    expect(component.state("redirect")).toBeTruthy();
-    expect(component.find(Redirect).length).toEqual(1);
+    // Expect on completion to go back to the index page.
+    expect(historyMock.push).toBeCalledWith("/");
   });
 
   it("sets an error while creating trying to save a database", async () => {
@@ -73,7 +78,11 @@ describe("SaveDatabase component", () => {
         json: () =>
           Promise.resolve({
             message: "A problem occured while trying to save this database."
-          })
+          }),
+        text: () =>
+          Promise.resolve(
+            "A problem occured while trying to save this database."
+          )
       })
     );
 

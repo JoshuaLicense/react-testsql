@@ -1,6 +1,6 @@
 import React from "react";
 import { shallow, mount } from "enzyme";
-import DatabaseManager from "../index";
+import DatabaseManager from "../DatabaseManager";
 
 import IconButton from "@material-ui/core/IconButton";
 
@@ -33,7 +33,12 @@ describe("DatabaseManager component", () => {
   let component;
 
   beforeEach(async () => {
-    component = shallow(<DatabaseManager />);
+    component = shallow(
+      <DatabaseManager
+        currentDatabase={jest.fn()}
+        loadDatabaseHandler={jest.fn()}
+      />
+    );
 
     // Wait for the event loop to finish.
     await flushPromises();
@@ -41,14 +46,27 @@ describe("DatabaseManager component", () => {
     component.update();
   });
 
-  it("renders a default database icon (not in any group)", () => {
-    expect(component.find(IconButton).prop("disabled")).toBeFalsy();
+  it('renders the default list when the URL matches "/" ', () => {
+    const allRoutes = component.find(Route);
+
+    const routeRenderComponents = mount(
+      <MemoryRouter initialEntries={["/", "/database/save"]} initialIndex={0}>
+        <Switch>{allRoutes.map(route => route)}</Switch>
+      </MemoryRouter>
+    );
+
+    expect(routeRenderComponents.find(DatabaseList).length).toEqual(1);
   });
 
-  it("renders a disabled icon when in a current group", () => {
-    // Add a current group prop.
-    component = component.setProps({ disabled: true });
+  it('renders the default list when the URL matches "/database/save" ', () => {
+    const allRoutes = component.find(Route);
 
-    expect(component.find(IconButton).prop("disabled")).toBeTruthy();
+    const routeRenderComponents = mount(
+      <MemoryRouter initialEntries={["/", "/database/save"]} initialIndex={1}>
+        <Switch>{allRoutes.map(route => route)}</Switch>
+      </MemoryRouter>
+    );
+
+    expect(routeRenderComponents.find(SaveDatabase).length).toEqual(1);
   });
 });
