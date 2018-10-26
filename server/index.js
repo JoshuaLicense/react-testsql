@@ -64,10 +64,10 @@ app.use(
     resave: true,
     saveUninitialized: true,
     secret: process.env.SESSION_SECRET,
+    cookie: { maxAge: 1209600000 },
     store: new MongoStore({
       url: process.env.MONGODB_URI,
-      autoReconnect: true,
-      clear_interval: 3600
+      autoReconnect: true
     })
   })
 );
@@ -79,7 +79,7 @@ app.use(express.static(path.join(__dirname, "client", "build")));
 
 // Routes
 app.post(
-  "/register",
+  "/api/user/register",
   [
     check("username")
       .exists()

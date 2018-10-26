@@ -11,26 +11,9 @@ const userSchema = new Schema(
       maxlength: 32,
       unique: true
     },
+
     password: String,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
-
-    facebook: String,
-    twitter: String,
-    google: String,
-    github: String,
-    instagram: String,
-    linkedin: String,
-    steam: String,
-    tokens: [String],
-
-    profile: {
-      name: String,
-      gender: String,
-      location: String,
-      website: String,
-      picture: String
-    }
+    admin: Boolean
   },
   {
     timestamps: true
