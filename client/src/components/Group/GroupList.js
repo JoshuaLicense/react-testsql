@@ -101,8 +101,6 @@ class GroupList extends React.Component {
       const error = await response.text();
 
       this.setState({ error });
-
-      await leaveCurrentGroup();
     }
   };
 

@@ -26,7 +26,7 @@ export default class Container extends React.Component {
 
     const results = currentDatabase.exec(`SELECT * FROM ${name} LIMIT 10`);
 
-    this.setState({ results });
+    this.handleUpdateResults(results);
 
     return this.props.sidebarToggleHandler();
   };
@@ -58,7 +58,7 @@ export default class Container extends React.Component {
                 results={results}
                 updateResultsHandler={this.handleUpdateResults}
                 currentDatabase={currentDatabase}
-                uploadDatabaseHandler={loadDatabase}
+                loadDatabase={loadDatabase}
               />
             )
           }

@@ -1,10 +1,11 @@
 import React from "react";
 import { shallow } from "enzyme";
 
-import ManageGroup from "../ManageGroup";
+import ManageGroup from "../Manage";
 
 import Input from "@material-ui/core/Input";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import { DialogContentText, DialogContent } from "@material-ui/core";
 
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
@@ -57,16 +58,6 @@ describe("ManageGroup component", () => {
       error: null,
       controlledTitle: group.title
     });
-  });
-
-  it("updates the state onChange input, controlled input", () => {
-    component.find(Input).simulate("change", {
-      target: { name: "name", value: "Text" }
-    });
-
-    component.update();
-
-    expect(component.state("controlledTitle")).toEqual("Text");
   });
 
   // TODO: Remove server side call and remove the user in the state.
@@ -122,7 +113,7 @@ describe("ManageGroup component", () => {
 
   it("sets an error while creating a new group", async () => {
     // Error text to be hidden initially.
-    expect(component.find(FormHelperText).length).toEqual(0);
+    expect(component.find(DialogContentText).length).toEqual(0);
 
     fetch.mockImplementationOnce(() =>
       Promise.resolve({
@@ -130,7 +121,11 @@ describe("ManageGroup component", () => {
         json: () =>
           Promise.resolve({
             message: "A problem occured while trying to manage this group."
-          })
+          }),
+        text: () =>
+          Promise.resolve(
+            "A problem occured while trying to manage this group."
+          )
       })
     );
 
@@ -142,7 +137,7 @@ describe("ManageGroup component", () => {
 
     component.update();
 
-    expect(component.find(FormHelperText).length).toEqual(1);
+    expect(component.find(DialogContentText).length).toEqual(1);
   });
 });
 
@@ -161,6 +156,6 @@ it("displays loading a group while waiting for promise to resolve", () => {
   );
 
   expect(
-    component.contains(<div>Loading group information...</div>)
+    component.find(DialogContentText).text("Loading group information...")
   ).toBeTruthy();
 });

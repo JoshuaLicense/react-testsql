@@ -9,7 +9,7 @@ describe("buildQuestions function", () => {
     jest.mock("../../index", () => ({
       default: [
         {
-          func: jest.fn(() => ({
+          build: jest.fn(() => ({
             question: "Question string",
             answer: "Answer string"
           }))

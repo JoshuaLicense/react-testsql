@@ -7,7 +7,7 @@ import ManageIcon from "@material-ui/icons/Settings";
 import GroupItem from "../GroupItem";
 
 const joinGroupMock = jest.fn();
-const leaveCurrentGroupMock = jest.fn();
+const leaveGroupMock = jest.fn();
 
 describe("GroupItem component", () => {
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe("GroupItem component", () => {
       <GroupItem
         group={group}
         joinGroupHandler={joinGroupMock}
-        leaveCurrentGroupHandler={leaveCurrentGroupMock}
+        leaveGroupHandler={leaveGroupMock}
       />
     );
 
@@ -55,7 +55,7 @@ describe("GroupItem component", () => {
       <GroupItem
         group={group}
         joinGroupHandler={joinGroupMock}
-        leaveCurrentGroupHandler={leaveCurrentGroupMock}
+        leaveGroupHandler={leaveGroupMock}
       />
     );
 
@@ -69,7 +69,7 @@ describe("GroupItem component", () => {
     leaveIconComponent.parent().simulate("click");
 
     // Should call the relevant prop.
-    expect(leaveCurrentGroupMock).toHaveBeenCalledTimes(1);
+    expect(leaveGroupMock).toHaveBeenCalledTimes(1);
   });
 
   it("doesn't allow the user to leave a group that is not current", () => {
@@ -88,7 +88,7 @@ describe("GroupItem component", () => {
       <GroupItem
         group={group}
         joinGroupHandler={joinGroupMock}
-        leaveCurrentGroupHandler={leaveCurrentGroupMock}
+        leaveGroupHandler={leaveGroupMock}
       />
     );
 
@@ -114,7 +114,7 @@ describe("GroupItem component", () => {
       <GroupItem
         group={group}
         joinGroupHandler={joinGroupMock}
-        leaveCurrentGroupHandler={leaveCurrentGroupMock}
+        leaveGroupHandler={leaveGroupMock}
       />
     );
 
@@ -145,7 +145,7 @@ describe("GroupItem component", () => {
       <GroupItem
         group={group}
         joinGroupHandler={joinGroupMock}
-        leaveCurrentGroupHandler={leaveCurrentGroupMock}
+        leaveGroupHandler={leaveGroupMock}
       />
     );
 

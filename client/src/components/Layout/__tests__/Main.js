@@ -6,7 +6,7 @@ import Main from "../Main";
 
 import { saveProgress } from "../../Group/API";
 import checkAnswer from "../../Question/answer";
-import DatabaseOutput from "../../Database/Output";
+import OutputTable from "../../Database/Output";
 import Question from "../../Question";
 
 import saveQuestions from "../../../questions/utils/saveQuestions";
@@ -31,7 +31,7 @@ const currentDatabaseMock = {
 };
 
 const loadDatabaseMock = jest.fn();
-const handleToggleSidebarMock = jest.fn();
+const updateResultsMock = jest.fn();
 const userMock = {};
 
 const flushPromises = () => new Promise(resolve => setImmediate(resolve));
@@ -43,10 +43,10 @@ describe("the Main component", () => {
     component = shallow(
       <Main
         user={userMock}
+        results={[]}
+        updateResultsHandler={updateResultsMock}
         currentDatabase={currentDatabaseMock}
         loadDatabase={loadDatabaseMock}
-        sidebarToggleHandler={handleToggleSidebarMock}
-        openSidebar={false}
       />
     );
 
@@ -73,26 +73,7 @@ describe("the Main component", () => {
   });
 
   describe("runQuery()", () => {
-    it("resets the results back to null", () => {
-      // Mock some example results.
-      const resultsMock = [{ columns: [], values: [] }];
-
-      component = component.setState({ results: resultsMock });
-
-      // Call the run query but route so new results are used.
-      currentDatabaseMock.getRowsModified.mockReturnValueOnce(1);
-
-      component.instance().runQuery('SELECT "Example Query";');
-
-      expect(component.state("results")).toBeNull();
-    });
-
     it("saves the database when rows are modified", () => {
-      // Mock some example results.
-      const resultsMock = [{ columns: [], values: [] }];
-
-      component = component.setState({ results: resultsMock });
-
       // Call the run query but route so new results are used.
       currentDatabaseMock.getRowsModified.mockReturnValueOnce(1);
 
@@ -195,30 +176,8 @@ describe("the Main component", () => {
     expect(component.state("allQuestions")).toEqual(allQuestionsMock);
   });
 
-  it("queries the database to fetch the schema", () => {
-    const schemaMock = [{ columns: [], values: [] }];
-
-    // Mock the database call to return the schema mock.
-    currentDatabaseMock.exec.mockImplementation(() => schemaMock);
-
-    // Call the function.
-    component.instance().displaySchema("Test table");
-
-    // Update the component so the state can update inside the displaySchema call.
-    component.update();
-
-    // Expect the database to execute a query to fetch the schema.
-    expect(currentDatabaseMock.exec).toHaveBeenCalledTimes(1);
-
-    // Expect the state results property to be what was returned from the currentDatabase mock.
-    expect(component.state("results")).toEqual(schemaMock);
-  });
-
-  it("renders the results when the state recieves them", () => {
-    // Right now the results section should be hidden, as the state for results is empty.
-    expect(component.state("results")).toBeNull();
-
-    expect(component.find(DatabaseOutput).length).toBeFalsy();
+  it("renders the results when the props recieves them", () => {
+    expect(component.find(OutputTable).length).toBeFalsy();
 
     // Once some results are injected the database output should be shown.
     const results = [
@@ -227,11 +186,10 @@ describe("the Main component", () => {
         values: []
       }
     ];
-    component = component.setState({ results });
 
-    expect(component.state("results")).toEqual(results);
+    component = component.setProps({ results });
 
-    expect(component.find(DatabaseOutput).length).toBe(1);
+    expect(component.find(OutputTable).length).toBe(1);
   });
 
   it("renders the Question component once all the questions are loaded", () => {
@@ -305,7 +263,7 @@ it("loads the user's progress when in a group", () => {
     }
   };
 
-  const component = shallow(<Main user={user} />);
+  const component = shallow(<Main user={user} results={[]} />);
 
   expect(component.state("allQuestions")).toEqual(questions);
   expect(component.state("activeQuestion")).toEqual(questions[0]);
@@ -328,7 +286,7 @@ it("loads the a new set of user questions for the group they are in and saves th
 
   buildQuestions.mockImplementationOnce(() => Promise.resolve(questions));
 
-  const component = shallow(<Main user={user} />);
+  const component = shallow(<Main user={user} results={[]} />);
 
   await flushPromises();
 
@@ -351,7 +309,7 @@ it("builds a set of questions for a user not part of a group", async () => {
 
   buildQuestions.mockImplementationOnce(() => Promise.resolve(questions));
 
-  const component = shallow(<Main user={{}} />);
+  const component = shallow(<Main user={{}} results={[]} />);
 
   await flushPromises();
 

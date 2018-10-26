@@ -94,7 +94,9 @@ describe("CreateGroup component", () => {
         json: () =>
           Promise.resolve({
             message: "A problem occured while trying to create a group."
-          })
+          }),
+        text: () =>
+          Promise.resolve("A problem occured while trying to create a group.")
       })
     );
 

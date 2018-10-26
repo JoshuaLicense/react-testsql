@@ -1,7 +1,7 @@
 import React from "react";
 import { shallow } from "enzyme";
 
-import RemoveUserIcon from "@material-ui/icons/RemoveCircle";
+import RemoveUserIcon from "@material-ui/icons/RemoveCircleOutline";
 
 import GroupUser from "../GroupUser";
 
@@ -59,9 +59,7 @@ describe("GroupItem component", () => {
       <GroupUser user={user} removeHandler={removeHandlerMock} />
     );
 
-    const removeUserButton = component.find(RemoveUserIcon).parent();
-
-    removeUserButton.simulate("click");
+    component.instance().handleRemoveUser();
 
     expect(removeHandlerMock).toHaveBeenCalledTimes(1);
   });

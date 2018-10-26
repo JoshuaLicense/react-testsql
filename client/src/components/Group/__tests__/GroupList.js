@@ -77,6 +77,8 @@ const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
 const loadDatabaseMock = jest.fn();
 const refreshUserContextMock = jest.fn();
+const joinGroupMock = jest.fn();
+const leaveGroupMock = jest.fn();
 const closeHandlerMock = jest.fn();
 
 clearQuestions.mockImplementation(() => Promise.resolve());
@@ -95,8 +97,10 @@ describe("ActiveGroups component (Initial loading)", () => {
     // Disable lifecycle methods so the script can access the load promise directly.
     component = shallow(
       <GroupList
+        currentGroup={{}}
+        joinGroupHandler={joinGroupMock}
+        leaveGroupHandler={leaveGroupMock}
         loadDatabaseHandler={loadDatabaseMock}
-        refreshUserContext={refreshUserContextMock}
         closeHandler={closeHandlerMock}
       />
     );
@@ -158,7 +162,7 @@ describe("ActiveGroups component (Initial loading)", () => {
 
     // Assert the relevant flow was followed.
     expect(loadDatabaseMock).toHaveBeenCalledTimes(1);
-    expect(refreshUserContextMock).toHaveBeenCalledTimes(1);
+    expect(joinGroupMock).toHaveBeenCalledTimes(1);
 
     // Expect the group just joined to be the only new current group.
     expect(component.state("list")).toEqual(
@@ -180,10 +184,10 @@ describe("ActiveGroups component (Initial loading)", () => {
       })
     );
 
-    await component.instance().handleLeaveCurrentGroup();
+    await component.instance().handleLeaveGroup();
 
     // Assert the relevant flow was followed.
-    expect(refreshUserContextMock).toHaveBeenCalledTimes(1);
+    expect(leaveGroupMock).toHaveBeenCalledTimes(1);
 
     // Expect all the groups to have isCurrent = false
     expect(component.state("list")).toEqual(
@@ -202,7 +206,9 @@ describe("ActiveGroups component (Initial loading)", () => {
         json: () =>
           Promise.resolve({
             message: "A problem occured while trying to join this group."
-          })
+          }),
+        text: () =>
+          Promise.resolve("A problem occured while trying to join this group.")
       })
     );
 
@@ -226,7 +232,9 @@ describe("ActiveGroups component (Initial loading)", () => {
         json: () =>
           Promise.resolve({
             message: "A problem occured while trying to load groups."
-          })
+          }),
+        text: () =>
+          Promise.resolve("A problem occured while trying to load groups.")
       })
     );
 
@@ -244,11 +252,13 @@ describe("ActiveGroups component (Initial loading)", () => {
         json: () =>
           Promise.resolve({
             message: "A problem occured while trying to leave this group."
-          })
+          }),
+        text: () =>
+          Promise.resolve("A problem occured while trying to leave this group.")
       })
     );
 
-    await component.instance().handleLeaveCurrentGroup();
+    await component.instance().handleLeaveGroup();
 
     // Assert the relevant flow was followed.
     expect(refreshUserContextMock).toHaveBeenCalledTimes(0);

@@ -40,8 +40,7 @@ const style = {
 export default class ManageGroup extends React.Component {
   state = {
     error: null,
-    group: null,
-    activeQuestionIndex: null
+    group: null
   };
 
   componentDidMount() {

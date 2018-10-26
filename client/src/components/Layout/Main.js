@@ -30,9 +30,7 @@ export default class Main extends React.Component {
     feedback: null,
 
     allQuestions: null,
-    activeQuestion: null,
-
-    results: null
+    activeQuestion: null
   };
 
   changeFeedback = feedback =>
