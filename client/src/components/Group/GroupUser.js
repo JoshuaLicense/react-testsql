@@ -5,7 +5,7 @@ import IconButton from "@material-ui/core/IconButton";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import RemoveUserIcon from "@material-ui/icons/RemoveCircle";
+import RemoveUserIcon from "@material-ui/icons/RemoveCircleOutline";
 
 import Typography from "@material-ui/core/Typography";
 

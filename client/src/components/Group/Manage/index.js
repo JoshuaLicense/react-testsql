@@ -154,11 +154,7 @@ export default class ManageGroup extends React.Component {
                 Members
               </Typography>
               <Paper elevation={2} square>
-                <List
-                  style={{ maxHeight: 368, overflow: "auto" }}
-                  dense={users.length >= 5}
-                  disablePadding
-                >
+                <List dense={users.length >= 5} disablePadding>
                   {users.map(user => (
                     <GroupUser
                       key={user._id}

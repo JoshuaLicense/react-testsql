@@ -43,7 +43,7 @@ export default class PieChartContainer extends React.Component {
     const { data } = this.props;
 
     return (
-      <ResponsiveContainer width="99%" height={300}>
+      <ResponsiveContainer width="99%" height={280}>
         <PieChart margin={{ top: 50, right: 60, left: 60, bottom: 50 }}>
           <Pie
             data={data}

@@ -50,7 +50,7 @@ export default class BarChartContainer extends React.PureComponent {
     );
 
     return (
-      <ResponsiveContainer width="99%" height={300}>
+      <ResponsiveContainer width="99%" height={280}>
         <BarChart
           data={sortedUsers}
           margin={{ right: 20, bottom: 5 }}

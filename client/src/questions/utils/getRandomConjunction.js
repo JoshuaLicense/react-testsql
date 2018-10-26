@@ -2,11 +2,11 @@ import getRandomInt from "lodash/random";
 
 export const conjunctions = [
   {
-    code: "&&",
+    code: "and",
     text: "and"
   },
   {
-    code: "||",
+    code: "or",
     text: "or"
   }
 ];
