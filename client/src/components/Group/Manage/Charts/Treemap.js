@@ -1,16 +1,9 @@
 import React from "react";
 import ResponsiveContainer from "recharts/lib/component/ResponsiveContainer";
 import Treemap from "recharts/lib/chart/Treemap";
-import Bar from "recharts/lib/cartesian/Bar";
-import XAxis from "recharts/lib/cartesian/XAxis";
-import YAxis from "recharts/lib/cartesian/YAxis";
-import CartesianGrid from "recharts/lib/cartesian/CartesianGrid";
 import Tooltip from "recharts/lib/component/Tooltip";
-import Cell from "recharts/lib/component/Cell";
 
 import Typography from "@material-ui/core/Typography";
-
-import stringToColor from "../stringToColor";
 
 const style = {
   tooltip: {

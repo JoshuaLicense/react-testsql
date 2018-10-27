@@ -26,7 +26,7 @@ describe("buildQuestions function", () => {
     jest.mock("../../index", () => ({
       default: [
         {
-          func: jest.fn(() => {
+          build: jest.fn(() => {
             throw new Error("An error occurred while building this question.");
           })
         }

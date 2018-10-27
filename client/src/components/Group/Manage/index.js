@@ -28,8 +28,6 @@ import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
 import DialogContentText from "@material-ui/core/DialogContentText";
 
-import ChartManager from "./Charts/Tiles";
-
 import "./manageGroup.css";
 
 const style = {

@@ -5,8 +5,6 @@ import Button from "@material-ui/core/Button";
 
 import Input from "@material-ui/core/Input";
 
-import Redirect from "react-router-dom/Redirect";
-
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 
@@ -57,7 +55,7 @@ export default class SaveDatabase extends React.Component {
   handleClose = () => this.props.closeHandler();
 
   render() {
-    const { title, error, redirect } = this.state;
+    const { title, error } = this.state;
 
     const { currentSavedDatabaseCount } = this.props;
 

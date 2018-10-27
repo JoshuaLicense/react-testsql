@@ -147,6 +147,6 @@ describe("The question configurations", async () => {
   });
 
   it("renders all the questions successfully", () => {
-    Questions.default.map(question => expect(question.func(db)).toBeTruthy());
+    Questions.default.map(question => expect(question.build(db)).toBeTruthy());
   });
 });

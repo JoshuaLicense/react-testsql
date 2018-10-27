@@ -4,20 +4,21 @@ import { shallow } from "enzyme";
 
 import Guest from "../Guest";
 
-const refreshUserContextMock = jest.fn();
+const loginMock = jest.fn();
 
 describe("the Guest component", () => {
   let component;
 
   beforeEach(() => {
-    component = shallow(<Guest refreshUserContext={refreshUserContextMock} />);
+    component = shallow(<Guest loginHandler={loginMock} />);
   });
 
   it("tries to login when handling the submit", async () => {
     fetch.mockImplementationOnce(() =>
       Promise.resolve({
         ok: true,
-        json: () => Promise.resolve()
+        json: () => Promise.resolve(),
+        text: () => Promise.resolve("OK")
       })
     );
 
@@ -29,7 +30,7 @@ describe("the Guest component", () => {
     // Mimic a login call.
     await component.instance().handleLogin();
 
-    expect(refreshUserContextMock).toHaveBeenCalledTimes(1);
+    expect(loginMock).toHaveBeenCalledTimes(1);
   });
 
   it("correctly updates the state when handling a change", () => {

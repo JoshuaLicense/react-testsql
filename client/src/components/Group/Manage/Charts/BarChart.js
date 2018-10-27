@@ -11,7 +11,6 @@ import Cell from "recharts/lib/component/Cell";
 import Typography from "@material-ui/core/Typography";
 
 import stringToColor from "../stringToColor";
-import Label from "recharts/lib/component/Label";
 
 const style = {
   tooltip: {

@@ -16,8 +16,8 @@ const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 const uploadDatabaseHandlerMock = jest.fn();
 
 describe("UploadDatabase component", () => {
-  it("renders he UploadDatabase component", () => {
-    mockUserContext.mockReturnValueOnce({ user: {} });
+  it("renders the UploadDatabase component", () => {
+    mockUserContext.mockReturnValueOnce({ user: {}, isLoaded: true });
 
     const component = shallow(
       <UploadDatabase uploadDatabaseHandler={uploadDatabaseHandlerMock} />
@@ -26,8 +26,11 @@ describe("UploadDatabase component", () => {
     expect(component.find("input#uploadFile").length).toEqual(1);
   });
 
-  it("renders he UploadDatabase component as a disabled button", () => {
-    mockUserContext.mockReturnValueOnce({ user: { group: true } });
+  it("renders the UploadDatabase component as a disabled button", () => {
+    mockUserContext.mockReturnValueOnce({
+      user: { group: true },
+      isLoaded: true
+    });
 
     const component = shallow(
       <UploadDatabase uploadDatabaseHandler={uploadDatabaseHandlerMock} />
@@ -39,7 +42,10 @@ describe("UploadDatabase component", () => {
   it("uploads the selected file", async () => {
     const uploadDatabaseHandlerMock = jest.fn();
 
-    mockUserContext.mockReturnValueOnce({ user: { group: true } });
+    mockUserContext.mockReturnValueOnce({
+      user: { group: true },
+      isLoaded: true
+    });
 
     const component = shallow(
       <UploadDatabase uploadDatabaseHandler={uploadDatabaseHandlerMock} />
