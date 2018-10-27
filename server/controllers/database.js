@@ -5,7 +5,7 @@ const path = require("path");
 const multer = require("multer");
 
 const upload = multer({
-  dest: path.join(__dirname, "saves"),
+  dest: path.join(__dirname, "../saves"),
   limits: {
     fileSize: 2000000
   },
@@ -13,7 +13,7 @@ const upload = multer({
     // This is an includes() rather than equals to easily extend the mimes accepted.
     // The db.export() will always try pack it up as a .sqlite.
     if (["application/x-sqlite-3"].includes(file.mimetype) === false) {
-      return cb(
+      cb(
         new Error("The file recieved didn't match the requested format."),
         false
       );
