@@ -30,7 +30,7 @@ export default class Main extends React.Component {
     feedback: null,
 
     allQuestions: null,
-    activeQuestion: null
+    activeQuestionIndex: 0
   };
 
   changeFeedback = feedback =>
@@ -52,18 +52,18 @@ export default class Main extends React.Component {
     // Has the group already have generated questions.
     // Joining a group SHOULD remove all questions so they are rebuilt with the new group database.
     if (group && group.questions && group.questions.length > 0) {
-      console.log("Used group questions");
+      //console.log("Used group questions");
       allQuestions = group.questions;
     } else {
       // Check the localStorage for any cached question sets
       const cachedQuestions = localStorage.getItem("__testSQL_Questions__");
 
       if (cachedQuestions && !group) {
-        console.log("Used cached questions");
+        //console.log("Used cached questions");
         // Cached questions, and the user is not in a group.
         allQuestions = JSON.parse(cachedQuestions);
       } else {
-        console.log("Built new questions");
+        //console.log("Built new questions");
         // Cached questions, but the user is in a group that doesn't have questions.
         // Rebuild the questions for this group.
         allQuestions = await buildQuestions(this.props.currentDatabase);
@@ -79,7 +79,7 @@ export default class Main extends React.Component {
       }
     }
 
-    return this.setState({ allQuestions, activeQuestion: allQuestions[0] });
+    return this.setState({ allQuestions });
   };
 
   componentDidUpdate(prevProps) {
@@ -102,12 +102,12 @@ export default class Main extends React.Component {
     }
   }
 
-  changeQuestion = question => this.setState({ activeQuestion: question });
+  changeQuestion = index => this.setState({ activeQuestionIndex: index });
 
   runQuery = async sql => {
     const { currentDatabase, loadDatabase } = this.props;
 
-    const { activeQuestion, allQuestions } = this.state;
+    const { activeQuestionIndex, allQuestions } = this.state;
 
     let results = [];
 
@@ -122,7 +122,9 @@ export default class Main extends React.Component {
         results = output;
       }
 
-      if (checkAnswer(currentDatabase, sql, activeQuestion)) {
+      if (
+        checkAnswer(currentDatabase, sql, allQuestions[activeQuestionIndex])
+      ) {
         await this.completeCurrentQuestion(sql);
 
         // Only save progress if in a group.
@@ -141,22 +143,21 @@ export default class Main extends React.Component {
   };
 
   completeCurrentQuestion = sql => {
-    const { activeQuestion, allQuestions } = this.state;
+    const { activeQuestionIndex, allQuestions } = this.state;
 
     this.changeFeedback({ message: "Correct Answer", variant: "success" });
 
-    // Create a new question object with completed=true
-    const completedActiveQuestion = { ...activeQuestion, completed: true };
+    const activeQuestion = allQuestions[activeQuestionIndex];
 
-    // Find the active question index in allQuestions to allow
-    // to alter the main array with a new completed status.
-    const index = allQuestions.indexOf(activeQuestion);
+    // Create a copy of the original question set and update the completed flag of the active question.
+    // Immutable \o/.
+    const updatedAllQuestions = allQuestions.map(question => {
+      if (Object.is(question, activeQuestion)) {
+        return { ...question, completed: true };
+      }
 
-    // Create a copy of the original question set.
-    const updatedAllQuestions = allQuestions;
-
-    // Directly update the active question element.
-    updatedAllQuestions[index] = completedActiveQuestion;
+      return question;
+    });
 
     // Save the updated set to the client localStorage.
     localStorage.setItem(
@@ -165,15 +166,14 @@ export default class Main extends React.Component {
     );
 
     this.setState({
-      allQuestions: updatedAllQuestions,
-      activeQuestion: completedActiveQuestion
+      allQuestions: updatedAllQuestions
     });
   };
 
   render() {
     const {
       allQuestions,
-      activeQuestion,
+      activeQuestionIndex,
 
       feedback
     } = this.state;
@@ -185,7 +185,7 @@ export default class Main extends React.Component {
         <Section title="Questions">
           {allQuestions && (
             <Question
-              activeQuestion={activeQuestion}
+              activeQuestionIndex={activeQuestionIndex}
               allQuestions={allQuestions}
               changeQuestionHandler={this.changeQuestion}
             />

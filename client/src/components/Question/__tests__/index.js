@@ -6,15 +6,22 @@ import Typography from "@material-ui/core/Typography";
 import StepLabel from "@material-ui/core/StepLabel";
 
 const questions = [
-  { set: "Test set 1", question: "Test question 1", completed: true },
-  { set: "Test set 2", question: "Test question 2", completed: false },
+  { index: 0, set: "Test set 1", question: "Test question 1", completed: true },
   {
+    index: 1,
+    set: "Test set 2",
+    question: "Test question 2",
+    completed: false
+  },
+  {
+    index: 2,
     set: "Test set 2",
     question: "Test question 3",
     error: "A problem occurred while building this question."
   },
-  { set: "Test set 1", question: "Test question 4", completed: true },
+  { index: 3, set: "Test set 1", question: "Test question 4", completed: true },
   {
+    index: 4,
     set: "Test set 1",
     question: "Test question 5",
     completed: false,
@@ -31,6 +38,7 @@ describe("Question component", () => {
     // Dive as the component is wrapped by withStyles() from MaterialUI
     component = shallow(
       <QuestionManager
+        activeQuestionIndex={0}
         allQuestions={questions}
         changeQuestionHandler={changeQuestionMock}
       />
@@ -54,8 +62,6 @@ describe("Question component", () => {
       questions[3],
       questions[4]
     ]);
-
-    expect(component.state("activeQuestionIndex")).toEqual(0);
   });
 
   it("updates the active set questions when changing sets", () => {
@@ -72,26 +78,20 @@ describe("Question component", () => {
     // The change question prop updates the active question and passes it back.
     // Called in handleSetChange()
     expect(changeQuestionMock).toHaveBeenCalledTimes(1);
+  });
 
-    expect(component.state("activeQuestionIndex")).toEqual(0);
+  it("goes to the next question in the set", () => {
+    component.instance().handleNext();
+
+    // The next QUESTION INDEX in "Test Set 1" is index 3.
+    expect(changeQuestionMock).toBeCalledWith(3);
   });
 
   it("goes to the previous question in the set (loops)", () => {
     component.instance().handlePrev();
 
-    // The last set in "Test Set 1" is index 2.
-    expect(component.state("activeQuestionIndex")).toEqual(2);
-
-    component.instance().handlePrev();
-
-    expect(component.state("activeQuestionIndex")).toEqual(1);
-  });
-
-  it("goes to the next question in the set (loops)", () => {
-    component.instance().handleNext();
-
-    // The last set in "Test Set 1" is index 2.
-    expect(component.state("activeQuestionIndex")).toEqual(1);
+    // The last QUESTION INDEX in "Test Set 1" is index 4.
+    expect(changeQuestionMock).toBeCalledWith(4);
   });
 
   it("doesn't change sets if the set requested is not found", () => {
@@ -105,33 +105,14 @@ describe("Question component", () => {
     // Expect the state to not change
     expect(component.state("activeQuestionSet")).toEqual(prevState);
   });
-
-  it("updates the questions when a new active question is detected", () => {
-    const activeQuestion = { ...questions[4], completed: true };
-
-    const allQuestions = [
-      questions[0],
-      questions[1],
-      questions[2],
-      questions[3],
-      activeQuestion
-    ];
-
-    component = component.setProps({
-      activeQuestion,
-      allQuestions
-    });
-
-    expect(component.state("activeQuestionIndex")).toEqual(2);
-  });
 });
 
 it("shows the active question", () => {
   // Dive as the component is wrapped by withStyles() from MaterialUI
   const component = shallow(
     <QuestionManager
+      activeQuestionIndex={0}
       allQuestions={questions}
-      activeQuestion={questions[0]}
       changeQuestionHandler={jest.fn()}
     />
   ).dive();
@@ -149,8 +130,8 @@ it("shows the error message label when a message failed to build", () => {
   // Dive as the component is wrapped by withStyles() from MaterialUI
   const component = shallow(
     <QuestionManager
+      activeQuestionIndex={4}
       allQuestions={questions}
-      activeQuestion={questions[4]}
       changeQuestionHandler={jest.fn()}
     />
   ).dive();

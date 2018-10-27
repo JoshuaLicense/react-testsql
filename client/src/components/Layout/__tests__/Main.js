@@ -150,11 +150,9 @@ describe("the Main component", () => {
       }
     ];
 
-    const activeQuestionMock = allQuestionsMock[1];
-
     component = component.setState({
-      activeQuestion: activeQuestionMock,
-      allQuestions: allQuestionsMock
+      allQuestions: allQuestionsMock,
+      activeQuestionIndex: 1
     });
 
     // Mock the methods that are called inside completeCurrentQuestion(), to isolate it.
@@ -172,7 +170,6 @@ describe("the Main component", () => {
 
     component.update();
 
-    expect(component.state("activeQuestion")).toEqual(completedQuestionMock);
     expect(component.state("allQuestions")).toEqual(allQuestionsMock);
   });
 
@@ -233,16 +230,15 @@ describe("the Main component", () => {
     await flushPromises();
 
     expect(component.state("allQuestions")).toEqual(questions);
-    expect(component.state("activeQuestion")).toEqual(questions[0]);
   });
 
   it("changes question when a new active question is supplied", () => {
     // Supply a new active question to the changeQuestion() function.
-    const mockActiveQuestion = { mockQuestion: "Mock Question" };
+    const mockActiveQuestion = { index: 5, mockQuestion: "Mock Question" };
 
-    component.instance().changeQuestion(mockActiveQuestion);
+    component.instance().changeQuestion(mockActiveQuestion.index);
 
-    expect(component.state("activeQuestion")).toEqual(mockActiveQuestion);
+    expect(component.state("activeQuestionIndex")).toEqual(5);
   });
 });
 
@@ -266,7 +262,6 @@ it("loads the user's progress when in a group", () => {
   const component = shallow(<Main user={user} results={[]} />);
 
   expect(component.state("allQuestions")).toEqual(questions);
-  expect(component.state("activeQuestion")).toEqual(questions[0]);
 });
 
 it("loads the a new set of user questions for the group they are in and saves them to the server", async () => {
@@ -291,7 +286,6 @@ it("loads the a new set of user questions for the group they are in and saves th
   await flushPromises();
 
   expect(component.state("allQuestions")).toEqual(questions);
-  expect(component.state("activeQuestion")).toEqual(questions[0]);
 });
 
 it("builds a set of questions for a user not part of a group", async () => {
@@ -314,5 +308,4 @@ it("builds a set of questions for a user not part of a group", async () => {
   await flushPromises();
 
   expect(component.state("allQuestions")).toEqual(questions);
-  expect(component.state("activeQuestion")).toEqual(questions[0]);
 });

@@ -56,11 +56,10 @@ class QuestionManager extends React.Component {
   state = {
     allSetNames: [],
     activeSet: null,
-    activeQuestionSet: null,
-    activeQuestionIndex: null
+    activeQuestionSet: null
   };
 
-  componentDidMount = () => {
+  componentDidMount() {
     const { allQuestions } = this.props;
 
     const allSetNames = [
@@ -74,29 +73,40 @@ class QuestionManager extends React.Component {
       ...allQuestions.filter(question => question.set === activeSet)
     ];
 
-    this.handleQuestionChange(0, activeQuestionSet[0])();
-
     this.setState({
       allSetNames,
       activeSet,
       activeQuestionSet
     });
-  };
+  }
 
   /**
    * Required to update the "active question set".
    * The props passed is the full question set.
    */
   componentDidUpdate = prevProps => {
-    // Only update if the current active queston isn't identical (meaning the question is now completed perhaps).
-    if (!Object.is(prevProps.activeQuestion, this.props.activeQuestion)) {
-      const { allQuestions, activeQuestion } = this.props;
+    const { allQuestions, activeQuestionIndex } = this.props;
 
-      const allSetNames = [
-        ...new Set(allQuestions.map(question => question.set))
-      ];
+    const activeQuestion = allQuestions[activeQuestionIndex];
 
-      const activeSet = this.props.activeQuestion.set;
+    //console.log(activeQuestion);
+
+    // Or, if the set has changed, rebuild the available sets.
+    if (
+      this.props.allQuestions &&
+      this.state.activeSet !== activeQuestion.set
+    ) {
+      // If this set doesn't exist, rebuilt the sets from the questions.
+      // This signifies a new question set.
+      if (this.state.allSetNames.includes(activeQuestion.set) === false) {
+        const allSetNames = [
+          ...new Set(allQuestions.map(question => question.set))
+        ];
+
+        this.setState({ allSetNames });
+      }
+
+      const activeSet = activeQuestion.set;
 
       // Means that the component has to rebuild the active set, as we created a brand new completed question object.
       const activeQuestionSet = [
@@ -105,46 +115,47 @@ class QuestionManager extends React.Component {
         )
       ];
 
+      // Yes, setState is called twice; it's batched.
       this.setState({
-        allSetNames,
         activeSet,
-        activeQuestionSet,
-        activeQuestionIndex: activeQuestionSet.indexOf(activeQuestion)
+        activeQuestionSet
       });
     }
   };
 
   handleNext = () => {
-    // Allows the looping of questions so get a remainder of the total.
+    const activeQuestionIndex = this.props.allQuestions[
+      this.props.activeQuestionIndex
+    ].index;
+
     const next =
-      (this.state.activeQuestionIndex + 1) %
-      this.state.activeQuestionSet.length;
+      (activeQuestionIndex + 1) % this.state.activeQuestionSet.length;
 
-    // Get the question from the active set.
-    const question = this.state.activeQuestionSet[next];
+    // Translate the prev index of the active set to allQuestions.
+    const allQuestionsIndex = this.state.activeQuestionSet[next].index;
 
-    // Run the change question function, the function returns a callable, so immediately invoke.
-    this.handleQuestionChange(next, question)();
+    this.props.changeQuestionHandler(allQuestionsIndex);
   };
 
   handlePrev = () => {
-    const prevIndex = this.state.activeQuestionIndex - 1;
+    const activeQuestionIndex = this.props.allQuestions[
+      this.props.activeQuestionIndex
+    ].index;
 
-    // Check for underflow
+    const prevIndex = activeQuestionIndex - 1;
+
+    // Check for underflow.
     const prev =
       prevIndex < 0 ? this.state.activeQuestionSet.length - 1 : prevIndex;
 
-    // Get the question from the active set.
-    const question = this.state.activeQuestionSet[prev];
+    // Translate the prev index of the active set to allQuestions.
+    const allQuestionsIndex = this.state.activeQuestionSet[prev].index;
 
-    // Run the change question function, the function returns a callable, so immediately invoke.
-    this.handleQuestionChange(prev, question)();
+    this.props.changeQuestionHandler(allQuestionsIndex);
   };
 
-  handleQuestionChange = (index, question) => () => {
-    this.props.changeQuestionHandler(question);
-
-    this.setState({ activeQuestionIndex: index });
+  handleQuestionChange = index => () => {
+    this.props.changeQuestionHandler(index);
   };
 
   handleSetChange = event => {
@@ -161,41 +172,43 @@ class QuestionManager extends React.Component {
     if (activeQuestionSet.length === 0) return;
 
     // Set the active question to the first in the set.
-    this.handleQuestionChange(0, activeQuestionSet[0])();
+    this.props.changeQuestionHandler(activeQuestionSet[0].index);
 
-    const activeQuestionIndex = 0;
     const activeSet = set;
 
     this.setState({
       activeSet,
-      activeQuestionSet,
-      activeQuestionIndex
+      activeQuestionSet
     });
   };
 
   render() {
-    const { classes, activeQuestion } = this.props;
+    const { activeQuestionSet, allSetNames, activeSet } = this.state;
 
-    const {
-      activeQuestionSet,
-      allSetNames,
-      activeSet,
-      activeQuestionIndex
-    } = this.state;
+    // Wait until we have the sets divided.
+    if (!activeSet) {
+      return <div>Dividing the questions by their sets.</div>;
+    }
+
+    const { classes, allQuestions, activeQuestionIndex } = this.props;
+
+    const activeQuestion = allQuestions[activeQuestionIndex];
+
+    const activeStep = activeQuestionSet.indexOf(activeQuestion);
 
     return (
       <React.Fragment>
         {activeQuestionSet && (
           <Stepper
-            activeStep={activeQuestionIndex}
+            activeStep={activeStep}
             className={classes.innerPadding}
             nonLinear
           >
-            {activeQuestionSet.map((question, index) => (
-              <Step key={index}>
+            {activeQuestionSet.map(question => (
+              <Step key={question.index}>
                 <StepButton
                   className={classes.stepperButton}
-                  onClick={this.handleQuestionChange(index, question)}
+                  onClick={this.handleQuestionChange(question.index)}
                   completed={Boolean(question.completed)}
                 >
                   <StepLabel

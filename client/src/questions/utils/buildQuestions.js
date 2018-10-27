@@ -15,7 +15,7 @@ const buildQuestions = async (database, availableQuestions) =>
         try {
           const { question, answer } = build(database);
 
-          acc.push({ ...cur, question, answer });
+          acc.push({ index: i, ...cur, question, answer });
 
           return acc;
         } catch (Error) {
