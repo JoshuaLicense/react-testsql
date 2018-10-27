@@ -13,11 +13,8 @@ const { check, validationResult } = require("express-validator/check");
 const { matchedData, sanitize } = require("express-validator/filter");
 
 const path = require("path");
-const multer = require("multer");
 
 const chalk = require("chalk");
-
-const upload = multer({ dest: path.join(__dirname, "saves") });
 
 const dotenv = require("dotenv");
 
@@ -133,7 +130,7 @@ app.post(
       .withMessage("Database title must be within 32 characters.")
   ],
   databaseController.canSaveDatabase,
-  upload.single("database"),
+  databaseController.uploadDatabase,
   databaseController.saveDatabase
 );
 

@@ -1,5 +1,28 @@
 const fs = require("fs");
 
+const path = require("path");
+
+const multer = require("multer");
+
+const upload = multer({
+  dest: path.join(__dirname, "saves"),
+  limits: {
+    fileSize: 2000000
+  },
+  fileFilter: (req, file, cb) => {
+    // This is an includes() rather than equals to easily extend the mimes accepted.
+    // The db.export() will always try pack it up as a .sqlite.
+    if (["application/x-sqlite-3"].includes(file.mimetype) === false) {
+      return cb(
+        new Error("The file recieved didn't match the requested format."),
+        false
+      );
+    }
+
+    cb(null, true);
+  }
+});
+
 // Config
 const config = require("../config/config");
 
@@ -46,6 +69,26 @@ exports.canSaveDatabase = (req, res, next) => {
     return next();
   });
 };
+
+exports.uploadDatabase = (req, res, next) =>
+  upload.single("database")(req, res, err => {
+    if (err) {
+      // Catch the errors that we expect and translate to something else.
+      if (err.code === "LIMIT_FILE_SIZE") {
+        return res
+          .status(400)
+          .send(
+            "The database you're trying to save is too large to save on the server."
+          );
+      }
+
+      // If not just return the actual error message.
+      return res.status(400).send(err.message);
+    }
+
+    // No errors continue.
+    return next();
+  });
 
 exports.saveDatabase = (req, res, next) => {
   // Create a new database instance
