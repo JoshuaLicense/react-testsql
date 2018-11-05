@@ -2,13 +2,6 @@ const passport = require("passport");
 
 const LocalStrategy = require("passport-local").Strategy;
 
-const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
-const FacebookStrategy = require("passport-facebook").Strategy;
-
-//const TwitterStrategy = require('passport-twitter').Strategy;
-//const GitHubStrategy = require('passport-github').Strategy;
-//const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
-
 const User = require("../models/User");
 
 passport.serializeUser((user, done) => {
@@ -47,3 +40,30 @@ passport.use(
     });
   })
 );
+
+/**
+ * Login Required middleware.
+ */
+exports.isAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+
+  return res.status(401).json({
+    error: "User not authenticated"
+  });
+};
+
+/**
+ * Authorization Required middleware.
+ */
+exports.isAuthorized = (req, res, next) => {
+  const provider = req.path.split("/").slice(-1)[0];
+  const token = req.user.tokens.find(token => token.kind === provider);
+
+  if (token) {
+    next();
+  } else {
+    res.redirect(`/auth/${provider}`);
+  }
+};
