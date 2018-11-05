@@ -2,7 +2,7 @@
   "name": "react-testsql",
   "private": true,
   "author": "Joshua License",
-  "version": "0.10.0",
+  "version": "0.12.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/JoshuaLicense/react-testsql.git"
@@ -19,10 +19,8 @@
     "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
     "server": "cd server && yarn start-dev",
     "client": "cd client && yarn start",
-    "test": "cd client && yarn test",
     "build": "cd client && yarn build",
-    "clean": "cd server && shx rm -rf build",
-    "move": "cd client && shx mv build ../server",
+    "test": "cd client && yarn test",
     "heroku-postbuild": "cd client && yarn install --production && yarn build"
   },
   "cacheDirectories": [

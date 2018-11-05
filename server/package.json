@@ -1,6 +1,6 @@
 {
   "name": "@react-testsql/server",
-  "version": "0.10.0",
+  "version": "0.12.0",
   "private": true,
   "main": "index.js",
   "homepage": "https://joshualicense.github.io/react-testsql",
@@ -36,7 +36,6 @@
     "client/node_modules"
   ],
   "devDependencies": {
-    "nodemon": "^1.17.2",
-    "openode": "^1.6.0"
+    "nodemon": "^1.17.2"
   }
 }
