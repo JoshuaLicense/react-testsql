@@ -89,13 +89,29 @@ class QuestionManager extends React.Component {
 
     const activeQuestion = allQuestions[activeQuestionIndex];
 
-    //console.log(activeQuestion);
+    if (
+      activeQuestionIndex === prevProps.activeQuestionIndex &&
+      activeQuestion.completed !==
+        prevProps.allQuestions[activeQuestionIndex].completed
+    ) {
+      // Means that the component has to rebuild the active set, as we created a brand new completed question object.
+      const activeQuestionSet = [
+        ...allQuestions.filter(
+          question => question.set === this.state.activeSet
+        )
+      ];
 
-    // Or, if the set has changed, rebuild the available sets.
+      // Yes, setState is called twice; it's batched.
+      this.setState({
+        activeQuestionSet
+      });
+    }
+
     if (
       this.props.allQuestions &&
       this.state.activeSet !== activeQuestion.set
     ) {
+      // Or, if the set has changed, rebuild the available sets.
       // If this set doesn't exist, rebuilt the sets from the questions.
       // This signifies a new question set.
       if (this.state.allSetNames.includes(activeQuestion.set) === false) {
