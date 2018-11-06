@@ -2,13 +2,32 @@
 
 > An dynamic tuition tool that aids the learning of SQL.
 
-## Prerequisites
+## Built using
+
+- [ReactJS](https://github.com/facebook/react/)
+- [create-react-app](https://github.com/facebook/create-react-app)
+- [MaterialUI](https://github.com/mui-org/material-ui)
+
+## Demo
+
+Currently there are ~~two~~ one version~~s~~ of testSQL hosted as a demo.
+
+The client-only version will become available early 2019.
+
+| Website                                            | Detail                   |
+| -------------------------------------------------- | ------------------------ |
+| https://react-testsql.herokuapp.com/               | Full version.            |
+| ~~https://joshualicense.github.io/react-testsql/~~ | ~~Client-only version.~~ |
+
+## Still here? Good. Want to run it yourself?
+
+### Prerequisites
 
 Make sure you have **git**, and **yarn** or **npm** installed.
 
-A MongoDB container is **required**, the URI should be set inside `.env`. See [here](https://mongolab.com/) for a free alternative from mLab.
+For the full version, a MongoDB container is **required**, the URI should be set inside `.env`. See [mLab](https://mongolab.com/) for a free option.
 
-## Getting started
+### Getting started
 
 1.  Clone this repository locally.  
     `git clone https://github.com/JoshuaLicense/react-testsql.git`
@@ -18,17 +37,6 @@ A MongoDB container is **required**, the URI should be set inside `.env`. See [h
     `yarn`
 1.  Start testSQL.  
     `yarn start`
-1.  Open `localhost:3001` in your browser.
+1.  Open `localhost:3000` in your browser.
 
 ##### [See a full list of commands here](https://github.com/JoshuaLicense/react-testsql/wiki/Package-scripts)
-
-## Built using
-
-- [ReactJS](https://github.com/facebook/react/)
-- [create-react-app](https://github.com/facebook/create-react-app)
-- [Flow](https://github.com/facebook/flow)
-- [MaterialUI](https://github.com/mui-org/material-ui)
-
-## License
-
-See [here](https://github.com/JoshuaLicense/react-testsql/blob/master/LICENSE).
