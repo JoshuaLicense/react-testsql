@@ -35,6 +35,7 @@ For the full version, a MongoDB container is **required**, the URI should be set
     `cd react-testsql`
 1.  Install all depedancies for testSQL.  
     `yarn`
+1.  Configured a `.env` file using `.env.example` as a template.
 1.  Start testSQL.  
     `yarn start`
 1.  Open `localhost:3000` in your browser.
