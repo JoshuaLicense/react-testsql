@@ -18,8 +18,8 @@ const chalk = require("chalk");
 
 const dotenv = require("dotenv");
 
-// Load the env settings & API keys (eventually)
-dotenv.load({ path: ".env" });
+// Load the env settings & API keys (eventually).
+dotenv.load({ path: path.join(__dirname, ".env") });
 
 // Controllers
 const userController = require("./controllers/user");
@@ -41,6 +41,9 @@ const app = express();
 mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
 mongoose.set("useNewUrlParser", true);
+
+console.log(process.env);
+
 mongoose.connect(process.env.MONGODB_URI);
 mongoose.connection.on("error", err => {
   console.error(err);
