@@ -125,13 +125,13 @@ export default class Main extends React.Component {
       if (
         checkAnswer(currentDatabase, sql, allQuestions[activeQuestionIndex])
       ) {
-        await this.completeCurrentQuestion(sql);
+        const updatedAllQuestions = await this.completeCurrentQuestion(sql);
 
         // Only save progress if in a group.
         if (this.props.user && this.props.user.group) {
-          saveProgress(allQuestions);
+          saveProgress(updatedAllQuestions);
         } else {
-          saveQuestions(allQuestions, this.props.user);
+          saveQuestions(updatedAllQuestions, this.props.user);
         }
       }
     } catch (Error) {
@@ -159,15 +159,11 @@ export default class Main extends React.Component {
       return question;
     });
 
-    // Save the updated set to the client localStorage.
-    localStorage.setItem(
-      "__testSQL_Questions__",
-      JSON.stringify(updatedAllQuestions)
-    );
-
     this.setState({
       allQuestions: updatedAllQuestions
     });
+
+    return updatedAllQuestions;
   };
 
   render() {

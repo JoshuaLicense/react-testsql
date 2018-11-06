@@ -15,7 +15,10 @@ export default class Provider extends React.Component {
 
   refresh = async () => {
     try {
-      const user = await getCurrentUser();
+      // If this application is client only, no login can occur, don't check.
+      const user = process.env.REACT_APP_CLIENT_ONLY
+        ? null
+        : await getCurrentUser();
 
       this.setState({ user, isLoaded: true });
     } catch (e) {

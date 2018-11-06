@@ -20,6 +20,7 @@
     "server": "cd server && yarn start-dev",
     "client": "cd client && yarn start",
     "build": "cd client && yarn build",
+    "build-client": "cross-env REACT_APP_CLIENT_ONLY=true yarn build",
     "test": "cd client && yarn test",
     "heroku-postbuild": "cd client && yarn install --production && yarn build"
   },
@@ -32,7 +33,7 @@
     "@types/enzyme": "^3.1.11",
     "@types/jest": "^23.1.4",
     "concurrently": "^3.5.1",
-    "shx": "^0.3.2"
+    "cross-env": "^5.2.0"
   },
   "workspaces": [
     "client",
