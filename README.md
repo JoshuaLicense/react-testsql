@@ -10,14 +10,14 @@
 
 ## Demo
 
-Currently there are ~~two~~ one version~~s~~ of testSQL hosted as a demo.
+Currently there are two versions of testSQL hosted as a demo.
 
 The client-only version will become available early 2019.
 
-| Website                                            | Detail                   |
-| -------------------------------------------------- | ------------------------ |
-| https://react-testsql.herokuapp.com/               | Full version.            |
-| ~~https://joshualicense.github.io/react-testsql/~~ | ~~Client-only version.~~ |
+| Website                                        | Detail               |
+| ---------------------------------------------- | -------------------- |
+| https://react-testsql.herokuapp.com/           | Full version.        |
+| https://joshualicense.github.io/react-testsql/ | Client-only version. |
 
 ## Still here? Good. Want to run it yourself?
 

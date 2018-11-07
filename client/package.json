@@ -2,7 +2,7 @@
   "name": "@react-testsql/client",
   "version": "0.12.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "https://joshualicense.github.io/react-testsql/",
   "proxy": "http://localhost:3001/",
   "dependencies": {
     "@material-ui/core": "^3.0.0",
@@ -23,7 +23,7 @@
     "typeface-roboto": "^0.0.54"
   },
   "scripts": {
-    "predeploy": "yarn build",
+    "predeploy": "cross-env REACT_APP_CLIENT_ONLY=true yarn build",
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
