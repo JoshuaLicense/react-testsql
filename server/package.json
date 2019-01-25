@@ -29,7 +29,7 @@
   },
   "scripts": {
     "start": "node index.js",
-    "start-dev": "nodemon index.js"
+    "start:dev": "nodemon index.js"
   },
   "cacheDirectories": [
     "node_modules",
