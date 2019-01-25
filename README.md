@@ -1,6 +1,6 @@
 # testSQL [![Build Status](https://travis-ci.org/JoshuaLicense/react-testsql.svg?branch=master)](https://travis-ci.org/JoshuaLicense/react-testsql) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE)
 
-> An dynamic tuition tool that aids the learning of SQL.
+A dynamic SQL problem generator application to test your knowledge on SQL. Can be build to run in either _client_ or _server_ mode.
 
 ## Built using
 
@@ -39,3 +39,11 @@ For the full version, a MongoDB container is **required**, the URI should be set
 1.  Open `localhost:3000` in your browser.
 
 ##### [See a full list of commands here](https://github.com/JoshuaLicense/react-testsql/wiki/Package-scripts)
+
+### FAQ
+#### Why is the payload so large?
+To ensure the application runs solely in the browser, react testSQL uses [SQL.js](https://github.com/kripken/sql.js/) which is SQLite compiled into JavaScript (_>2.5MB_)?
+
+#### How can I add a new question?
+See [here](https://github.com/JoshuaLicense/react-testsql/wiki/Creating-a-new-question).
+
