@@ -16,11 +16,11 @@
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
-    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
-    "server": "cd server && yarn start-dev",
-    "client": "cd client && yarn start",
+    "start:dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
+    "start:server": "cd server && yarn start-dev",
+    "start:client": "cd client && yarn start",
     "build": "cd client && yarn build",
-    "build-client": "cross-env REACT_APP_CLIENT_ONLY=true yarn build",
+    "build:client": "cross-env REACT_APP_CLIENT_ONLY=true yarn build",
     "test": "cd client && yarn test",
     "heroku-postbuild": "cd client && yarn install --production && yarn build"
   },
