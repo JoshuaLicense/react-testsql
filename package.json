@@ -24,7 +24,7 @@
     "test": "cd client && yarn test",
     "deploy:gh-pages": "cd client && yarn deploy",
     "deploy:heroku": "git push heroku master",
-    "heroku-postbuild": "cd client && yarn install --production && yarn build"
+    "heroku-postbuild": "cd client && yarn build"
   },
   "cacheDirectories": [
     "node_modules",
