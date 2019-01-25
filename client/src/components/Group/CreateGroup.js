@@ -77,7 +77,7 @@ class CreateGroup extends React.Component {
           <Button
             component={Link}
             color="secondary"
-            variant="raised"
+            variant="contained"
             size="small"
             to="/"
           >
@@ -152,7 +152,11 @@ class CreateGroup extends React.Component {
           <Button onClick={this.props.closeHandler} color="primary">
             Close
           </Button>
-          <Button onClick={this.handleSubmit} color="primary" variant="raised">
+          <Button
+            onClick={this.handleSubmit}
+            color="primary"
+            variant="contained"
+          >
             Create
           </Button>
         </DialogActions>

@@ -88,7 +88,11 @@ class Guest extends React.Component {
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleLogin} color="primary" variant="raised">
+            <Button
+              onClick={this.handleLogin}
+              color="primary"
+              variant="contained"
+            >
               Login
             </Button>
           </DialogActions>

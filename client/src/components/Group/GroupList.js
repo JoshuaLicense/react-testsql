@@ -116,7 +116,7 @@ class GroupList extends React.Component {
               component={Link}
               to="/group/create"
               color="primary"
-              variant="raised"
+              variant="contained"
               size="small"
             >
               Create &raquo;

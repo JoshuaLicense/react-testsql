@@ -70,7 +70,7 @@ export default class SaveDatabase extends React.Component {
           <Button
             component={Link}
             color="secondary"
-            variant="raised"
+            variant="contained"
             size="small"
             to="/"
           >
@@ -101,7 +101,7 @@ export default class SaveDatabase extends React.Component {
         </DialogContent>
         <DialogActions>
           <Button
-            variant="raised"
+            variant="contained"
             color="primary"
             onClick={this.handleSaveDatabase}
             disabled={Boolean(

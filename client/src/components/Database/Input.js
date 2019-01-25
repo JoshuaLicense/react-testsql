@@ -66,7 +66,7 @@ class DatabaseInput extends React.Component {
         <Button
           className={classes.button}
           size="small"
-          variant="raised"
+          variant="contained"
           color="primary"
           onClick={this.handleSubmit}
         >
@@ -76,7 +76,7 @@ class DatabaseInput extends React.Component {
         <Button
           className={classes.button}
           size="small"
-          variant="raised"
+          variant="contained"
           color="secondary"
           onClick={this.handleClear}
         >

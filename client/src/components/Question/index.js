@@ -272,7 +272,7 @@ class QuestionManager extends React.Component {
             <div>
               <Button
                 className={classes.previousButton}
-                variant="raised"
+                variant="contained"
                 size="small"
                 onClick={this.handlePrev}
               >
@@ -283,7 +283,7 @@ class QuestionManager extends React.Component {
               </Button>
               <Button
                 className={classes.nextButton}
-                variant="raised"
+                variant="contained"
                 size="small"
                 color="primary"
                 onClick={this.handleNext}

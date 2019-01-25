@@ -75,7 +75,7 @@ export default class DatabaseList extends React.Component {
               component={Link}
               to="/database/save"
               color="primary"
-              variant="raised"
+              variant="contained"
               size="small"
             >
               Save &raquo;
