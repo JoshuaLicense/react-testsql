@@ -23,7 +23,7 @@ describe("UploadDatabase component", () => {
       <UploadDatabase uploadDatabaseHandler={uploadDatabaseHandlerMock} />
     ).dive();
 
-    expect(component.find("input#uploadFile").length).toEqual(1);
+    expect(component.find("input").length).toEqual(1);
   });
 
   it("renders the UploadDatabase component as a disabled button", () => {

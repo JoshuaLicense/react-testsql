@@ -224,6 +224,7 @@ class QuestionManager extends React.Component {
               <Step key={question.index}>
                 <StepButton
                   className={classes.stepperButton}
+                  aria-label={`Question #${question.index}`}
                   onClick={this.handleQuestionChange(question.index)}
                   completed={Boolean(question.completed)}
                 >
@@ -274,6 +275,7 @@ class QuestionManager extends React.Component {
                 className={classes.previousButton}
                 variant="contained"
                 size="small"
+                aria-label="Previous question"
                 onClick={this.handlePrev}
               >
                 <PreviousIcon />
@@ -286,6 +288,7 @@ class QuestionManager extends React.Component {
                 variant="contained"
                 size="small"
                 color="primary"
+                aria-label="Next question"
                 onClick={this.handleNext}
               >
                 <Hidden xsDown implementation="css">

@@ -68,6 +68,7 @@ class DatabaseInput extends React.Component {
           size="small"
           variant="contained"
           color="primary"
+          aria-label="Run"
           onClick={this.handleSubmit}
         >
           Run
@@ -78,6 +79,7 @@ class DatabaseInput extends React.Component {
           size="small"
           variant="contained"
           color="secondary"
+          aria-label="Clear"
           onClick={this.handleClear}
         >
           Clear

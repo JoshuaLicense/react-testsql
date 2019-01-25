@@ -53,19 +53,17 @@ class UploadDatabase extends React.Component {
             </Tooltip>
           ) : (
             <React.Fragment>
-              <input
-                accept=".db,.sqlite"
-                onChange={this.handleUpload}
-                style={displayNone}
-                id="uploadFile"
-                type="file"
-              />
-
               <Tooltip title="Upload Database">
-                <label htmlFor="uploadFile">
+                <label>
                   <IconButton component="span" aria-label="Upload Database">
                     <UploadIcon />
                   </IconButton>
+                  <input
+                    accept=".db,.sqlite"
+                    onChange={this.handleUpload}
+                    style={displayNone}
+                    type="file"
+                  />
                 </label>
               </Tooltip>
             </React.Fragment>
