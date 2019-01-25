@@ -177,6 +177,9 @@ class QuestionManager extends React.Component {
   handleSetChange = event => {
     const set = event.target.value;
 
+    // Don't do anything if nothing has changed.
+    if (set === this.state.activeSet) return;
+
     const { allQuestions } = this.props;
 
     // Extract only the questions in this set.
