@@ -23,7 +23,7 @@
     "build:client": "cross-env REACT_APP_CLIENT_ONLY=true yarn build",
     "test": "cd client && yarn test",
     "deploy:gh-pages": "cd client && yarn deploy",
-    "deploy:heroku": "git push heroku master",
+    "deploy:heroku": "cd server && git push heroku master",
     "heroku-postbuild": "cd client && yarn build"
   },
   "cacheDirectories": [
