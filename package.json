@@ -16,7 +16,7 @@
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
-    "start:dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
+    "start:dev": "concurrently --kill-others-on-fail \"yarn start:server\" \"yarn start:client\"",
     "start:server": "cd server && yarn start:dev",
     "start:client": "cd client && yarn start",
     "build": "cd client && yarn build",
