@@ -68,10 +68,10 @@ class DatabaseInput extends React.Component {
           size="small"
           variant="contained"
           color="primary"
-          aria-label="Run"
+          aria-label="Test"
           onClick={this.handleSubmit}
         >
-          Run
+          Test
           <RunIcon className={classes.rightIcon} />
         </Button>
         <Button
