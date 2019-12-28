@@ -11,7 +11,7 @@ import Typography from "@material-ui/core/Typography";
 import LeaveIcon from "@material-ui/icons/ExitToApp";
 import ManageIcon from "@material-ui/icons/Settings";
 
-import Link from "react-router-dom/Link";
+import { Link } from "react-router-dom";
 
 const styles = {
   progress: { flex: "0 0 40px" },

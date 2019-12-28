@@ -6,9 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 
 import Dialog from "@material-ui/core/Dialog";
 
-import Route from "react-router-dom/Route";
-import MemoryRouter from "react-router-dom/MemoryRouter";
-import { Switch } from "react-router-dom";
+import { Switch, Route, MemoryRouter } from "react-router-dom";
 
 import SaveDatabase from "../SaveDatabase";
 import DatabaseList from "../DatabaseList";

@@ -2,9 +2,7 @@ import React from "react";
 import { shallow, mount } from "enzyme";
 import GroupManager from "../GroupManager";
 
-import Route from "react-router-dom/Route";
-import MemoryRouter from "react-router-dom/MemoryRouter";
-import { Switch } from "react-router-dom";
+import { Switch, Route, MemoryRouter } from "react-router-dom";
 
 import GroupList from "../GroupList";
 import CreateGroup from "../CreateGroup";
