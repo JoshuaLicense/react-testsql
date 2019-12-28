@@ -1,6 +1,6 @@
 import React from "react";
 
-import SQL from "sql.js";
+import initSqlJs from "sql.js/dist/sql-wasm";
 
 import getDatabase from "./utils/getDatabase";
 import saveDatabase from "./utils/saveDatabase";
@@ -8,7 +8,9 @@ import saveDatabase from "./utils/saveDatabase";
 import DatabaseContext from "./Context";
 
 export default class Provider extends React.Component {
-  loadDatabase = typedArray => {
+  loadDatabase = async typedArray => {
+    const SQL = await initSqlJs({ locateFile: filename => `/${filename}` });
+
     // Create a new SQL object
     const database = new SQL.Database(typedArray);
 
