@@ -1,16 +1,13 @@
-import React from "react";
+import React, { Suspense } from "react";
 
 import IconButton from "@material-ui/core/IconButton";
 import GroupIcon from "@material-ui/icons/GroupWorkTwoTone";
 
 import Tooltip from "@material-ui/core/Tooltip";
 
-import Loadable from "react-loadable";
-
-const LoadableGroupManager = Loadable({
-  loader: () => import("./GroupManager" /* webpackChunkName: "groups" */),
-  loading: () => <div>Loading...</div>
-});
+const LoadableGroupManager = React.lazy(() =>
+  import("./GroupManager" /* webpackChunkName: "groups" */)
+);
 
 export default class Group extends React.Component {
   state = {
@@ -20,8 +17,6 @@ export default class Group extends React.Component {
   handleOpen = () => this.setState({ open: true });
 
   handleClose = () => this.setState({ open: false });
-
-  handleMouseOver = () => LoadableGroupManager.preload();
 
   render() {
     const { open } = this.state;
@@ -46,13 +41,15 @@ export default class Group extends React.Component {
           </IconButton>
         </Tooltip>
         {open && (
-          <LoadableGroupManager
-            closeHandler={this.handleClose}
-            currentGroup={currentGroup}
-            loadDatabaseHandler={loadDatabaseHandler}
-            joinGroupHandler={joinGroupHandler}
-            leaveGroupHandler={leaveGroupHandler}
-          />
+          <Suspense fallback={<div>Loading...</div>}>
+            <LoadableGroupManager
+              closeHandler={this.handleClose}
+              currentGroup={currentGroup}
+              loadDatabaseHandler={loadDatabaseHandler}
+              joinGroupHandler={joinGroupHandler}
+              leaveGroupHandler={leaveGroupHandler}
+            />
+          </Suspense>
         )}
       </React.Fragment>
     );

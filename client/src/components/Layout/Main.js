@@ -11,14 +11,10 @@ import checkAnswer from "../Question/answer";
 
 import { saveProgress } from "../Group/API";
 
-import Loadable from "react-loadable";
 import buildQuestions from "../../questions/utils/buildQuestions";
 import saveQuestions from "../../questions/utils/saveQuestions";
 
-const LoadableInputForm = Loadable({
-  loader: () => import("../Database/Input" /* webpackChunkName: "inputForm" */),
-  loading: () => <div>Loading...</div>
-});
+import InputForm from "../Database/Input";
 
 const innerContainerStyle = {
   overflow: "auto",
@@ -189,7 +185,7 @@ export default class Main extends React.Component {
         </Section>
 
         <Section title="Statement" padding="16px">
-          <LoadableInputForm submitHandler={this.runQuery} />
+          <InputForm submitHandler={this.runQuery} />
         </Section>
 
         {results.map((result, i) => (

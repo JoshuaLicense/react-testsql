@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 
 import IconButton from "@material-ui/core/IconButton";
 
@@ -6,13 +6,9 @@ import DatabaseIcon from "@material-ui/icons/StorageTwoTone";
 
 import Tooltip from "@material-ui/core/Tooltip";
 
-import Loadable from "react-loadable";
-
-const LoadableDatabaseManager = Loadable({
-  loader: () =>
-    import("./DatabaseManager" /* webpackChunkName: "saved-databases" */),
-  loading: () => <div>Loading...</div>
-});
+const LoadableDatabaseManager = React.lazy(() =>
+  import("./DatabaseManager" /* webpackChunkName: "saved-databases" */)
+);
 
 export default class SavedDatabase extends React.Component {
   state = {
@@ -22,8 +18,6 @@ export default class SavedDatabase extends React.Component {
   handleOpen = () => this.setState({ open: true });
 
   handleClose = () => this.setState({ open: false });
-
-  handleMouseOver = () => LoadableDatabaseManager.preload();
 
   render() {
     const { open } = this.state;
@@ -61,11 +55,13 @@ export default class SavedDatabase extends React.Component {
           </span>
         </Tooltip>
         {open && (
-          <LoadableDatabaseManager
-            closeHandler={this.handleClose}
-            currentDatabase={currentDatabase}
-            loadDatabaseHandler={loadDatabaseHandler}
-          />
+          <Suspense fallback={<div>Loading...</div>}>
+            <LoadableDatabaseManager
+              closeHandler={this.handleClose}
+              currentDatabase={currentDatabase}
+              loadDatabaseHandler={loadDatabaseHandler}
+            />
+          </Suspense>
         )}
       </React.Fragment>
     );
