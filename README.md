@@ -33,17 +33,23 @@ For the full version, a MongoDB container is **required**, the URI should be set
     `cd react-testsql`
 1.  Install all depedancies for testSQL.  
     `yarn`
-1.  Configured a `.env` file using `.env.example` as a template.
+1.  Configured a `.env` file using `env-example` as a template.
 1.  Start testSQL.  
-    `yarn start`
-1.  Open `localhost:3000` in your browser.
+    `yarn start`  
+    or  
+    `yarn start:client`
+1.  Open `localhost:3001` or `localhost:3000` (client only) in your browser.
 
 ##### [See a full list of commands here](https://github.com/JoshuaLicense/react-testsql/wiki/Package-scripts)
 
 ### FAQ
+
 #### Why is the payload so large?
+
 To ensure the application runs solely in the browser, react testSQL uses [SQL.js](https://github.com/kripken/sql.js/) which is SQLite compiled into JavaScript (_>2.5MB_)?
 
 #### How can I add a new question?
+
 See [here](https://github.com/JoshuaLicense/react-testsql/wiki/Creating-a-new-question).
 
+**Please find additional help in the [wiki](https://github.com/JoshuaLicense/react-testsql/wiki/). Questions that are not found please raise an [issue](https://github.com/JoshuaLicense/react-testsql/issues/new).**
