@@ -6,16 +6,17 @@ describe("buildQuestions function", () => {
   });
 
   it("renders the question", async () => {
-    jest.mock("../../index", () => ({
-      default: [
+    jest.mock("../../index", () => {
+      return [
         {
           build: jest.fn(() => ({
             question: "Question string",
             answer: "Answer string"
           }))
         }
-      ]
-    }));
+      ];
+    });
+
     const [response] = await buildQuestions(jest.fn());
 
     expect(response.question).toEqual("Question string");
@@ -32,6 +33,15 @@ describe("buildQuestions function", () => {
         }
       ]
     }));
+    jest.mock("../../index", () => {
+      return [
+        {
+          build: jest.fn(() => {
+            throw new Error("An error occurred while building this question.");
+          })
+        }
+      ];
+    });
 
     const [response] = await buildQuestions(jest.fn());
 

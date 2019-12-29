@@ -5,6 +5,16 @@ import UploadDatabase from "../Upload";
 
 import IconButton from "@material-ui/core/IconButton";
 
+window.FileReader = jest.fn(() => ({
+  readAsArrayBuffer: function() {
+    // The onload should be registered before this function is called.
+    // Call it here.
+    this.onload();
+
+    return new ArrayBuffer(10);
+  }
+}));
+
 const mockUserContext = jest.fn();
 
 jest.mock("../../Auth/Context", () => ({

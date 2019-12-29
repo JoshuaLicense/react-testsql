@@ -13,9 +13,6 @@ describe("the saveDatabase helper function", () => {
 
     toBinString.mockImplementation(() => true);
 
-    // null is returned when the localStorage item isn't found.
-    localStorage.setItem.mockImplementation(() => null);
-
     saveDatabase(database);
 
     expect(database.export).toHaveBeenCalledTimes(1);

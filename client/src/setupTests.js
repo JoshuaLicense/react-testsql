@@ -13,13 +13,25 @@ global.document.createRange = () => {
   };
 };
 
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  clear: jest.fn()
-};
+const localStorageMock = (function() {
+  let store = {};
 
-global.localStorage = localStorageMock;
+  return {
+    getItem: function(key) {
+      return store[key] || null;
+    },
+    setItem: function(key, value) {
+      store[key] = value.toString();
+    },
+    clear: function() {
+      store = {};
+    }
+  };
+})();
+
+Object.defineProperty(window, "localStorage", {
+  value: localStorageMock
+});
 
 const sessionStorageMock = {
   getItem: jest.fn(),
