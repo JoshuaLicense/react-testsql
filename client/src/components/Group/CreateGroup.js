@@ -73,7 +73,7 @@ class CreateGroup extends React.Component {
           style={flexSpaceBetween}
           disableTypography
         >
-          <Typography variant="title">Creating a new group</Typography>
+          <Typography variant="h6">Creating a new group</Typography>
           <Button
             component={Link}
             color="secondary"
@@ -91,7 +91,7 @@ class CreateGroup extends React.Component {
           </DialogContentText>
         </DialogContent>
         <DialogContent>
-          <Grid container spacing={24}>
+          <Grid container spacing={3}>
             <Grid item xs={3}>
               <Typography align="right">Group Name</Typography>
             </Grid>

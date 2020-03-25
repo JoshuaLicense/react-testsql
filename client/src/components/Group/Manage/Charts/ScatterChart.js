@@ -28,9 +28,10 @@ const CustomTooltip = props => {
 
     return (
       <div style={style.tooltip}>
-        <Typography variant="body2" color="textPrimary">{`Question ${
-          payload[0].value
-        }`}</Typography>
+        <Typography
+          variant="body1"
+          color="textPrimary"
+        >{`Question ${payload[0].value}`}</Typography>
         <Typography color="textSecondary" gutterBottom>
           {payload[0].payload.title}
         </Typography>

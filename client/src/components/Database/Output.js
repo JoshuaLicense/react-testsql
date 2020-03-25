@@ -9,7 +9,7 @@ import TableRow from "@material-ui/core/TableRow";
 import PropTypes from "prop-types";
 
 const DatabaseOutput = ({ columns, values }) => (
-  <Table padding="dense">
+  <Table size="small">
     <TableHead>
       <TableRow>
         {columns.map((name, i) => (

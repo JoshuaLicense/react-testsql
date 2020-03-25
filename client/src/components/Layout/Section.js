@@ -26,7 +26,7 @@ const Section = props => {
   return (
     <div style={style.seperator} {...other}>
       <Typography
-        variant="body2"
+        variant="body1"
         color="textSecondary"
         component="h3"
         gutterBottom

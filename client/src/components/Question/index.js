@@ -25,12 +25,12 @@ import Hidden from "@material-ui/core/Hidden";
 
 const styles = theme => ({
   innerPadding: {
-    padding: theme.spacing.unit * 2,
+    padding: theme.spacing(2),
     overflow: "auto"
   },
   stepperButton: {
-    padding: theme.spacing.unit,
-    margin: -theme.spacing.unit
+    padding: theme.spacing(1),
+    margin: -theme.spacing(1)
   },
   stepperLabel: {
     padding: 0
@@ -39,16 +39,16 @@ const styles = theme => ({
     color: "green !important"
   },
   divider: {
-    marginBottom: `${theme.spacing.unit * 2}px`
+    marginBottom: theme.spacing(2)
   },
   previousButton: {
-    marginRight: theme.spacing.unit
+    marginRight: theme.spacing(1)
   },
   bottomActions: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: theme.spacing.unit * 2
+    marginTop: theme.spacing(2)
   }
 });
 
@@ -252,7 +252,7 @@ class QuestionManager extends React.Component {
         <div className={classes.innerPadding}>
           {activeQuestion && (
             <Typography
-              variant="subheading"
+              variant="subtitle1"
               component="div"
               color={activeQuestion.error ? "error" : "inherit"}
               dangerouslySetInnerHTML={{

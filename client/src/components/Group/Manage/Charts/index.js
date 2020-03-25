@@ -36,7 +36,7 @@ export default class ChartManager extends React.Component {
           indicatorColor="primary"
           textColor="primary"
           scrollButtons="auto"
-          scrollable
+          variant="scrollable"
         >
           <Tab icon={<BarChartIcon />} />
           <Tab icon={<ScatterChartIcon />} />

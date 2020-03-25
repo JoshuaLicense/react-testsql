@@ -66,7 +66,7 @@ export default class SaveDatabase extends React.Component {
           style={flexSpaceBetween}
           disableTypography
         >
-          <Typography variant="title">Save your current database</Typography>
+          <Typography variant="h6">Save your current database</Typography>
           <Button
             component={Link}
             color="secondary"

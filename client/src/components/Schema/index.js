@@ -71,7 +71,7 @@ class Schema extends React.Component {
       <React.Fragment>
         <Typography
           component="h3"
-          variant="body2"
+          variant="body1"
           color="textSecondary"
           align="center"
           gutterBottom

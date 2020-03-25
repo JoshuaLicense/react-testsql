@@ -25,7 +25,7 @@ const CustomTooltip = props => {
 
     return (
       <div style={style.tooltip}>
-        <Typography variant="body2" color="textPrimary">
+        <Typography variant="body1" color="textPrimary">
           {payload[0].name}
         </Typography>
         <Typography>

@@ -64,10 +64,10 @@ export default class Tile extends React.Component {
     return (
       <Paper elevation={2} className="tile" style={{ backgroundColor }}>
         <div className="content">
-          <Typography variant="display4" style={{ color }}>
+          <Typography variant="h1" style={{ color }}>
             {number}
           </Typography>
-          <Typography variant="title">{title}</Typography>
+          <Typography variant="h6">{title}</Typography>
         </div>
       </Paper>
     );

@@ -100,7 +100,7 @@ export default class ManageGroup extends React.Component {
           >
             <CloseIcon fontSize="small" />
           </IconButton>
-          <Typography variant="title" color="inherit" style={style.flex}>
+          <Typography variant="h6" color="inherit" style={style.flex}>
             {title}
           </Typography>
         </Toolbar>
@@ -140,10 +140,10 @@ export default class ManageGroup extends React.Component {
         {header}
 
         <div style={{ margin: 16 }}>
-          <Grid container spacing={16}>
+          <Grid container spacing={2}>
             <Grid item xs={12} md={4}>
               <Typography
-                variant="body2"
+                variant="body1"
                 color="textSecondary"
                 component="h3"
                 gutterBottom
@@ -167,7 +167,7 @@ export default class ManageGroup extends React.Component {
               <Grid container>
                 <Grid item xs={12}>
                   <Typography
-                    variant="body2"
+                    variant="body1"
                     color="textSecondary"
                     component="h3"
                     gutterBottom
@@ -178,7 +178,7 @@ export default class ManageGroup extends React.Component {
                 </Grid>
                 <Grid item xs={12} sm={6} xl={3}>
                   <Typography
-                    variant="body2"
+                    variant="body1"
                     color="textSecondary"
                     component="h3"
                     gutterBottom
@@ -190,7 +190,7 @@ export default class ManageGroup extends React.Component {
                 </Grid>
                 <Grid item xs={12} sm={6} xl={3}>
                   <Typography
-                    variant="body2"
+                    variant="body1"
                     color="textSecondary"
                     component="h3"
                     gutterBottom

@@ -42,7 +42,7 @@ const Header = props => (
           <MenuIcon fontSize="small" />
         </IconButton>
       </Hidden>
-      <Typography variant="title" color="inherit" noWrap>
+      <Typography variant="h6" color="inherit" noWrap>
         testSQL
       </Typography>
       {!process.env.REACT_APP_CLIENT_ONLY && (
