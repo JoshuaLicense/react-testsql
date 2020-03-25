@@ -3,28 +3,21 @@ import React from "react";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 
-const style = {
-  heading: {
-    fontWeight: 500
-  },
+import { withStyles } from "@material-ui/core/styles";
+
+const styles = theme => ({
   seperator: {
-    margin: "16px"
-  },
-  paper: {
-    overflow: "auto"
-  },
-  gutters: {
-    padding: "16px"
+    margin: theme.spacing(2)
   }
-};
+});
 
 const Section = props => {
-  const { title, children, padding = 0, ...other } = props;
+  const { classes, title, children, padding = 0, ...other } = props;
 
-  const paperStyle = { ...style.paper, padding };
+  const paperStyle = { padding };
 
   return (
-    <div style={style.seperator} {...other}>
+    <div className={classes.seperator} {...other}>
       <Typography
         variant="body1"
         color="textSecondary"
@@ -40,4 +33,4 @@ const Section = props => {
   );
 };
 
-export default Section;
+export default withStyles(styles)(Section);

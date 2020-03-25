@@ -30,8 +30,8 @@ const styles = theme => ({
 });
 
 const Header = props => (
-  <AppBar position="static">
-    <Toolbar variant="dense">
+  <AppBar position="fixed">
+    <Toolbar>
       <Hidden implementation="css" mdUp>
         <IconButton
           color="inherit"

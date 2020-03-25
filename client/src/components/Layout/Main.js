@@ -16,12 +16,18 @@ import saveQuestions from "../../questions/utils/saveQuestions";
 
 import InputForm from "../Database/Input";
 
-const innerContainerStyle = {
-  overflow: "auto",
-  flexGrow: 1
-};
+import { withStyles } from "@material-ui/core/styles";
 
-export default class Main extends React.Component {
+const styles = theme => ({
+  innerContainerStyle: {
+    overflow: "auto",
+    flexGrow: 1
+  },
+  // Necessary for content to be below app bar.
+  toolbar: theme.mixins.toolbar
+});
+
+class Main extends React.Component {
   state = {
     feedback: null,
 
@@ -163,17 +169,13 @@ export default class Main extends React.Component {
   };
 
   render() {
-    const {
-      allQuestions,
-      activeQuestionIndex,
+    const { allQuestions, activeQuestionIndex, feedback } = this.state;
 
-      feedback
-    } = this.state;
-
-    const { results } = this.props;
+    const { results, classes } = this.props;
 
     return (
-      <main style={innerContainerStyle}>
+      <main className={classes.innerContainerStyle}>
+        <div className={classes.toolbar} />
         <Section title="Questions">
           {allQuestions && (
             <Question
@@ -198,3 +200,5 @@ export default class Main extends React.Component {
     );
   }
 }
+
+export default withStyles(styles)(Main);

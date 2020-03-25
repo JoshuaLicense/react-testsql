@@ -14,12 +14,13 @@ const styles = theme => ({
     height: "100%"
   },
   drawerPaper: {
-    height: "100%", // Overwrite the 100vh default!
     width: "16rem",
-    paddingTop: "16px",
     [theme.breakpoints.up("md")]: {
       position: "relative"
     }
+  },
+  gutterTop: {
+    marginTop: theme.spacing(2)
   },
   container: {
     display: "flex"
@@ -29,7 +30,9 @@ const styles = theme => ({
     justifyContent: "space-evenly",
     marginTop: "auto",
     marginBottom: "8px"
-  }
+  },
+  // Necessary for content to be below app bar.
+  toolbar: theme.mixins.toolbar
 });
 
 class Sidebar extends React.Component {
@@ -75,7 +78,7 @@ class Sidebar extends React.Component {
               keepMounted: true // Better open performance on mobile.
             }}
           >
-            {schema}
+            <div className={classes.gutterTop}>{schema}</div>
             {schemaActions}
           </Drawer>
         </Hidden>
@@ -88,7 +91,8 @@ class Sidebar extends React.Component {
             variant="permanent"
             open
           >
-            {schema}
+            <div className={classes.toolbar} />
+            <div className={classes.gutterTop}>{schema}</div>
             {schemaActions}
           </Drawer>
         </Hidden>
