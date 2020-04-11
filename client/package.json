@@ -22,10 +22,11 @@
     "typeface-roboto": "^0.0.54"
   },
   "scripts": {
-    "predeploy": "cross-env REACT_APP_CLIENT_ONLY=true PUBLIC_URL=https://joshualicense.github.io/react-testsql/ yarn build",
+    "predeploy": "cross-env REACT_APP_CLIENT_ONLY=true PUBLIC_URL=https://joshualicense.github.io/react-testsql/ yarn build && yarn copy-wasm",
     "deploy": "gh-pages -d build",
-    "prestart": "copy \"..\\node_modules\\sql.js\\dist\\sql-wasm.wasm\" \"public/sql-wasm.wasm\"",
     "start": "react-scripts start",
+    "poststart": "yarn copy-wasm",
+    "copy-wasm": "copy \"..\\node_modules\\sql.js\\dist\\sql-wasm.wasm\" \"build/static/js/sql-wasm.wasm\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
