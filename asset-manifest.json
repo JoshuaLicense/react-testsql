@@ -2,15 +2,15 @@
   "files": {
     "static/js/0.e325bd0d.chunk.js": "https://joshualicense.github.io/react-testsql/static/js/0.e325bd0d.chunk.js",
     "static/js/0.e325bd0d.chunk.js.map": "https://joshualicense.github.io/react-testsql/static/js/0.e325bd0d.chunk.js.map",
-    "database.js": "https://joshualicense.github.io/react-testsql/static/js/database.82e15a6c.chunk.js",
-    "database.js.map": "https://joshualicense.github.io/react-testsql/static/js/database.82e15a6c.chunk.js.map",
+    "database.js": "https://joshualicense.github.io/react-testsql/static/js/database.5339f713.chunk.js",
+    "database.js.map": "https://joshualicense.github.io/react-testsql/static/js/database.5339f713.chunk.js.map",
     "groups.css": "https://joshualicense.github.io/react-testsql/static/css/groups.174d80c0.chunk.css",
     "groups.js": "https://joshualicense.github.io/react-testsql/static/js/groups.c30a924f.chunk.js",
     "groups.js.map": "https://joshualicense.github.io/react-testsql/static/js/groups.c30a924f.chunk.js.map",
     "main.js": "https://joshualicense.github.io/react-testsql/static/js/main.6ee1fdb1.chunk.js",
     "main.js.map": "https://joshualicense.github.io/react-testsql/static/js/main.6ee1fdb1.chunk.js.map",
-    "runtime-main.js": "https://joshualicense.github.io/react-testsql/static/js/runtime-main.12c92a6c.js",
-    "runtime-main.js.map": "https://joshualicense.github.io/react-testsql/static/js/runtime-main.12c92a6c.js.map",
+    "runtime-main.js": "https://joshualicense.github.io/react-testsql/static/js/runtime-main.1c96ed53.js",
+    "runtime-main.js.map": "https://joshualicense.github.io/react-testsql/static/js/runtime-main.1c96ed53.js.map",
     "saved-databases.js": "https://joshualicense.github.io/react-testsql/static/js/saved-databases.e6ff1e0c.chunk.js",
     "saved-databases.js.map": "https://joshualicense.github.io/react-testsql/static/js/saved-databases.e6ff1e0c.chunk.js.map",
     "static/js/6.bdeb0c3c.chunk.js": "https://joshualicense.github.io/react-testsql/static/js/6.bdeb0c3c.chunk.js",
@@ -25,7 +25,7 @@
     "static/js/10.000795e8.chunk.js": "https://joshualicense.github.io/react-testsql/static/js/10.000795e8.chunk.js",
     "static/js/10.000795e8.chunk.js.map": "https://joshualicense.github.io/react-testsql/static/js/10.000795e8.chunk.js.map",
     "index.html": "https://joshualicense.github.io/react-testsql/index.html",
-    "precache-manifest.8bb2b58682cfcdf682369a7dd99593cb.js": "https://joshualicense.github.io/react-testsql/precache-manifest.8bb2b58682cfcdf682369a7dd99593cb.js",
+    "precache-manifest.44ffefb4dfc8bfc3fa9a205afb0e3b95.js": "https://joshualicense.github.io/react-testsql/precache-manifest.44ffefb4dfc8bfc3fa9a205afb0e3b95.js",
     "service-worker.js": "https://joshualicense.github.io/react-testsql/service-worker.js",
     "static/css/7.2a142bed.chunk.css.map": "https://joshualicense.github.io/react-testsql/static/css/7.2a142bed.chunk.css.map",
     "static/css/groups.174d80c0.chunk.css.map": "https://joshualicense.github.io/react-testsql/static/css/groups.174d80c0.chunk.css.map",
@@ -37,7 +37,7 @@
     "static/media/index.css": "https://joshualicense.github.io/react-testsql/static/media/roboto-latin-900italic.bc833e72.woff"
   },
   "entrypoints": [
-    "static/js/runtime-main.12c92a6c.js",
+    "static/js/runtime-main.1c96ed53.js",
     "static/css/7.2a142bed.chunk.css",
     "static/js/7.c263f1c2.chunk.js",
     "static/js/main.6ee1fdb1.chunk.js"
