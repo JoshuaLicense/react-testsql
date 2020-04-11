@@ -18,13 +18,18 @@ import InputForm from "../Database/Input";
 
 import { withStyles } from "@material-ui/core/styles";
 
-const styles = theme => ({
+const styles = (theme) => ({
+  containerStyle: {
+    flexGrow: 1,
+    height: "100%",
+    flexDirection: "column",
+    display: "flex",
+  },
   innerContainerStyle: {
     overflow: "auto",
-    flexGrow: 1
   },
   // Necessary for content to be below app bar.
-  toolbar: theme.mixins.toolbar
+  toolbar: theme.mixins.toolbar,
 });
 
 class Main extends React.Component {
@@ -32,12 +37,12 @@ class Main extends React.Component {
     feedback: null,
 
     allQuestions: null,
-    activeQuestionIndex: 0
+    activeQuestionIndex: 0,
   };
 
-  changeFeedback = feedback =>
+  changeFeedback = (feedback) =>
     this.setState({
-      feedback: { ...feedback, timestamp: new Date().getTime() }
+      feedback: { ...feedback, timestamp: new Date().getTime() },
     });
 
   componentDidMount() {
@@ -104,9 +109,9 @@ class Main extends React.Component {
     }
   }
 
-  changeQuestion = index => this.setState({ activeQuestionIndex: index });
+  changeQuestion = (index) => this.setState({ activeQuestionIndex: index });
 
-  runQuery = async sql => {
+  runQuery = async (sql) => {
     const { currentDatabase, loadDatabase } = this.props;
 
     const { activeQuestionIndex, allQuestions } = this.state;
@@ -144,7 +149,7 @@ class Main extends React.Component {
     this.props.updateResultsHandler(results);
   };
 
-  completeCurrentQuestion = sql => {
+  completeCurrentQuestion = (sql) => {
     const { activeQuestionIndex, allQuestions } = this.state;
 
     this.changeFeedback({ message: "Correct Answer", variant: "success" });
@@ -153,7 +158,7 @@ class Main extends React.Component {
 
     // Create a copy of the original question set and update the completed flag of the active question.
     // Immutable \o/.
-    const updatedAllQuestions = allQuestions.map(question => {
+    const updatedAllQuestions = allQuestions.map((question) => {
       if (Object.is(question, activeQuestion)) {
         return { ...question, completed: true };
       }
@@ -162,7 +167,7 @@ class Main extends React.Component {
     });
 
     this.setState({
-      allQuestions: updatedAllQuestions
+      allQuestions: updatedAllQuestions,
     });
 
     return updatedAllQuestions;
@@ -174,28 +179,30 @@ class Main extends React.Component {
     const { results, classes } = this.props;
 
     return (
-      <main className={classes.innerContainerStyle}>
+      <main className={classes.containerStyle}>
         <div className={classes.toolbar} />
-        <Section title="Questions">
-          {allQuestions && (
-            <Question
-              activeQuestionIndex={activeQuestionIndex}
-              allQuestions={allQuestions}
-              changeQuestionHandler={this.changeQuestion}
-            />
-          )}
-        </Section>
-
-        <Section title="Statement" padding="16px">
-          <InputForm submitHandler={this.runQuery} />
-        </Section>
-
-        {results.map((result, i) => (
-          <Section title="Results" key={i} padding="16px">
-            <OutputTable columns={result.columns} values={result.values} />
+        <div className={classes.innerContainerStyle}>
+          <Section title="Questions">
+            {allQuestions && (
+              <Question
+                activeQuestionIndex={activeQuestionIndex}
+                allQuestions={allQuestions}
+                changeQuestionHandler={this.changeQuestion}
+              />
+            )}
           </Section>
-        ))}
-        <Feedback {...feedback} changeHandler={this.changeFeedback} />
+
+          <Section title="Statement" padding="16px">
+            <InputForm submitHandler={this.runQuery} />
+          </Section>
+
+          {results.map((result, i) => (
+            <Section title="Results" key={i} padding="16px">
+              <OutputTable columns={result.columns} values={result.values} />
+            </Section>
+          ))}
+          <Feedback {...feedback} changeHandler={this.changeFeedback} />
+        </div>
       </main>
     );
   }

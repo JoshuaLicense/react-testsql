@@ -8,8 +8,8 @@ import saveDatabase from "./utils/saveDatabase";
 import DatabaseContext from "./Context";
 
 export default class Provider extends React.Component {
-  loadDatabase = async typedArray => {
-    const SQL = await initSqlJs({ locateFile: filename => `/${filename}` });
+  loadDatabase = async (typedArray) => {
+    const SQL = await initSqlJs();
 
     // Create a new SQL object
     const database = new SQL.Database(typedArray);
@@ -24,7 +24,7 @@ export default class Provider extends React.Component {
 
   state = {
     database: null,
-    loadDatabase: this.loadDatabase
+    loadDatabase: this.loadDatabase,
   };
 
   async componentDidMount() {
