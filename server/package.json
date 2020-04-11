@@ -6,6 +6,7 @@
   "homepage": "https://joshualicense.github.io/react-testsql",
   "proxy": "http://localhost:3001/",
   "dependencies": {
+    "@react-testsql/client": "^0.12.0",
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.18.2",
     "chalk": "^2.4.1",
@@ -22,8 +23,7 @@
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1",
     "passport-google-oauth": "^1.0.0",
-    "passport-local": "^1.0.0",
-    "@react-testsql/client": "^0.12.0"
+    "passport-local": "^1.0.0"
   },
   "scripts": {
     "start": "node index.js",
