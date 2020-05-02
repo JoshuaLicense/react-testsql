@@ -24,6 +24,7 @@ const styles = (theme) => ({
     height: "100%",
     flexDirection: "column",
     display: "flex",
+    overflow: "auto",
   },
   innerContainerStyle: {
     overflow: "auto",
