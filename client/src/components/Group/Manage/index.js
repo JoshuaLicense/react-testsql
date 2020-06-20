@@ -32,13 +32,13 @@ import "./manageGroup.css";
 
 const style = {
   closeButton: { marginRight: 16 },
-  flex: { flex: 1 }
+  flex: { flex: 1 },
 };
 
 export default class ManageGroup extends React.Component {
   state = {
     error: null,
-    group: null
+    group: null,
   };
 
   componentDidMount() {
@@ -51,23 +51,23 @@ export default class ManageGroup extends React.Component {
 
     await updateGroup(id, controlledTitle);
 
-    this.setState(prevState => ({
-      group: { ...prevState.group, title: controlledTitle }
+    this.setState((prevState) => ({
+      group: { ...prevState.group, title: controlledTitle },
     }));
   };
 
-  handleRemoveUser = async userId => {
+  handleRemoveUser = async (userId) => {
     await removeUserFromGroup(this.props.match.params.id, userId);
 
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       group: {
         ...prevState.group,
-        users: [...prevState.group.users.filter(user => user._id !== userId)]
-      }
+        users: [...prevState.group.users.filter((user) => user._id !== userId)],
+      },
     }));
   };
 
-  handleChange = e => this.setState({ controlledTitle: e.target.value });
+  handleChange = (e) => this.setState({ controlledTitle: e.target.value });
 
   loadGroup = async () => {
     const { id } = this.props.match.params;
@@ -152,7 +152,7 @@ export default class ManageGroup extends React.Component {
               </Typography>
               <Paper elevation={2} square>
                 <List dense={users.length >= 5} disablePadding>
-                  {users.map(user => (
+                  {users.map((user) => (
                     <GroupUser
                       key={user._id}
                       user={user}
@@ -188,7 +188,7 @@ export default class ManageGroup extends React.Component {
                   </Typography>
                   <PieChart data={setMetrics} />
                 </Grid>
-                <Grid item xs={12} sm={6} xl={3}>
+                <Grid item xs={12} sm={6} xl={9}>
                   <Typography
                     variant="body1"
                     color="textSecondary"
