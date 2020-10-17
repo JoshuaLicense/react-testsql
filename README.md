@@ -8,6 +8,9 @@ A dynamic SQL problem generator application to test your knowledge on SQL. Can b
 - [create-react-app](https://github.com/facebook/create-react-app)
 - [MaterialUI](https://github.com/mui-org/material-ui)
 
+## Screenshots
+![Home Page](/../screenshots/HomePage.png?raw=true "What the landing page looks like?")
+
 ## Demo
 
 Currently there are two versions of testSQL hosted as a demo.
@@ -46,7 +49,7 @@ For the full version, a MongoDB container is **required**, the URI should be set
 
 #### Why is the payload so large?
 
-To ensure the application runs solely in the browser, react testSQL uses [SQL.js](https://github.com/kripken/sql.js/) which is SQLite compiled into JavaScript (_>2.5MB_)?
+To ensure the application runs solely in the browser, react testSQL uses [SQL.js](https://github.com/kripken/sql.js/) which is SQLite compiled into JavaScript.
 
 #### How can I add a new question?
 
