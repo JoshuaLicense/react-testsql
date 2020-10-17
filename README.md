@@ -9,7 +9,7 @@ A dynamic SQL problem generator application to test your knowledge on SQL. Can b
 - [MaterialUI](https://github.com/mui-org/material-ui)
 
 ## Screenshots
-![Home Page](/../screenshots/HomePage.png?raw=true "What the landing page looks like?")
+![Home Page](/../master/HomePage.png?raw=true "What the landing page looks like?")
 
 ## Demo
 
