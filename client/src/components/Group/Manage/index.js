@@ -184,7 +184,7 @@ export default class ManageGroup extends React.Component {
                     gutterBottom
                   >
                     Comparison of question set ratio and their corresponding
-                    completed ratio
+                    completed ratio example commit second
                   </Typography>
                   <PieChart data={setMetrics} />
                 </Grid>
